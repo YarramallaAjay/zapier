@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  password String
+  email    String @unique
+  zaps     Zap[]
+}
+
+model Zap {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  metadata    Json     @default("{}")
+  userId      Int
+  triggerId   String
+  actions     Action[]
+  trigger     Trigger?
+  user        User     @relation(fields: [userId], references: [id])
+  zapRuns     ZapRun[]
+}
+
+model Trigger {
+  id          String            @id @default(uuid())
+  name        String
+  description String
+  zapId       String            @unique
+  metadata    Json              @default("{}")
+  triggerId   String
+  type        AvailableTriggers @relation(fields: [triggerId], references: [id])
+  zap         Zap               @relation(fields: [zapId], references: [id])
+}
+
+model Action {
+  id           String           @id @default(uuid())
+  name         String
+  description  String
+  metadata     Json             @default("{}")
+  zapId        String
+  actionId     String
+  sortingOrder Int              @default(0)
+  type         AvailableActions @relation(fields: [actionId], references: [id])
+  zap          Zap              @relation(fields: [zapId], references: [id])
+}
+
+model ZapRun {
+  id           String        @id @default(uuid())
+  metadata     Json          @default("{}")
+  zapId        String
+  zap          Zap           @relation(fields: [zapId], references: [id])
+  ZapRunOutBox ZapRunOutBox?
+}
+
+model AvailableActions {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  metadata    Json     @default("{}")
+  actions     Action[]
+}
+
+model AvailableTriggers {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  metadata    Json      @default("{}")
+  triggers    Trigger[]
+}
+
+model ZapRunOutBox {
+  id       String @id  @default(uuid())
+  zaprunId String @unique
+  ZapRun   ZapRun @relation(fields: [zaprunId], references: [id])
+}
