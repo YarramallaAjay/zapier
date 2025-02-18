@@ -1,4 +1,4 @@
-import hooksRouter from "./hooks/routes/hooksRouter";
+import hooksRouter from "./routes/hooksRouter";
 import { kafkaProducer, } from "./processor/processor";
 import { kafkaConsumer } from "./workers/worker";
 import express from 'express'
