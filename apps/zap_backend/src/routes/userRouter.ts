@@ -1,22 +1,29 @@
 import { PrismaClient } from '@prisma/client'
-import express from 'express'
+import express,{Router} from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import "dotenv/config"
+import { signInSchema,signupSchema } from '../types'
 
-const router=express.Router()
+const router:express.Router=Router()
 const client=new PrismaClient()
 
 const JWT_SECRET=process.env.JWT_SECRET || "jwtsecret"
 console.log(JWT_SECRET)
 
 router.post("/signup",async (req,res)=>{
-    const {username,email,password}=await req.body
-    console.log({username,email,password})
+    const parsedData=await signupSchema.safeParse(req.body)
+    if(!parsedData.success){
+        console.log("validation failed..check again")
+        res.status(400).json({message:"validation failed..check again"})
+        return
+    }
+
+    console.log(parsedData.data)
 
         const userExisted=await client.user.findFirst({
             where:{
-                name:username
+                name:parsedData.data.name
             }
         });
 
@@ -25,12 +32,12 @@ router.post("/signup",async (req,res)=>{
             return;
         }
 
-        const hashedPassword=await bcrypt.hash(password,10)
+        const hashedPassword=await bcrypt.hash(parsedData.data.password,10)
 
         const createUser=await client.user.create({
           data:{
-            name:username,
-            email:email,
+            name:parsedData.data.name,
+            email:parsedData.data.email,
             password:hashedPassword
           }
         })
@@ -47,12 +54,18 @@ router.post("/signup",async (req,res)=>{
 
 
 router.post("/signin",async (req,res)=>{
-    const {username,password}=await req.body
-    console.log({username,password})
+    const parsedData=await signInSchema.safeParse(req.body)
+    if(!parsedData.success){
+        console.log("validation failed")
+        res.status(400).json({message:"validation failed"})
+        return
+
+    }
+    console.log(parsedData.data)
 
     const user=await client.user.findFirst({
         where:{
-            name:username
+            name:parsedData.data.name
         }
     })
 
@@ -62,7 +75,7 @@ router.post("/signin",async (req,res)=>{
         return
     }
 
-    const isPasswordValid=await bcrypt.compare(password,user.password)
+    const isPasswordValid=await bcrypt.compare(parsedData.data.password,user.password)
     if (!isPasswordValid){
         console.log("password is not valid");
         res.status(401).json("password is not valid")
@@ -78,3 +91,5 @@ router.post("/signin",async (req,res)=>{
         token:token
     })
 })
+
+export default router

@@ -69,6 +69,9 @@ importers:
       zap_backend:
         specifier: 'file:'
         version: file:apps/zap_backend(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
 
   packages/db:
     dependencies:
@@ -2295,6 +2298,9 @@ packages:
   'zapier@file:':
     resolution: {directory: '', type: directory}
     engines: {node: '>=18'}
+
+  zod@3.24.2:
+    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
 snapshots:
 
@@ -4847,6 +4853,7 @@ snapshots:
       '@types/express': 5.0.0
       '@types/jsonwebtoken': 9.0.8
       bcrypt: 5.1.1
+      cookie: 1.0.2
       cors: 2.8.5
       dotenv: 16.4.7
       express: 4.21.2
@@ -4859,3 +4866,5 @@ snapshots:
       - typescript
 
   'zapier@file:': {}
+
+  zod@3.24.2: {}

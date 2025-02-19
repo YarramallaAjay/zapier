@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/hooks/routes/hooksrouter.ts","./src/processor/processor.ts","./src/workers/worker.ts"],"version":"5.7.3"}
+{"root":["./src/index.ts","./src/middlewares/userauthmiddleware.ts","./src/processor/processor.ts","./src/routes/hooksrouter.ts","./src/routes/userrouter.ts","./src/routes/zaprouter.ts","./src/types/expresstypes.ts","./src/types/index.ts","./src/workers/worker.ts"],"version":"5.7.3"}

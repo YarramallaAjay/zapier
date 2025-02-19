@@ -3,6 +3,8 @@ import { kafkaProducer, } from "./processor/processor";
 import { kafkaConsumer } from "./workers/worker";
 import express from 'express'
 import cors from 'cors'
+import userRouter from "./routes/userRouter";
+import zapRouter from "./routes/zapRouter";
 
 export async function main(){
 
@@ -14,6 +16,8 @@ export async function main(){
     app.use(express.json())
 
     app.use("/hooks", hooksRouter);
+    app.use("/user",userRouter);
+    app.use("/",zapRouter)
 
     app.listen(3000,()=>{
         console.log("server is running on port 3000")
