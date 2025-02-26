@@ -1,22 +1,19 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { Request, Response, NextFunction, request } from "express";
-import cookie from "cookie";
-import { string } from "zod";
 import { reqProps } from "../types/expresstypes";
+import {Request, NextFunction,Response } from "express";
 
 dotenv.config();
 
 const client = new PrismaClient();
 
-export async function AuthUser(req: Request, res: Response, next: NextFunction) {
+export async function AuthUser(req:Request, res:Response,next:NextFunction) {
     const JWT_SECRET = process.env.JWT_SECRET || "jwtsecret";
-
     console.log(req.headers.cookie)
 
     // Extract token from cookies
-    const token = req.headers.cookie
+    const token = req.headers.cookie?.split("=")[1]
     console.log(token)
 
     if (!token) {

@@ -8,7 +8,8 @@ const router: Router = express.Router();
 const client = new PrismaClient();
 
 // Get all zaps for authenticated user
-router.get("/zaps", AuthUser, async (req: Request, res: Response) => {
+router.get("/zaps", AuthUser, async (req, res) => {
+    console.log(req)
     try 
     {
         const user = (req as reqProps).user;
@@ -33,7 +34,7 @@ router.get("/zaps", AuthUser, async (req: Request, res: Response) => {
         });
 
         if (userZaps.length === 0) {
-             res.status(404).json({ message: "No zaps found. Create one!" });
+             res.status(203).json({ message: "No zaps found. Create one!" });
              return;
         }
 
@@ -44,7 +45,7 @@ router.get("/zaps", AuthUser, async (req: Request, res: Response) => {
 });
 
 // Get a zap by ID
-router.get("/:zapId", AuthUser, async (req: Request, res: Response) => {
+router.get("/zap/:zapId", AuthUser, async (req: Request, res: Response) => {
     try {
         const zapItem = await client.zap.findUnique({ where: { id: req.params.zapId } });
         if (!zapItem) { res.status(404).json({ message: "Zap not found" });
@@ -152,7 +153,7 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
 
 
 // Trigger a zap
-router.post("/:zapId", AuthUser, async (req: Request, res: Response) => {
+router.post("/zap/:zapId", AuthUser, async (req: Request, res: Response) => {
     try {
         const user = (req as reqProps).user;
         const { zapId } = req.params;
@@ -174,7 +175,7 @@ router.post("/:zapId", AuthUser, async (req: Request, res: Response) => {
 });
 
 // Update a zap
-router.put("/update/:zapId", AuthUser, async (req: Request, res: Response) => {
+router.put("/zap/:zapId", AuthUser, async (req: Request, res: Response) => {
     try {
         const { zapId } = req.params;
         const { zap } = req.body;
@@ -193,7 +194,7 @@ router.put("/update/:zapId", AuthUser, async (req: Request, res: Response) => {
 });
 
 // Delete a zap
-router.delete("/:zapId", AuthUser, async (req: Request, res: Response) => {
+router.delete("/zap/:zapId", AuthUser, async (req: Request, res: Response) => {
     try {
         await client.zap.delete({ where: { id: req.params.zapId } });
         res.status(200).json({ message: "Zap deleted successfully" });
@@ -204,11 +205,14 @@ router.delete("/:zapId", AuthUser, async (req: Request, res: Response) => {
 
 // Get zap catalogue
 router.get("/zapcatalogue", AuthUser, async (req: Request, res: Response) => {
+    console.log("in zap catalogue")
     try {
         const zapCatalogue = await client.$transaction(async (tx) => ({
             triggers: await tx.availableTriggers.findMany(),
             actions: await tx.availableActions.findMany()
         }));
+
+        console.log(zapCatalogue)
 
         res.status(200).json({ message: "All triggers & actions", data: zapCatalogue });
     } catch (error) {

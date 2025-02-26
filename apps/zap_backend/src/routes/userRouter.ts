@@ -65,7 +65,7 @@ router.post("/signin",async (req,res)=>{
 
     const user=await client.user.findFirst({
         where:{
-            name:parsedData.data.name
+            email:parsedData.data.email
         }
     })
 
@@ -86,7 +86,13 @@ router.post("/signin",async (req,res)=>{
         id:user.id
     },JWT_SECRET)
 
-    res.setHeader("Set-cookie",token).status(200).json({
+    res.cookie("token",token,{
+        httpOnly:true,
+        maxAge: 30 * 24 * 60 * 60 * 1000, //
+        sameSite:'none',
+        secure:false
+    })
+    res.status(200).send({
         message:"signIn Successful",
         token:token
     })
