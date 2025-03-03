@@ -1,8 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { AvailableActions, PrismaClient } from '@prisma/client';
 import express, { Router, Response, Request } from 'express';
 import "dotenv/config";
 import { AuthUser } from '../middlewares/userAuthMiddleware';
 import { reqProps } from '../types/expresstypes';
+import { string } from 'zod';
 
 const router: Router = express.Router();
 const client = new PrismaClient();
@@ -67,54 +68,57 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
             return;
         }
 
-        const { triggerId, triggername, name, description, actions } = req.body;
+        const { trigId, triggername, description, actions } = req.body;
 
-        if ( !triggername || !actions || actions.length === 0) {
+        console.log(req.body)
+
+        if ( !trigId || !triggername|| !actions || actions.length === 0) {
              res.status(400).json({ message: "Zap details are incomplete", data: req.body });
              return;
 
         }
 
-        // Validate trigger before transaction
-        const Validtrigger = await client.availableTriggers.findFirst({
-            where: { name: triggername },
-            select: { id: true }
-        });
+        // // Validate trigger before transaction
+        // const Validtrigger = await client.availableTriggers.findFirst({
+        //     where: { name: triggername },
+        //     select: { id: true }
+        // });
 
-        if (!Validtrigger) {
-             res.status(404).json({ message: "Trigger not found" });
-            return;
+        // if (!Validtrigger) {
+        //      res.status(404).json({ message: "Trigger not found" });
+        //     return;
 
-        }
+        // }
 
-        // Fetch all available actions in a single query
-        const validActions = await client.availableActions.findMany({
-            where: { name: { in: actions, mode: 'insensitive' } },
-            select: { id: true, name: true, description: true }
-        });
+        // // Fetch all available actions in a single query
+        // const validActions = await client.availableActions.findMany({
+        //     where: { name: { in: actions, mode: 'insensitive' } },
+        //     select: { id: true, name: true, description: true }
+        // });
 
-        if (validActions.length !== actions.length) {
-             res.status(400).json({ message: "Some actions not found" });
-             return;
+        // if (validActions.length !== actions.length) {
+        //      res.status(400).json({ message: "Some actions not found" });
+        //      return;
 
-        }
+        // }
 
         // Execute transaction
         const newZap = await client.$transaction(async (tx) => {
             // Create the Zap with its trigger
             const zapper = await tx.zap.create({
                 data: {
-                    name,
+                    name: triggername,
                     description,
                     userId: user.id,
-                    triggerId: "",
+                    triggerId: trigId,
                       // Set triggerId directly
                     actions: {
-                        create: validActions.map((action, index) => ({
-                            actionId: action.id,
-                            sortingOrder: index,
-                            name: action.name,
-                            description: action.description
+                        create: actions.map((action:any, index: any) => ({
+                            actionId: action.actionId,
+                            sortingOrder: action.actionIndex,
+                            name: action.actionName,
+                            description: action.actionDescription,
+                            metadata: action.actionMetadata,
                         }))
                     }
                 }
@@ -126,7 +130,7 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
                     name: triggername,
                     zapId: zapper.id,
                     description: description || triggername,
-                    triggerId:Validtrigger.id
+                    triggerId:trigId
 
                 }
             });
@@ -138,7 +142,7 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
                     id:zapper.id
                 },
                 data:{
-                    triggerId: triggerId.id,
+                    triggerId: trigId,
                     metadata:zapper
                 }
             });
