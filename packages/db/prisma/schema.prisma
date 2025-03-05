@@ -67,6 +67,8 @@ model AvailableActions {
   image       String?
   metadata    Json     @default("{}")
   actions     Action[]
+  AppId       String
+  App         App @relation(fields: [AppId], references: [id])
 }
 
 model AvailableTriggers {
@@ -76,10 +78,20 @@ model AvailableTriggers {
   image       String?
   metadata    Json      @default("{}")
   triggers    Trigger[]
+  AppId       String
+  App        App @relation(fields: [AppId], references: [id])
 }
 
 model ZapRunOutBox {
   id       String @id  @default(uuid())
   zaprunId String @unique
   ZapRun   ZapRun @relation(fields: [zaprunId], references: [id])
+}
+
+model App{
+  id String @id @default(uuid())
+  name String
+  triggers AvailableTriggers[]
+  actions AvailableActions[]
+
 }
