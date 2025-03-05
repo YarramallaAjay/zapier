@@ -8,6 +8,7 @@ import  LinkButton  from "../components/buttons/LinkButton";
 import { useRouter } from "next/navigation";
 import { api } from "../page";
 import { Zap } from "../types/zaps";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "app/components/table";
 
 
 
@@ -56,6 +57,7 @@ export default  function() {
         </div>
         {!zaps? <div className="flex flex-col justify center items-center">Zaps not found...create one!</div>:<div>zaps found</div>}
         {loading ? "Loading..." : <div className="flex justify-center"> <ZapTable zaps={zaps} /> </div>}
+        {loading ? "Loading..." : <div className="flex justify-center"> <ShadcnTable zaps={zaps} /> </div>}
     </div>
 }
 
@@ -75,11 +77,42 @@ function ZapTable({ zaps }: {zaps: Zap[]}) {
         {zaps.map(z => <div className="flex border-b border-t py-4">
             <div className="flex-1 flex"><img src={z.trigger.type.image} className="w-[30px] h-[30px]" /> {z.actions.map(x => <img src={x.type.image} className="w-[30px] h-[30px]" />)}</div>
             <div className="flex-1">{z.id}</div>
-            <div className="flex-1"></div>
+            <div className="flex-1">now</div>
             <div className="flex-1">{`${HOOKS_URL}/hooks/catch/${z.userId}/${z.id}`}</div>
             <div className="flex-1"><LinkButton onClick={() => {
                     router.push("/zap/" + z.id)
                 }}>Go</LinkButton></div>
         </div>)}
+    </div>
+}
+
+function ShadcnTable({ zaps }: {zaps: Zap[]}) {
+    const router=useRouter()
+    return <div className="p-8 max-w-screen-lg w-full border border-gray-200 shadow-md">
+        <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Created At</TableHead>
+                        <TableHead>Webhook URL</TableHead>
+                        <TableHead>Go</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {zaps.map(z => 
+                    <TableRow>
+                        <TableCell>
+                            <img src={z.trigger.type.image || "I"} alt="I" className="w-[30px] h-[30px]" /> {z.actions.map(x => <img src={x.type.image || "I"} alt="I" className="w-[30px] h-[30px]" />)}
+                        </TableCell>
+                        <TableCell>{z.id}</TableCell>
+                        <TableCell>now</TableCell>
+                        <TableCell>{`${HOOKS_URL}/hooks/catch/${z.userId}/${z.id}`}</TableCell>
+                        <TableCell><LinkButton onClick={() => {
+                            router.push("/zap/" + z.id)
+                        }}>Go</LinkButton></TableCell>
+                        </TableRow>)}
+                </TableBody>
+            </Table>
     </div>
 }
