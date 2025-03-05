@@ -176,8 +176,8 @@ importers:
   packages/db:
     dependencies:
       '@prisma/client':
-        specifier: 6.3.1
-        version: 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+        specifier: 6.4.1
+        version: 6.4.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
       '@repo/db':
         specifier: 'file:'
         version: 'link:'
@@ -6119,7 +6119,7 @@ snapshots:
 
   zap_backend@file:apps/zap_backend(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3):
     dependencies:
-      '@prisma/client': 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+      '@prisma/client': 6.4.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
       '@repo/db': link:packages/db
       '@repo/typescript-config': link:packages/typescript-config
       '@types/bcrypt': 5.0.2

@@ -8,11 +8,12 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       Int          @id @default(autoincrement())
   name     String
   password String
-  email    String @unique
+  email    String       @unique
   zaps     Zap[]
+  tokens   TokenStore[]
 }
 
 model Zap {
@@ -21,8 +22,8 @@ model Zap {
   description String
   metadata    Json     @default("{}")
   userId      Int
-  image       String?
   triggerId   String
+  image       String?
   actions     Action[]
   trigger     Trigger?
   user        User     @relation(fields: [userId], references: [id])
@@ -64,34 +65,41 @@ model AvailableActions {
   id          String   @id @default(uuid())
   name        String
   description String
-  image       String?
   metadata    Json     @default("{}")
+  image       String?
   actions     Action[]
-  AppId       String
-  App         App @relation(fields: [AppId], references: [id])
+  AppId       String @default(uuid())
+  App         App      @relation(fields: [AppId], references: [id])
 }
 
 model AvailableTriggers {
   id          String    @id @default(uuid())
   name        String
   description String
-  image       String?
   metadata    Json      @default("{}")
+  image       String?
   triggers    Trigger[]
-  AppId       String
-  App        App @relation(fields: [AppId], references: [id])
+  AppId       String @default(uuid())
+  App         App       @relation(fields: [AppId], references: [id])
 }
 
 model ZapRunOutBox {
-  id       String @id  @default(uuid())
+  id       String @id @default(uuid())
   zaprunId String @unique
   ZapRun   ZapRun @relation(fields: [zaprunId], references: [id])
 }
 
-model App{
-  id String @id @default(uuid())
-  name String
-  triggers AvailableTriggers[]
-  actions AvailableActions[]
+model App {
+  id          String              @id @default(uuid())
+  name        String
+  description String
+  triggers    AvailableTriggers[]
+  actions     AvailableActions[]
+}
 
+model TokenStore {
+  id      Int    @id @default(autoincrement())
+  token   String
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id Int
 }
