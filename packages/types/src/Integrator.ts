@@ -19,5 +19,6 @@ export interface Team{
     name: string;
     email: string;
     metadata:{};
+    teamMembers: string[];
     integrations: Integrator[];
 }

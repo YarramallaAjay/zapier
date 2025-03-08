@@ -14,6 +14,8 @@ model User {
   email    String       @unique
   zaps     Zap[]
   tokens   TokenStore[]
+  team_id  Int?
+  team     Team?       @relation(fields: [team_id], references: [id])
 }
 
 model Zap {
@@ -66,9 +68,13 @@ model AvailableActions {
   name        String
   description String
   metadata    Json     @default("{}")
+  configMetadata Json @default("{}")
   image       String?
   actions     Action[]
+  type        String
   AppId       String @default(uuid())
+  teamId      Int
+  team        Team    @relation(fields: [teamId], references: [id])
   App         App      @relation(fields: [AppId], references: [id])
 }
 
@@ -78,8 +84,12 @@ model AvailableTriggers {
   description String
   metadata    Json      @default("{}")
   image       String?
+  type        String
+  configMetadata Json @default("{}")
   triggers    Trigger[]
   AppId       String @default(uuid())
+  teamId      Int
+  team        Team    @relation(fields: [teamId], references: [id])
   App         App       @relation(fields: [AppId], references: [id])
 }
 
@@ -102,4 +112,16 @@ model TokenStore {
   token   String
   user    User   @relation(fields: [user_id], references: [id])
   user_id Int
+}
+
+model Team {
+  id      Int    @id @default(autoincrement())
+  name    String
+  members User[]
+  triggers AvailableTriggers[]
+  actions AvailableActions[]
+  metadata Json @default("{}")
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
 }
