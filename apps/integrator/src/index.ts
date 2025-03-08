@@ -3,8 +3,7 @@ import zod from 'zod';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import RegisterRouter from './routes/RegisterRouter';
-import UpdateRouter from './routes/updateRouter';
-
+import UpdateRouter from './routes/UpdateRouter';
 const router = express.Router();
 
 const client = new PrismaClient();
