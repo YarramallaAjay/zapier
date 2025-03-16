@@ -6,6 +6,8 @@ import cors from 'cors'
 import userRouter from "./routes/userRouter";
 import zapRouter from "./routes/zapRouter";
 import cookieParser from 'cookie-parser';
+import session from "express-session";
+import google from "./routes/google";
 
 export async function main(){
 
@@ -20,9 +22,18 @@ export async function main(){
     app.use(express.json())
     
     app.use(cookieParser())
+    app.use(
+        session({
+          secret: process.env.SESSION_SECRET || "secret",
+          resave: false,
+          saveUninitialized: false,
+          cookie: { secure: false },
+        })
+      );
     app.use("/hooks", hooksRouter);
     app.use("/user",userRouter);
     app.use("/",zapRouter)
+    app.use("/auth",google)
 
     app.listen(3001,()=>{
         console.log("server is running on port 3001")

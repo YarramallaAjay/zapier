@@ -40,7 +40,7 @@ export class kafkaProducer {
 
                 await this.producer.send({
                     topic: this.TOPIC_NAME,
-                    messages: zaps.map((z) => ({
+                    messages: zaps.map(z => ({
                         value: z.zaprunId.toString(),
                     })),
                 });

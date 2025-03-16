@@ -64,6 +64,13 @@ export default function() {
                     <div className="pt-4">
                         <PrimaryButton onClick={()=>handleLogin({email,password,router})} size="big">Login</PrimaryButton>
                     </div>
+                    <div>
+                        <PrimaryButton onClick={()=>{
+                            router.push(`${BACKEND_URL}/auth/google`)
+                        }}>
+                            Login in Google
+                        </PrimaryButton>
+                    </div>
                 </div>
             </div>
         </div>

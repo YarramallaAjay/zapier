@@ -2,7 +2,7 @@ import { Action } from "./Actions";
 import { Authentication } from "./Authentication";
 import { Trigger } from "./Trigger";
 
-export interface Integrator {
+export type Integrator ={
     id: string;
     name: string;
     description: string;
@@ -14,7 +14,7 @@ export interface Integrator {
     metadata: Record<string, unknown>; 
 }
 
-export interface Team{
+export type Team={
     id: string;
     name: string;
     email: string;

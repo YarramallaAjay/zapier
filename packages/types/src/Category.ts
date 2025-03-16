@@ -5,10 +5,10 @@ export type Category = {
     triggerSupported: boolean;
     actionSupported: boolean;
     metadata: Record<string, unknown>;
-    type: 'email' | 'sms' | 'notification' | 'transaction';
+    type: email | 'sms' | 'notification' | 'transaction';
 }
 
-export type emailCategory = {
+export type email = {
     category: Category;
     inputConfig: {
         to: string;

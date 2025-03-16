@@ -12,10 +12,10 @@ model User {
   name     String
   password String
   email    String       @unique
-  zaps     Zap[]
-  tokens   TokenStore[]
   team_id  Int?
-  team     Team?       @relation(fields: [team_id], references: [id])
+  tokens   TokenStore[]
+  team     Team?        @relation(fields: [team_id], references: [id])
+  zaps     Zap[]
 }
 
 model Zap {
@@ -64,33 +64,33 @@ model ZapRun {
 }
 
 model AvailableActions {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  metadata    Json     @default("{}")
-  configMetadata Json @default("{}")
-  image       String?
-  actions     Action[]
-  type        String
-  AppId       String @default(uuid())
-  teamId      Int
-  team        Team    @relation(fields: [teamId], references: [id])
-  App         App      @relation(fields: [AppId], references: [id])
+  id             String   @id @default(uuid())
+  name           String
+  description    String
+  metadata       Json     @default("{}")
+  image          String?
+  AppId          String   @default(uuid())
+  configMetadata Json     @default("{}")
+  teamId         Int
+  type           String
+  actions        Action[]
+  App            App      @relation(fields: [AppId], references: [id])
+  team           Team     @relation(fields: [teamId], references: [id])
 }
 
 model AvailableTriggers {
-  id          String    @id @default(uuid())
-  name        String
-  description String
-  metadata    Json      @default("{}")
-  image       String?
-  type        String
-  configMetadata Json @default("{}")
-  triggers    Trigger[]
-  AppId       String @default(uuid())
-  teamId      Int
-  team        Team    @relation(fields: [teamId], references: [id])
-  App         App       @relation(fields: [AppId], references: [id])
+  id             String    @id @default(uuid())
+  name           String
+  description    String
+  metadata       Json      @default("{}")
+  image          String?
+  AppId          String    @default(uuid())
+  configMetadata Json      @default("{}")
+  teamId         Int
+  type           String
+  App            App       @relation(fields: [AppId], references: [id])
+  team           Team      @relation(fields: [teamId], references: [id])
+  triggers       Trigger[]
 }
 
 model ZapRunOutBox {
@@ -103,25 +103,28 @@ model App {
   id          String              @id @default(uuid())
   name        String
   description String
-  triggers    AvailableTriggers[]
   actions     AvailableActions[]
+  triggers    AvailableTriggers[]
 }
 
 model TokenStore {
-  id      Int    @id @default(autoincrement())
-  token   String
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id Int
+  id        Int      @id @default(autoincrement())
+  accestoken     String
+  refreshtoken    String
+  user_id   Int
+  createdAt DateTime @default(now())
+  provider  String
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [user_id], references: [id])
 }
 
 model Team {
-  id      Int    @id @default(autoincrement())
-  name    String
-  members User[]
-  triggers AvailableTriggers[]
-  actions AvailableActions[]
-  metadata Json @default("{}")
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
-
+  id        Int                 @id @default(autoincrement())
+  name      String
+  metadata  Json                @default("{}")
+  updatedAt DateTime            @updatedAt
+  createdAt DateTime            @default(now())
+  actions   AvailableActions[]
+  triggers  AvailableTriggers[]
+  members   User[]
 }

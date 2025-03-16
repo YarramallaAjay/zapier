@@ -1,18 +1,18 @@
 import { Category } from "./Category";
 
-export interface Action {
+export type Action={
     type: Category['type'],
     teamId: string,
     id: string,
     name: string,
     metadata:{},
     timestamp: number,
-    inputConfig: Partial<Fileds>[],
-    outputConfig: Partial<Fileds>[],
+    inputConfig: Partial<Fields>[],
+    outputConfig: Partial<Fields>[],
 }
 
 
-interface Fileds {
+interface Fields {
     name: string;
     type: "string" | "number" | "boolean" | "date" | "file";
     required: boolean;

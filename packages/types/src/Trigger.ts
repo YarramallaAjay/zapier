@@ -7,20 +7,20 @@ export interface Trigger {
     type: "Webhook" | "polling" | "real-time";
     config:WebHook | Polling;
     metadata:{};
-    inputConfig:Partial<Fileds>[];
-    outputConfig: Partial<Fileds>[];
+    inputConfig:Partial<Fields>[];
+    outputConfig: Partial<Fields>[];
 }
 
 
-interface Fileds {
+type Fields= {
     name: string;
     type: "string" | "number" | "boolean" | "date" | "file";
     required: boolean;
     description: string;
     defaultValue: string;
     options: string[];
-
 }
+
 
 interface WebHook{
     name: string;

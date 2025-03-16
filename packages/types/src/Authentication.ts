@@ -1,9 +1,10 @@
-export interface Authentication {
-    type:OAuth | Basic | JWT;
+export type Authentication= {
+    type:"OAuth" | "Basic" | "JWT";
+    config:OAuth | Basic | JWT;
     id:string;
 }
 
-export interface OAuth {
+export type OAuth ={
     type:"OAuth";
     clientId:string;
     clientSecret:string;
@@ -12,7 +13,7 @@ export interface OAuth {
     scope:string;
     redirectUrl:string;
 }  
-export interface Basic {
+export type Basic ={
     type:"Basic";
     username:string;
     password:string;

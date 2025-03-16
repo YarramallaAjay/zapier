@@ -1,9 +1,8 @@
-import { AvailableActions, PrismaClient } from '@prisma/client';
 import express, { Router, Response, Request } from 'express';
+import { PrismaClient } from '@prisma/client';
 import "dotenv/config";
 import { AuthUser } from '../middlewares/userAuthMiddleware';
 import { reqProps } from '../types/expresstypes';
-import { string } from 'zod';
 
 const router: Router = express.Router();
 const client = new PrismaClient();
