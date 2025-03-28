@@ -51,7 +51,7 @@ export abstract class Application {
         return this.client.$transaction(async (tx) => {
             try {
                 if (updateData.AppAuth) {
-                    this.authentication.updateAuth(updateData.AppAuth);
+                    this.authentication.updateAuth(appId,updateData.AppAuth);
                 }
                 if (updateData.AppTriggers) {
                     this.triggers.updateTrigger(appId,updateData.AppTriggers,tx);

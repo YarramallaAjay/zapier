@@ -1,0 +1,10 @@
+//Implemented triggers,actions.
+_________________________________________________________________________
+
+TODO:need to implement auth impl and change the auth types.
+
+TODO:update in applicatrion class too
+
+TODO: need to write routes
+
+TODO: need to write middleware too

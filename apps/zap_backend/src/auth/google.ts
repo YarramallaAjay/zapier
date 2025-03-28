@@ -33,9 +33,8 @@ passport.use(
     tokens: {
       create: [
         {
-       
-          accestoken: accessToken,
-          refreshtoken: refreshToken,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
           provider: "google",
         },
       ],
@@ -48,8 +47,8 @@ passport.use(
     tokens: {
       create: [
         {
-          accestoken: accessToken,
-          refreshtoken: refreshToken,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
           provider: "google",
         },
       ],
