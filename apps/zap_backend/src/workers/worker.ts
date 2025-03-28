@@ -9,15 +9,16 @@ export type ActionType = "SEND_EMAIL" | "SEND_SOL_TRANSACTION";
 export class KafkaConsumer {
   private kafka: Kafka;
   private consumer: Consumer;
-  private TOPIC_NAME = "zap-execution-topic";
+  private TOPIC_NAME = "zapsTopic";
   private client: PrismaClient;
 
-  constructor(clientId: string = "zap-consumer", brokers: string[] = ["localhost:9092"]) {
+  constructor(clientId: string = "zapconsumer", brokers: string[] = ["localhost:9092"]) {
     this.client = new PrismaClient();
     this.kafka = new Kafka({ clientId, brokers });
     this.consumer = this.kafka.consumer({ groupId: "zapConsumers" });
     this.initConsumer();
   }
+
 
   async initConsumer() {
     try {
@@ -79,28 +80,30 @@ export class KafkaConsumer {
     console.log(`[KafkaConsumer] Finished processing zapRun ${zapRunId}`);
   }
 
-  async executeAction(zapRunId: string, actionId: string, type: ActionType, inputData: any) {
-    try {
-      let result: any;
-      switch (type) {
-        case "SEND_EMAIL":
-          result = await sendEmailHandler(inputData);
-          break;
-        case "SEND_SOL_TRANSACTION":
-          result = await sendSolTransactionHandler(inputData);
-          break;
-        default:
-          throw new Error("Unsupported action type: " + type);
-      }
 
-      // Notify webhook handler with success status
-      await this.notifyWebhook({ zapRunId, actionId, status: "SUCCESS", result });
-    } catch (err: any) {
-      console.error(`[KafkaConsumer] Action ${actionId} failed:`, err);
-      // Notify webhook handler with failure status
-      await this.notifyWebhook({ zapRunId, actionId, status: "FAILED", result: { error: err.message } });
+async executeAction(zapRunId: string, actionId: string, type: ActionType, inputData: any) {
+  try {
+    let result: any;
+    switch (type) {
+      case "SEND_EMAIL":
+        result = await sendEmailHandler(inputData);
+        break;
+      case "SEND_SOL_TRANSACTION":
+        result = await sendSolTransactionHandler(inputData);
+        break;
+      default:
+        throw new Error("Unsupported action type: " + type);
     }
+
+    // Notify webhook handler with success status
+    await this.notifyWebhook({ zapRunId, actionId, status: "SUCCESS", result });
+  } catch (err: any) {
+    console.error(`[executeAction] Action ${actionId} failed:`, err);
+    await this.notifyWebhook({ zapRunId, actionId, status: "FAILED", result: { error: err.message } });
   }
+}
+
+      
 
   async notifyWebhook(payload: { zapRunId: string; actionId: string; status: "SUCCESS" | "FAILED"; result: any; }) {
     try {

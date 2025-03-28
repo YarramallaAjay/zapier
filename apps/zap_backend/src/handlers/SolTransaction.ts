@@ -1,9 +1,41 @@
 // SolTransactionHandler.ts
-export async function sendSolTransactionHandler(data: any): Promise<any> {
-    // Simulate SOL transaction process (replace with actual blockchain logic)\n
-    console.log("[SolTransactionHandler] Sending SOL transaction with data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 1500)); // simulate delay
-    // Return a successful result with a dummy transaction hash
-    return { txHash: "sol_tx_12345", timestamp: new Date().toISOString() };
+import {
+    Connection,
+    clusterApiUrl,
+    Keypair,
+    LAMPORTS_PER_SOL,
+    Transaction,
+    SystemProgram,
+    PublicKey,
+  } from "@solana/web3.js";
+  
+  export async function sendSolTransactionHandler(data: any): Promise<any> {
+    try {
+      const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+  
+
+      const fromKeypair = Keypair.generate();
+  
+      const toPublicKey = new PublicKey(data.to);
+      const lamports = data.amount * LAMPORTS_PER_SOL; 
+  
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: fromKeypair.publicKey,
+          toPubkey: toPublicKey,
+          lamports,
+        })
+      );
+  
+      // Sign and send the transaction
+      const signature = await connection.sendTransaction(transaction, [fromKeypair]);
+      await connection.confirmTransaction(signature, "confirmed");
+  
+      console.log("[SolTransactionHandler] Transaction successful, signature:", signature);
+      return { message: "SOL transaction completed", signature };
+    } catch (error) {
+      console.error("[SolTransactionHandler] Error executing SOL transaction:", error);
+      throw error;
+    }
   }
   
