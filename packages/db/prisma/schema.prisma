@@ -25,6 +25,7 @@ model Team {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   apps      App[]
+  createdById Int?
   members   User[]
 }
 
@@ -77,8 +78,8 @@ model Trigger {
   metadata    Json     @default("{}")
   zapId       String   @unique
   zap         Zap      @relation(fields: [zapId], references: [id])
-  triggerType String
-  available   AvailableTriggers @relation(fields: [triggerType], references: [id])
+  availableTriggerId String
+  available   AvailableTriggers @relation(fields: [availableTriggerId], references: [id])
 }
 
 model Action {

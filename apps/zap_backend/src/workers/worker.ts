@@ -12,7 +12,7 @@ export class KafkaConsumer {
   private TOPIC_NAME = "zapsTopic";
   private client: PrismaClient;
 
-  constructor(clientId: string = "zapconsumer", brokers: string[] = ["localhost:9092"]) {
+  constructor(clientId: string = "zapConsumers", brokers: string[] = ["localhost:9092"]) {
     this.client = new PrismaClient();
     this.kafka = new Kafka({ clientId, brokers });
     this.consumer = this.kafka.consumer({ groupId: "zapConsumers" });
