@@ -2,7 +2,7 @@ import express, { Router, Response, Request } from 'express';
 import { PrismaClient } from '@prisma/client';
 import "dotenv/config";
 import { AuthUser } from '../middlewares/userAuthMiddleware';
-import { reqProps } from '../types/expresstypes';
+import { reqProps } from '../types/express';
 
 const router: Router = express.Router();
 const client = new PrismaClient();
@@ -22,12 +22,12 @@ router.get("/zaps", AuthUser, async (req, res) => {
             include:{
                 actions:{
                     include:{
-                    type:true
+                    available:true
                     }   
                 },
                 trigger:{
                     include:{
-                        type:true 
+                        available:true 
                     }
                 }
             } 
@@ -78,28 +78,28 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
         }
 
         // // Validate trigger before transaction
-        // const Validtrigger = await client.availableTriggers.findFirst({
-        //     where: { name: triggername },
-        //     select: { id: true }
-        // });
+        const Validtrigger = await client.availableTriggers.findFirst({
+            where: { name: triggername },
+            select: { id: true }
+        });
 
-        // if (!Validtrigger) {
-        //      res.status(404).json({ message: "Trigger not found" });
-        //     return;
+        if (!Validtrigger) {
+             res.status(404).json({ message: "Trigger not found" });
+            return;
 
-        // }
+        }
 
-        // // Fetch all available actions in a single query
-        // const validActions = await client.availableActions.findMany({
-        //     where: { name: { in: actions, mode: 'insensitive' } },
-        //     select: { id: true, name: true, description: true }
-        // });
+        // Fetch all available actions in a single query
+        const validActions = await client.availableActions.findMany({
+            where: { name: { in: actions, mode: 'insensitive' } },
+            select: { id: true, name: true, description: true }
+        });
 
-        // if (validActions.length !== actions.length) {
-        //      res.status(400).json({ message: "Some actions not found" });
-        //      return;
+        if (validActions.length !== actions.length) {
+             res.status(400).json({ message: "Some actions not found" });
+             return;
 
-        // }
+        }
 
         // Execute transaction
         const newZap = await client.$transaction(async (tx) => {
@@ -109,7 +109,7 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
                     name: triggername,
                     description,
                     userId: user.id,
-                    triggerId: trigId,
+                    
                       // Set triggerId directly
                     actions: {
                         create: actions.map((action:any, index: any) => ({
@@ -124,12 +124,13 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
             });
 
             // Create the associated trigger
-            const triggerid=await tx.trigger.create({
+            const trigger=await tx.trigger.create({
                 data: {
                     name: triggername,
                     zapId: zapper.id,
                     description: description || triggername,
-                    triggerId:trigId
+                    availableTriggerId:Validtrigger.id,
+                    metadata:{}
 
                 }
             });
@@ -141,7 +142,7 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
                     id:zapper.id
                 },
                 data:{
-                    triggerId: trigId,
+                    id: trigger.id,
                     metadata:zapper
                 }
             });

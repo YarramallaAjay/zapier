@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { Field, FieldType } from "@repo/types/Fields";
+import { Field, FieldType } from "@repo/types/src/Fields";
 import { TriggerBase } from "@repo/types/Trigger";
 import { resolve } from "bun";
 

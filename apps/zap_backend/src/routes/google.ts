@@ -23,7 +23,7 @@ router.get(
     }
     
     const user = req.user as { user: any; token: string };
-    res.cookie("jwt", user.token, { httpOnly: true, secure: false });
+    res.cookie("zapper", user.token, { httpOnly: true, secure: false });
     res.redirect("http://localhost:3000/dashboard");
   }
 );

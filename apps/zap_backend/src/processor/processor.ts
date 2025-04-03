@@ -7,7 +7,7 @@ export class KafkaProducer {
     private producer: Producer
     private readonly TOPIC_NAME = "zapsTopic"
 
-    constructor(clientId: string = "zapconsumer", brokers: string[] = ["localhost:9092"]) {
+    constructor(clientId: string = "zapConsumers", brokers: string[] = ["localhost:9092"]) {
         this.client = new PrismaClient()
         this.kafka = new Kafka({
             clientId,

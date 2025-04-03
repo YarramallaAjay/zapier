@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { reqProps } from "../types/expresstypes";
+import { reqProps } from "../types/express";
 import {Request, NextFunction,Response } from "express";
 
 dotenv.config();
@@ -13,7 +13,7 @@ export async function AuthUser(req:Request, res:Response,next:NextFunction) {
     console.log(req.headers.cookie)
 
     // Extract token from cookies
-    const token = req.headers.cookie?.split("=")[1]
+    const token = req.headers.cookie
     console.log(token)
 
     if (!token) {

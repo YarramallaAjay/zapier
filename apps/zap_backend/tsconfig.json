@@ -3,6 +3,9 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "noImplicitAny": false
-  }
+    "noImplicitAny": false,
+    "typeRoots": ["./node_modules/@types", "./packages/types/src", "./src/types"],
+  },  
+  "include": ["src/**/*"]
+
 }
