@@ -1,6 +1,6 @@
 import hooksRouter from "./routes/hooksRouter";
-import { kafkaProducer, } from "./processor/processor";
-import { kafkaConsumer } from "./workers/worker";
+import { KafkaProducer } from "./processor/processor";
+import { KafkaConsumer } from "./workers/worker";
 import express from 'express'
 import cors from 'cors'
 import userRouter from "./routes/userRouter";
@@ -8,11 +8,14 @@ import zapRouter from "./routes/zapRouter";
 import cookieParser from 'cookie-parser';
 import session from "express-session";
 import google from "./routes/google";
+import integrationRouter from "./routes/ApplicationRoute";
+
 
 export async function main(){
 
-    await new kafkaProducer(" ",[" "])
-    await new kafkaConsumer(" ",[" "])
+  await new KafkaProducer("zapConsumers", ["localhost:9092", "localhost:9093"]);
+  await new KafkaConsumer("zapConsumers", ["localhost:9092", "localhost:9093"]);
+  
 
     const app=express()
     app.use(cors({
@@ -34,6 +37,7 @@ export async function main(){
     app.use("/user",userRouter);
     app.use("/",zapRouter)
     app.use("/auth",google)
+    app.use("/integrator",integrationRouter)
 
     app.listen(3001,()=>{
         console.log("server is running on port 3001")

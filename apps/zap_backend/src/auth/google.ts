@@ -34,7 +34,7 @@ passport.use(
       create: [
         {
           accessToken: accessToken,
-          refreshToken: refreshToken,
+          refreshToken: refreshToken ||accessToken,
           provider: "google",
         },
       ],
@@ -48,7 +48,7 @@ passport.use(
       create: [
         {
           accessToken: accessToken,
-          refreshToken: refreshToken,
+          refreshToken: refreshToken || accessToken,
           provider: "google",
         },
       ],
@@ -58,7 +58,9 @@ passport.use(
 
         // Upsert user without provider in User table
         // Generate JWT Token
-        const jwtToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || "secret", {
+        const JWTSecret= process.env.JWT_SECRET || "jwtSecret"
+        console.log(JWTSecret)
+        const jwtToken = jwt.sign({ userId: user.id },JWTSecret, {
           expiresIn: "1h",
         });
 
@@ -69,6 +71,8 @@ passport.use(
             password:jwtToken,
           },
         });
+
+        
 
         return done(null, { user, token: jwtToken });
       } catch (error) {

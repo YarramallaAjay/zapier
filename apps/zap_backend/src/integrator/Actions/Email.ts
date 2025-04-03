@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { ActionBase } from "@repo/types/Actions";
-import { Field, FieldType } from "@repo/types/Fields";
+import { Field, FieldType } from "@repo/types/src/Fields";
 
 export class Email implements ActionBase {
     id!: string;

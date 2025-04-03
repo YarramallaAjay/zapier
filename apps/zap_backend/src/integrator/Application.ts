@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { AuthFactory } from "./authStrategies/authFactory";
 import { TriggerFactory } from "./Triggers/TriggerFactory";
 import { ActionFactory } from "./Actions/ActionFactory";
-import { AuthenticationBase } from "@repo/types/Authentication";
+import { AuthenticationBase } from "@repo/types/src/Authentication";
 import { TriggerBase } from "@repo/types/Trigger";
 import { ActionBase } from "@repo/types/Actions";
 
