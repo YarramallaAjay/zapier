@@ -4,7 +4,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { PrismaClient } from "@prisma/client";
 import { Auth } from "../middlewares/Auth";
-import { UserDetails } from "@repo/types/src/UserSession";
+import { UserDetails } from "@repo/types/dist/UserSession";
+import { TeamBase } from "@repo/types/src/Team";
 
 const prisma = new PrismaClient();
 const router: Router = express.Router();
@@ -32,8 +33,10 @@ router.post("/team", Auth,async (req, res) => {
     }
 
     // Check if user already has a team
-    if (user.Teams && (user.Teams as any).id) {
-       res.status(400).json({ message: "User can only create one team." });
+    if (user.team && (user.team as any).id) {
+       res.status(400).json({ message: "User can only create one team.",
+        team: user.team
+        });
        return
     }
 
@@ -69,12 +72,13 @@ router.put("/team", Auth,async (req, res) => {
 
     const { name, metadata } = req.body;
 
-    if(!user.Teams || !(user.Teams as any).id) {
-      return res.status(400).json({ error: "User not part of a team." });
+    if(!user.team || !(user.team as any).id) {
+       res.status(400).json({ error: "User not part of a team." });
+       return;
     }
 
     const updatedTeam = await prisma.team.update({
-      where: { id: user.Teams.id },
+      where: { id: (user.team as TeamBase).id },
       data: { name, metadata: metadata || {} },
     });
 
@@ -82,9 +86,11 @@ router.put("/team", Auth,async (req, res) => {
     await UserDetails.updateUserDetails(user.id);
 
     res.json({ message: "Team updated successfully.", team: updatedTeam });
+    return;
   } catch (error) {
     console.error("Error updating team:", error);
     res.status(500).json({ error: "Failed to update team." });
+    return;
   }
 });
 
@@ -93,7 +99,8 @@ router.delete("/team", async (req, res) => {
   try {
     const user = req.user; // Use cached user details
     if (!user) {
-      return res.status(401).json({ message: "User not authenticated" });
+       res.status(401).json({ message: "User not authenticated" });
+       return;
     }
 
     await prisma.team.delete({
@@ -115,15 +122,18 @@ router.get("/apps", async (req, res) => {
   try {
     const user = req.user; // Use cached user details
     if (!user) {
-      return res.status(401).json({ message: "User not authenticated" });
+       res.status(401).json({ message: "User not authenticated" });
+       return;
+
     }
 
-    if (!user.Teams || !(user.Teams as any).id) {
-      return res.status(400).json({ error: "User not part of a team." });
+    if (!user.team || !(user.team as any).id) {
+       res.status(400).json({ error: "User not part of a team." });
+       return;
     }
 
     const apps = await prisma.app.findMany({
-      where: { teamId: (user.Teams as any).id },
+      where: { teamId: (user.team as any).id },
       include: {
         actions: true,
         triggers: true,
@@ -143,23 +153,27 @@ router.post("/newapp", async (req, res) => {
   try {
     const user = req.user; // Use cached user details
     if (!user) {
-      return res.status(401).json({ message: "User not authenticated" });
+       res.status(401).json({ message: "User not authenticated" });
+       return;
     }
 
     const { name, description } = req.body;
 
-    if (!user.Teams || !(user.Teams as any).id) {
-      return res.status(400).json({ error: "User not part of a team." });
+    if (!user.team || !(user.team as any).id) {
+       res.status(400).json({ error: "User not part of a team." });
+       return;
     }
 
     const newApp = await prisma.app.create({
-      data: { name, description, teamId: (user.Teams as any).id },
+      data: { name, description, teamId: (user.team as any).id },
     });
 
     res.json({ app: newApp });
+    return;
   } catch (error) {
     console.error("Error creating app:", error);
     res.status(500).json({ error: "Failed to create app." });
+    return;
   }
 });
 
@@ -174,9 +188,11 @@ router.post("/addauth", async (req, res) => {
     });
 
     res.json({ auth });
+    return;
   } catch (error) {
     console.error("Error adding auth method:", error);
     res.status(500).json({ error: "Failed to add auth method." });
+    return;
   }
 });
 
@@ -189,12 +205,18 @@ router.get("/apps/:id", async (req, res) => {
       include: { authMethods: true, triggers: true, actions: true },
     });
 
-    if (!app) return res.status(404).json({ message: "App not found" });
+    if (!app) {
+       res.status(404).json({ message: "App not found" });
+       return;
+    }
 
     res.json(app);
+    return;
   } catch (error) {
     console.error("Error fetching app by ID:", error);
     res.status(500).json({ message: "Server error" });
+    return;
+
   }
 });
 
@@ -203,9 +225,11 @@ router.get("/auth-methods", async (req, res) => {
   try {
     const methods = await prisma.availableAuthMethods.findMany();
     res.json({ methods });
+    return;
   } catch (error) {
     console.error("Error fetching auth methods:", error);
     res.status(500).json({ error: "Failed to fetch auth methods." });
+    return;
   }
 });
 

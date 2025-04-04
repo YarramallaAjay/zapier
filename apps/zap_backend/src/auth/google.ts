@@ -3,9 +3,8 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { password } from "bun";
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../config";
-
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET } from "../config";
+import {  UserDetails } from "@repo/types/dist/UserSession";
 
 dotenv.config();
 
@@ -18,82 +17,69 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET || "",
       callbackURL: "http://localhost:3001/auth/google/callback",
       scope: ["profile", "email"],
-    
-    },
+      
+        },
     async (accessToken, refreshToken, profile, done) => {
-      console.log(refreshToken)
-
-      ;console.log(accessToken)
       try {
         const email = profile.emails?.[0]?.value;
-        if (!email) return done(new Error("No email found"), "");
+        if (!email) return done(new Error("No email found"), false);
+
+        // Upsert user with tokens
         const user = await client.user.upsert({
-  where: { email },
-  update: {
-    tokens: {
-      create: [
-        {
-          accessToken: accessToken,
-          refreshToken: refreshToken ||accessToken,
-          provider: "google",
-        },
-      ],
-    },
-  },
-  create: {
-    email,
-    name: profile.displayName,
-    password: "",
-    tokens: {
-      create: [
-        {
-          accessToken: accessToken,
-          refreshToken: refreshToken || accessToken,
-          provider: "google",
-        },
-      ],
-    },
-  },
-});
-
-        // Upsert user without provider in User table
-        // Generate JWT Token
-        const JWTSecret= process.env.JWT_SECRET || "jwtSecret"
-        console.log(JWTSecret)
-        const jwtToken = jwt.sign({ userId: user.id },JWTSecret, {
-          expiresIn: "1h",
-        });
-
-        // Upsert tokens with JWT in the same TokenStore table
-        await client.user.update({
-          where: { id: user.id },
-          data: {
-            password:jwtToken,
+          where: { email },
+          update: {
+            tokens: {
+              create: [
+                {
+                  accessToken,
+                  refreshToken: refreshToken || accessToken,
+                  provider: "google",
+                },
+              ],
+            },
+          },
+          create: {
+            email,
+            name: profile.displayName,
+            password: "",
+            tokens: {
+              create: [
+                {
+                  accessToken,
+                  refreshToken: refreshToken || accessToken,
+                  provider: "google",
+                },
+              ],
+            },
           },
         });
+        if (!user) return done(new Error("User not found"), false);
 
-        
+        // Generate JWT Token
+        const JWTSecret = JWT_SECRET || "jwtSecret";
+        const jwtToken = jwt.sign({ userId: user.id,accesstoken:accessToken }, JWTSecret, { expiresIn: "1h" });
 
-        return done(null, { user, token: jwtToken });
+        // Update user details cache
+        const cachedUser=await UserDetails.getUser(user.id);
+        return done(null, {...cachedUser, jwtToken} as any);
       } catch (error) {
-        return done(error, " ");
+        return done(error,false);
       }
     }
   )
 );
 
 // Serialize user into session
-passport.serializeUser((user: any, done) => {
-  done(null, user.user.id);
-});
+passport.serializeUser(
+  (user:Express.User, done: (err: any, id: number) => void) => {
+    done(null,user.id);
+  }
+);
 
 // Deserialize user from session
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await client.user.findUnique({
-      where: { id: id as number },
-      include: {tokens: true },
-    });
+    const user = await UserDetails.getUser(id as number);
     done(null, user);
   } catch (error) {
     done(error, null);

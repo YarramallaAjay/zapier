@@ -2,7 +2,7 @@
   "name": "zap_backend",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
+    "scripts": {
     "dev": "tsc -b && nodemon ./dist/index.js"
   },
   "keywords": [],

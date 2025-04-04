@@ -1,1 +1,1 @@
-{"root":["./actions.ts","./authentication.ts","./category.ts","./fields.ts","./trigger.ts"],"version":"5.7.3"}
+{"root":["./src/actions.ts","./src/authentication.ts","./src/category.ts","./src/fields.ts","./src/team.ts","./src/trigger.ts","./src/usersession.ts"],"version":"5.7.3"}

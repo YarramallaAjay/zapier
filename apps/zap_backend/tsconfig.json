@@ -5,6 +5,7 @@
     "outDir": "./dist",
     "noImplicitAny": false,
     "typeRoots": ["./node_modules/@types", "./packages/types/src", "./src/types"],
+    "forceConsistentCasingInFileNames": true
   },  
   "include": ["src/**/*"]
 

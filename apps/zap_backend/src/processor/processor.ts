@@ -71,7 +71,7 @@ export class KafkaProducer {
 
                 console.log(`[Producer] Dispatched and cleared ${zaps.length} messages.`)
 
-                await this.sleep(1000)
+                await this.sleep(100)
             }
         } catch (error) {
             console.error("[Kafka Producer Error]", error)

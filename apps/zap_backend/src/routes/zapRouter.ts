@@ -2,7 +2,7 @@ import express, { Router, Response, Request } from 'express';
 import { PrismaClient } from '@prisma/client';
 import "dotenv/config";
 import { AuthUser } from '../middlewares/userAuthMiddleware';
-import { reqProps } from '../types/express';
+import { UserDetails } from '@repo/types/dist/UserSession';
 
 const router: Router = express.Router();
 const client = new PrismaClient();
@@ -12,7 +12,7 @@ router.get("/zaps", AuthUser, async (req, res) => {
     console.log(req)
     try 
     {
-        const user = (req as reqProps).user;
+        const user = (req).user;
         if (!user) { 
             res.status(401).json({ message: "User not authenticated" });
             return;
@@ -61,7 +61,7 @@ router.get("/zap/:zapId", AuthUser, async (req: Request, res: Response) => {
 // Create a new zap
 router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
     try {
-        const user = (req as reqProps).user;
+        const user = (req).user;
         if (!user) {
             res.status(401).json({ message: "User not authenticated" });
             return;
@@ -159,11 +159,15 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
 // Trigger a zap
 router.post("/zap/:zapId", AuthUser, async (req: Request, res: Response) => {
     try {
-        const user = (req as reqProps).user;
+        const userDetails = await req.user
         const { zapId } = req.params;
-
+        if(!UserDetails){
+            console.log("user Details are null")
+            res.json("user Details not found").status(400)
+            return;
+        }
         const zap = await client.zap.findFirst({
-            where: { id: zapId, userId: user.id }
+            where: { id: zapId, userId: userDetails?.id }
         });
 
         if (!zap) {

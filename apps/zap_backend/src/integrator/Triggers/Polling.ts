@@ -1,7 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { Field, FieldType } from "@repo/types/src/Fields";
-import { TriggerBase } from "@repo/types/Trigger";
-import { resolve } from "bun";
+import { TriggerBase } from "@repo/types/src/Trigger";
 
 export class Polling implements TriggerBase{
     id!: string;

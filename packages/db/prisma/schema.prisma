@@ -13,48 +13,48 @@ model User {
   password String
   email    String       @unique
   teamId   Int?
-  team     Team?        @relation(fields: [teamId], references: [id])
   tokens   TokenStore[]
+  team     Team?        @relation(fields: [teamId], references: [id])
   zaps     Zap[]
 }
 
 model Team {
-  id        Int      @id @default(autoincrement())
-  name      String
-  metadata  Json     @default("{}")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  apps      App[]
-  createdById Int?
-  members   User[]
+  id          Int      @id @default(autoincrement())
+  name        String
+  metadata    Json     @default("{}")
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  createdById Int?     @unique
+  apps        App[]
+  members     User[]
 }
 
 model App {
-  id          Int                  @id @default(autoincrement())
   name        String
   description String
   teamId      Int
-  team        Team                 @relation(fields: [teamId], references: [id])
+  id          Int                 @id @default(autoincrement())
+  team        Team                @relation(fields: [teamId], references: [id])
+  authMethods AuthMethods[]
   actions     AvailableActions[]
   triggers    AvailableTriggers[]
-  authMethods AuthMethods[]
 }
 
 model AuthMethods {
-  id          Int       @id @default(autoincrement())
-  appId       Int
-  authId      Int
-  metadata    Json      @default("{}")
-  app         App       @relation(fields: [appId], references: [id])
+  id            Int                  @id @default(autoincrement())
+  appId         Int
+  authId        Int
+  metadata      Json                 @default("{}")
+  app           App                  @relation(fields: [appId], references: [id])
   availableAuth AvailableAuthMethods @relation(fields: [authId], references: [id])
 }
 
 model AvailableAuthMethods {
-  id          Int       @id @default(autoincrement())
   name        String
   provider    String
   description String
-  metadata    Json      @default("{}")
+  metadata    Json          @default("{}")
+  id          Int           @id @default(autoincrement())
   authMethods AuthMethods[]
 }
 
@@ -63,46 +63,46 @@ model Zap {
   name        String
   description String
   metadata    Json     @default("{}")
-  image       String?
   userId      Int
+  image       String?
+  actions     Action[]
+  trigger     Trigger?
   user        User     @relation(fields: [userId], references: [id])
-  trigger     Trigger? // Each Zap has ONE trigger
-  actions     Action[] // Each Zap has MULTIPLE actions
   zapRuns     ZapRun[]
 }
 
 model Trigger {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  metadata    Json     @default("{}")
-  zapId       String   @unique
-  zap         Zap      @relation(fields: [zapId], references: [id])
+  id                 String            @id @default(uuid())
+  name               String
+  description        String
+  zapId              String            @unique
+  metadata           Json              @default("{}")
   availableTriggerId String
-  available   AvailableTriggers @relation(fields: [availableTriggerId], references: [id])
+  available          AvailableTriggers @relation(fields: [availableTriggerId], references: [id])
+  zap                Zap               @relation(fields: [zapId], references: [id])
 }
 
 model Action {
-  id           String   @id @default(uuid())
+  id           String           @id @default(uuid())
   name         String
   description  String
-  metadata     Json     @default("{}")
+  metadata     Json             @default("{}")
   zapId        String
-  zap          Zap      @relation(fields: [zapId], references: [id])
+  sortingOrder Int              @default(0)
   actionType   String
   available    AvailableActions @relation(fields: [actionType], references: [id])
-  sortingOrder Int      @default(0)
+  zap          Zap              @relation(fields: [zapId], references: [id])
 }
 
 model AvailableTriggers {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   name           String
   description    String
-  metadata       Json     @default("{}")
-  configMetadata Json     @default("{}")
+  metadata       Json      @default("{}")
+  configMetadata Json      @default("{}")
   type           String
   appId          Int
-  app            App?     @relation(fields: [appId], references: [id])
+  app            App       @relation(fields: [appId], references: [id])
   triggers       Trigger[]
 }
 
@@ -114,8 +114,8 @@ model AvailableActions {
   configMetadata Json     @default("{}")
   type           String
   appId          Int
-  app            App?     @relation(fields: [appId], references: [id])
   actions        Action[]
+  app            App      @relation(fields: [appId], references: [id])
 }
 
 model ZapRun {
@@ -134,11 +134,11 @@ model ZapRunOutBox {
 
 model TokenStore {
   id           Int      @id @default(autoincrement())
-  accessToken  String  
-  refreshToken String
-  userId       Int
   createdAt    DateTime @default(now())
   provider     String
   updatedAt    DateTime @updatedAt
+  accessToken  String
+  refreshToken String
+  userId       Int
   user         User     @relation(fields: [userId], references: [id])
 }

@@ -3,8 +3,8 @@ import { AuthFactory } from "./authStrategies/authFactory";
 import { TriggerFactory } from "./Triggers/TriggerFactory";
 import { ActionFactory } from "./Actions/ActionFactory";
 import { AuthenticationBase } from "@repo/types/src/Authentication";
-import { TriggerBase } from "@repo/types/Trigger";
-import { ActionBase } from "@repo/types/Actions";
+import { TriggerBase } from "@repo/types/src/Trigger";
+import { ActionBase } from "@repo/types/src/Actions";
 
 export type ApplicationType = {
     name: string;
