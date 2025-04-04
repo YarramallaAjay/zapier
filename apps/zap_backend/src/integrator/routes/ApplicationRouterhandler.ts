@@ -26,17 +26,15 @@ router.use(cookieParser());
 // 1. Create Team
 router.post("/team", Auth,async (req, res) => {
   try {
-    const user = req.user; // Use cached user details
+    const user = await req.user; // Use cached user details
     if (!user) {
        res.status(401).json({ message: "User not authenticated" });
        return;
     }
 
     // Check if user already has a team
-    if (user.team && (user.team as any).id) {
-       res.status(400).json({ message: "User can only create one team.",
-        team: user.team
-        });
+    if (user.team && (user.team as TeamBase).id) {
+       res.status(400).json({ message: "User can only create one team." });
        return
     }
 
@@ -66,8 +64,9 @@ router.put("/team", Auth,async (req, res) => {
   try {
     const user = await req.user; // Use cached user details
     if (!user) {
-       res.status(401).json({ message: "User not authenticated" });
-       return
+        res.status(401).json({ message: "User not authenticated" });
+        return;
+       
     }
 
     const { name, metadata } = req.body;
@@ -86,16 +85,14 @@ router.put("/team", Auth,async (req, res) => {
     await UserDetails.updateUserDetails(user.id);
 
     res.json({ message: "Team updated successfully.", team: updatedTeam });
-    return;
   } catch (error) {
     console.error("Error updating team:", error);
     res.status(500).json({ error: "Failed to update team." });
-    return;
   }
 });
 
 // 3. Delete Team
-router.delete("/team", async (req, res) => {
+router.delete("/team",Auth, async (req, res) => {
   try {
     const user = req.user; // Use cached user details
     if (!user) {
@@ -118,13 +115,12 @@ router.delete("/team", async (req, res) => {
 });
 
 // 4. Get Apps for the User's Team
-router.get("/apps", async (req, res) => {
+router.get("/apps", Auth, async (req, res) => {
   try {
     const user = req.user; // Use cached user details
     if (!user) {
        res.status(401).json({ message: "User not authenticated" });
        return;
-
     }
 
     if (!user.team || !(user.team as any).id) {
@@ -149,7 +145,7 @@ router.get("/apps", async (req, res) => {
 });
 
 // 5. Create New App
-router.post("/newapp", async (req, res) => {
+router.post("/newapp", Auth, async (req, res) => {
   try {
     const user = req.user; // Use cached user details
     if (!user) {
@@ -178,7 +174,7 @@ router.post("/newapp", async (req, res) => {
 });
 
 // 6. Add Auth Method to an App
-router.post("/addauth", async (req, res) => {
+router.post("/addauth", Auth,async (req, res) => {
   try {
     const { appId, authId, metadata } = req.body;
 
@@ -188,16 +184,14 @@ router.post("/addauth", async (req, res) => {
     });
 
     res.json({ auth });
-    return;
   } catch (error) {
     console.error("Error adding auth method:", error);
     res.status(500).json({ error: "Failed to add auth method." });
-    return;
   }
 });
 
 // 7. Get App by ID
-router.get("/apps/:id", async (req, res) => {
+router.get("/apps/:id", Auth, async (req, res) => {
   try {
     const { id } = req.params;
     const app = await prisma.app.findUnique({
@@ -205,10 +199,10 @@ router.get("/apps/:id", async (req, res) => {
       include: { authMethods: true, triggers: true, actions: true },
     });
 
-    if (!app) {
-       res.status(404).json({ message: "App not found" });
-       return;
-    }
+    if (!app) { 
+      res.status(404).json({ message: "App not found" });
+    return;
+  }
 
     res.json(app);
     return;
@@ -221,15 +215,13 @@ router.get("/apps/:id", async (req, res) => {
 });
 
 // 8. Get Available Auth Methods
-router.get("/auth-methods", async (req, res) => {
+router.get("/auth-methods", Auth,async (req, res) => {
   try {
     const methods = await prisma.availableAuthMethods.findMany();
     res.json({ methods });
-    return;
   } catch (error) {
     console.error("Error fetching auth methods:", error);
     res.status(500).json({ error: "Failed to fetch auth methods." });
-    return;
   }
 });
 
