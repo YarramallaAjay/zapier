@@ -15,7 +15,7 @@ export interface UserBase {
 
 export class UserDetails implements UserBase {
   static instance: UserDetails | null = null;
-  static cacheTimeout: number = 3600; // Cache timeout in seconds
+  static cacheTimeout: number = 86400; // Cache timeout in seconds (24 hours)
   static cacheCreatedAt: number | null = null; // Cache creation timestamp
 
   id: number;

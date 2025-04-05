@@ -19,55 +19,82 @@ passport.use(
       scope: ["profile", "email"],
       
         },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const email = profile.emails?.[0]?.value;
-        if (!email) return done(new Error("No email found"), false);
-
-        // Upsert user with tokens
-        const user = await client.user.upsert({
-          where: { email },
-          update: {
-            tokens: {
-              create: [
-                {
-                  accessToken,
-                  refreshToken: refreshToken || accessToken,
-                  provider: "google",
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            const email = profile.emails?.[0]?.value;
+            if (!email) return done(new Error("No email found"), false);
+        
+            const user = await client.user.findUnique({
+              where: { email },
+              include: {
+                tokens: true,
+              },
+            });
+        
+            let finalUser;
+        
+            if (user) {
+              const existingToken = user.tokens.find(t => t.provider === "google");
+        
+              if (existingToken) {
+                // Update existing token
+                await client.tokenStore.update({
+                  where: {
+                    id: existingToken.id,
+                  },
+                  data: {
+                    accessToken,
+                    refreshToken: refreshToken || accessToken,
+                  },
+                });
+              } else {
+                // Create new token
+                await client.tokenStore.create({
+                  data: {
+                    accessToken,
+                    refreshToken: refreshToken || accessToken,
+                    provider: "google",
+                    user: {
+                      connect: { id: user.id },
+                    },
+                  },
+                });
+              }
+        
+              finalUser = user;
+            } else {
+              // Create user + token
+              finalUser = await client.user.create({
+                data: {
+                  email,
+                  name: profile.displayName,
+                  password: accessToken, // Use real flow in production!
+                  tokens: {
+                    create: [
+                      {
+                        accessToken,
+                        refreshToken: refreshToken || accessToken,
+                        provider: "google",
+                      },
+                    ],
+                  },
                 },
-              ],
-            },
-          },
-          create: {
-            email,
-            name: profile.displayName,
-            password: "",
-            tokens: {
-              create: [
-                {
-                  accessToken,
-                  refreshToken: refreshToken || accessToken,
-                  provider: "google",
-                },
-              ],
-            },
-          },
-        });
-        if (!user) return done(new Error("User not found"), false);
-
-        // Generate JWT Token
-        const JWTSecret = JWT_SECRET || "jwtSecret";
-        const jwtToken = jwt.sign({ userId: user.id,accesstoken:accessToken }, JWTSecret, { expiresIn: "1h" });
-
-        // Update user details cache
-        const cachedUser=await UserDetails.getUser(user.id);
-        return done(null, {...cachedUser, jwtToken} as any);
-      } catch (error) {
-        return done(error,false);
-      }
-    }
-  )
-);
+              });
+            }
+        
+            const jwtToken = jwt.sign(
+              { userId: finalUser.id, accesstoken: accessToken },
+              JWT_SECRET || "jwtSecret"
+            );
+        
+            const cachedUser = await UserDetails.getUser(finalUser.id);
+        
+            return done(null, { ...cachedUser, jwtToken } as any);
+          } catch (error) {
+            return done(error, false);
+          }
+        }    
+  ))
 
 // Serialize user into session
 passport.serializeUser(
