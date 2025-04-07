@@ -1,5 +1,6 @@
 import { PrismaClient, Zap } from "@prisma/client";
 import { TeamBase } from "./Team";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
@@ -38,38 +39,47 @@ export class UserDetails implements UserBase {
 
   // Singleton: Retrieve user details (cached if already fetched)
   static async getUser(userId: string): Promise<UserDetails> {
-    if (
-      UserDetails.cacheCreatedAt &&
-      (Date.now() - UserDetails.cacheCreatedAt) < UserDetails.cacheTimeout * 1000 &&
-      UserDetails.instance &&
-      UserDetails.instance.id === userId
-    ) {
-      console.log("Returning cached user details...");
+    try{
+      if (
+        UserDetails.cacheCreatedAt &&
+        (Date.now() - UserDetails.cacheCreatedAt) < UserDetails.cacheTimeout * 1000 &&
+        UserDetails.instance &&
+        UserDetails.instance.id === userId
+      ) {
+        console.log("Returning cached user details...");
+        return UserDetails.instance;
+      }
+  
+      console.log("Fetching user details from DB...");
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { team: true, zaps: true },
+      });
+  
+      if (!user) throw new Error("User details not found");
+  
+      UserDetails.instance = new UserDetails({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        team: user.team || {},
+        Zaps: user.zaps || [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+  
+      UserDetails.cacheCreatedAt = Date.now();
+      console.log("User details fetched and cached successfully.");
+      // Return the user details instance
       return UserDetails.instance;
+
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        throw new Error("Prisma error:" + e.code + " : " + e.message);
+      }
+      console.error("Error fetching user details:", e);
+      throw new Error("Failed to fetch user details");
     }
-
-    console.log("Fetching user details from DB...");
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: { team: true, zaps: true },
-    });
-
-    if (!user) throw new Error("User details not found");
-
-    UserDetails.instance = new UserDetails({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      team: user.team || {},
-      Zaps: user.zaps || [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
-
-    UserDetails.cacheCreatedAt = Date.now();
-    console.log("User details fetched and cached successfully.");
-    // Return the user details instance
-    return UserDetails.instance;
   }
 
   static setUser(data: UserBase): void {
