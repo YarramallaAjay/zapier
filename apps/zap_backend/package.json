@@ -2,8 +2,9 @@
   "name": "zap_backend",
   "version": "1.0.0",
   "main": "index.js",
-    "scripts": {
-    "dev": "tsc -b && nodemon ./dist/index.js"
+  "scripts": {
+    "dev": "tsc -b && nodemon ./dist/index.js",
+    "test": "jest --detectOpenHandles --forceExit --watchAll"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +32,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
+    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",
     "nodemailer": "^6.10.0",
@@ -38,8 +40,13 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "prisma": "^6.5.0",
+    "supertest": "^7.1.0",
     "uuid": "^11.1.0",
     "zap_backend": "file:",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "ts-jest": "^29.3.1"
   }
 }
