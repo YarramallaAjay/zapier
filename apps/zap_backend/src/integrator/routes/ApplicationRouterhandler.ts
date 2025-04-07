@@ -6,8 +6,7 @@ import { PrismaClient } from "@prisma/client";
 import { Auth } from "../middlewares/Auth";
 import { UserDetails } from "@repo/types/dist/UserSession";
 import { TeamBase } from "@repo/types/src/Team";
-import { number, unknown } from "zod";
-import { z } from "zod";
+
 
 const prisma = new PrismaClient();
 const router: Router = express.Router();
@@ -40,15 +39,19 @@ router.post("/team", Auth, async (req, res) => {
       return;
     }
 
-    const { name, metadata } = req.body;
+    const { name, metadata, createdById } = req.body;
 
     const newTeam = await prisma.team.create({
       data: {
         name,
         metadata: metadata || {},
-        createdById: user.id,
-        members: { connect: { id: user.id } }, // Add user as team member
-      },
+        createdById: (user.id ) as unknown as string,
+        members:{
+          connect:{
+            id: String(user.id)
+          }
+        } 
+      }, // Add user as team member
     });
 
     // Update user session to include the new team
@@ -102,7 +105,7 @@ router.delete("/team", Auth, async (req, res) => {
     }
 
     await prisma.team.delete({
-      where: { createdById: user.id },
+      where: { createdById: (user.id) as unknown as string  },
     });
 
     // Clear user session since team is deleted

@@ -18,7 +18,7 @@ router.get("/zaps", AuthUser, async (req, res) => {
             return;
         }
 
-        const userZaps = await client.zap.findMany({ where: { userId: user.id },
+        const userZaps = await client.zap.findMany({ where: { userId:( user.id) as unknown as string },
             include:{
                 actions:{
                     include:{
@@ -108,7 +108,7 @@ router.post("/newzap", AuthUser, async (req: Request, res: Response) => {
                 data: {
                     name: triggername,
                     description,
-                    userId: user.id,
+                    userId: (user.id) as unknown as string,
                     
                       // Set triggerId directly
                     actions: {
@@ -167,7 +167,7 @@ router.post("/zap/:zapId", AuthUser, async (req: Request, res: Response) => {
             return;
         }
         const zap = await client.zap.findFirst({
-            where: { id: zapId, userId: userDetails?.id }
+            where: { id: zapId, userId: (userDetails?.id) as unknown as string }
         });
 
         if (!zap) {

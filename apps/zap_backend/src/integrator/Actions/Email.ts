@@ -25,7 +25,7 @@ export class Email implements ActionBase {
     }
 
 
-    async createAction(appId: number, action: any, tx?: Prisma.TransactionClient) {
+    async createAction(appId: string, action: any, tx?: Prisma.TransactionClient) {
         const db = tx || this.client;
         try {
             await db.availableActions.create({
@@ -72,7 +72,7 @@ export class Email implements ActionBase {
         }
     }
 
-    async getActions(appId: number, tx?: Prisma.TransactionClient) {
+    async getActions(appId: string, tx?: Prisma.TransactionClient) {
         const db = tx || this.client;
         try {
             const actions = await db.availableActions.findMany({

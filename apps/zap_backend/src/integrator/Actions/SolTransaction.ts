@@ -16,7 +16,7 @@ export class SolTransaction implements ActionBase{
         this.inputConfig=[{name: "to",type: "string",value: "",required: true,description:"Receptient wallet address "},
                         {name: "from",type: "string",value: "",required: true,description:"Sender wallet address "}]  
     }
-    async createAction(appId: number, action: any, tx?: Prisma.TransactionClient) {
+    async createAction(appId: string, action: any, tx?: Prisma.TransactionClient) {
         const db = tx || this.client;
         try {
             await db.availableActions.create({
@@ -63,7 +63,7 @@ export class SolTransaction implements ActionBase{
         }
     }
 
-    async getActions(appId: number, tx?: Prisma.TransactionClient) {
+    async getActions(appId: string, tx?: Prisma.TransactionClient) {
         const db = tx || this.client;
         try {
             const actions = await db.availableActions.findMany({

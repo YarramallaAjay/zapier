@@ -13,7 +13,7 @@ export const WebhookHandler = async (req: Request, res: Response) => {
     const zap = await prisma.zap.findFirst({
       where: {
         id: zapId,
-        userId: parseInt(userId as string)
+        userId: userId
       },
       include: {
         actions: {

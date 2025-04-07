@@ -1,72 +1,104 @@
 import express, { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { Auth } from "../middlewares/Auth";
 
 const router: Router = express.Router();
 const prisma = new PrismaClient();
 
+router.use(Auth)
+
 // Get all triggers
 router.get("/", async (req, res) => {
   try {
-    const triggers = await prisma.trigger.findMany({
-      include: { available: true, zap: true },
-    });
+    const triggers = await prisma.availableTriggers.findMany();
     if (triggers.length === 0) {
-       res.status(404).json({ message: "No triggers found" });
-       return;
+      res.status(404).json({ message: "No triggers found", data: {} });
+      return;
     }
-    res.status(200).json(triggers);
+    res.status(200).json({ message: "Triggers fetched successfully", data: triggers });
   } catch (err) {
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching triggers:", err);
+    res.status(500).json({ error: "Internal server error", data: {} });
+  }
+});
+
+// Get triggers by appId
+router.get("/:appId", async (req, res) => {
+  try {
+    const appId = req.params.appId;
+
+    if (typeof(appId)!="string") {
+      res.status(400).json({ message: "Invalid appId parameter", data: {} });
+      return;
+    }
+
+    const app = await prisma.app.findFirst({
+      where: { id: appId },
+      include: { triggers: true },
+    });
+
+    if (!app || app.triggers.length === 0) {
+      res.status(404).json({ message: "No triggers created by the team for this application", data: {} });
+      return;
+    }
+
+    res.status(200).json({ message: "Triggers fetched successfully", data: app.triggers });
+  } catch (err) {
+    console.error("Error fetching triggers:", err);
+    res.status(500).json({ error: "Internal server error", data: {} });
   }
 });
 
 // Add a new trigger
 router.post("/", async (req, res) => {
-  const { name, description, zapId, metadata, availableTriggerId } = req.body;
+  const { name, description, appId, metadata, configMetadata, type } = req.body;
 
-  if (!name || !description || !zapId || !availableTriggerId) {
-     res.status(400).json({ error: "Missing required fields" });
-     return;
+  if (!name || !description || !appId || !configMetadata || !metadata || !type) {
+    res.status(400).json({ message: "Missing required fields", data: {} });
+    return;
   }
 
   try {
-    const trigger = await prisma.trigger.create({
+    const trigger = await prisma.availableTriggers.create({
       data: {
         name,
         description,
-        zapId,
         metadata: metadata || {},
-        availableTriggerId,
+        type,
+        appId,
+        configMetadata,
       },
     });
-    res.status(201).json(trigger);
-  } catch (e) {
-    res.status(400).json({ error: "Invalid data or database error" });
+    res.status(201).json({ message: "Trigger created successfully", data: trigger });
+  } catch (err) {
+    console.error("Error creating trigger:", err);
+    res.status(400).json({ error: "Invalid data or database error", data: {} });
   }
 });
 
 // Update a trigger
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
+router.put("/:appId/:id", async (req, res) => {
+  const { id, appId } = req.params;
 
   if (!id) {
-     res.status(400).json({ error: "Trigger ID is required" });
-     return;
+    res.status(400).json({ message: "Trigger ID is required", data: {} });
+    return;
   }
 
   try {
-    const updated = await prisma.trigger.update({
-      where: { id },
+    const updated = await prisma.availableTriggers.update({
+      where: { id: id, appId: appId},
       data: { ...req.body },
     });
-    res.status(200).json(updated);
+    res.status(200).json({ message: "Trigger updated successfully", data: updated });
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError&& err.code === "P2025") {
-       res.status(404).json({ error: "Trigger not found" });
-       return;
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
+      res.status(404).json({ message: "Trigger not found", data: {} });
+      return;
     }
-    res.status(400).json({ error: "Invalid data or database error" });
+    console.error("Error updating trigger:", err);
+    res.status(400).json({ error: "Invalid data or database error", data: {} });
   }
 });
 
@@ -75,19 +107,20 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   if (!id) {
-     res.status(400).json({ error: "Trigger ID is required" });
-     return;
+    res.status(400).json({ message: "Trigger ID is required", data: {} });
+    return;
   }
 
   try {
     await prisma.trigger.delete({ where: { id } });
-    res.status(200).json({ message: "Trigger deleted" });
+    res.status(200).json({ message: "Trigger deleted successfully", data: {} });
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError&&err.code === "P2025") {
-       res.status(404).json({ error: "Trigger not found" });
-        return;
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
+      res.status(404).json({ message: "Trigger not found", data: {} });
+      return;
     }
-    res.status(400).json({ error: "Invalid data or database error" });
+    console.error("Error deleting trigger:", err);
+    res.status(400).json({ error: "Invalid data or database error", data: {} });
   }
 });
 

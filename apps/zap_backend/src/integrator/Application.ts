@@ -8,7 +8,7 @@ import { ActionBase } from "@repo/types/src/Actions";
 
 export type ApplicationType = {
     name: string;
-    teamId: number;
+    teamId: string;
     AppAuth: string[];
     AppTriggers: string[];
     AppActions: Partial<ActionBase>[];
@@ -47,7 +47,7 @@ export abstract class Application {
         });
     }
 
-    async updateApplication(appId: number, updateData: Partial<ApplicationType>) {
+    async updateApplication(appId: string, updateData: Partial<ApplicationType>) {
         return this.client.$transaction(async (tx) => {
             try {
                 if (updateData.AppAuth) {
@@ -73,7 +73,7 @@ export abstract class Application {
         });
     }
 
-    async deleteApplication(appId: number) {
+    async deleteApplication(appId: string) {
         return this.client.$transaction(async (tx) => {
             try {
                 await tx.app.delete({ where: { id: appId } });
@@ -112,7 +112,7 @@ export abstract class Application {
         });
     }
 
-    async addTrigger(appId: number, data: any) {
+    async addTrigger(appId: string, data: any) {
          
             try {
                 await this.triggers.createTrigger(appId,data);
@@ -138,7 +138,7 @@ export abstract class Application {
         });
     }
 
-    async listApplications(teamId: number) {
+    async listApplications(teamId: string) {
         try {
             const apps = await this.client.app.findMany({
                 where: { teamId },

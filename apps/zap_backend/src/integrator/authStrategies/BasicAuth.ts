@@ -10,7 +10,7 @@ export class BasicAuth implements AuthenticationBase {
   /**
    * Create a Basic Auth configuration for a given app
    */
-  async createAuth(appId: number, data: any, tx?: Prisma.TransactionClient) {
+  async createAuth(appId: string, data: any, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -44,7 +44,7 @@ export class BasicAuth implements AuthenticationBase {
   /**
    * Delete a Basic Auth configuration
    */
-  async deleteAuth(authId: number, tx?: Prisma.TransactionClient) {
+  async deleteAuth(authId: string, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -60,7 +60,7 @@ export class BasicAuth implements AuthenticationBase {
   /**
    * Update Basic Auth metadata (e.g., change username/password)
    */
-  async updateAuth(authId: number, data: Partial<AuthenticationBase>, tx?: Prisma.TransactionClient) {
+  async updateAuth(authId: string, data: Partial<AuthenticationBase>, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -87,7 +87,7 @@ export class BasicAuth implements AuthenticationBase {
   /**
    * Get all Basic Auth configs for a specific app
    */
-  async getAuths(appId: number, tx?: Prisma.TransactionClient) {
+  async getAuths(appId: string, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -104,7 +104,7 @@ export class BasicAuth implements AuthenticationBase {
   /**
    * Get Basic Auth config by ID
    */
-  async getAuthById(authId: number, tx?: Prisma.TransactionClient) {
+  async getAuthById(authId: string, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {

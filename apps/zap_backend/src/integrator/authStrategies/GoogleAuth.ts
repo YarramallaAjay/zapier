@@ -16,7 +16,7 @@ export class GoogleAuth implements AuthenticationBase {
   /**
    * Create a new Google OAuth authentication method for an app
    */
-  async createAuth(appId: number, data: any, tx?: Prisma.TransactionClient) {
+  async createAuth(appId: string, data: any, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -52,7 +52,7 @@ export class GoogleAuth implements AuthenticationBase {
   /**
    * Delete an auth method by ID
    */
-  async deleteAuth(authId: number, tx?: Prisma.TransactionClient) {
+  async deleteAuth(authId: string, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -66,7 +66,7 @@ export class GoogleAuth implements AuthenticationBase {
   /**
    * Update OAuth credentials or metadata
    */
-  async updateAuth(authId: number, data: any, tx?: Prisma.TransactionClient) {
+  async updateAuth(authId: string, data: any, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -91,7 +91,7 @@ export class GoogleAuth implements AuthenticationBase {
   /**
    * Get all auths for an app
    */
-  async getAuths(appId: number, tx?: Prisma.TransactionClient) {
+  async getAuths(appId: string, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {
@@ -108,7 +108,7 @@ export class GoogleAuth implements AuthenticationBase {
   /**
    * Get a single auth config by ID
    */
-  async getAuthById(authId: number, tx?: Prisma.TransactionClient) {
+  async getAuthById(authId: string, tx?: Prisma.TransactionClient) {
     const prisma = tx ?? new PrismaClient();
 
     try {

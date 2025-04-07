@@ -13,8 +13,8 @@ import integrator from "./routes/ApplicationRoute"
 
 export async function main(){
 
-  await new KafkaProducer("zapConsumers", ["localhost:9092", "localhost:9093"]);
-  await new KafkaConsumer("zapConsumers", ["localhost:9092", "localhost:9093"]);
+  await new KafkaProducer("zapConsumers", ["localhost:9092"]);
+  await new KafkaConsumer("zapConsumers", ["localhost:9092"]);
   
 
     const app=express()
