@@ -1,5 +1,5 @@
 export interface TeamBase {
-        id:number
+        id:string
         name:string
         metadata:{}
         createdAt :string

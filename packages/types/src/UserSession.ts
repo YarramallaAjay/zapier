@@ -4,7 +4,7 @@ import { TeamBase } from "./Team";
 const prisma = new PrismaClient();
 
 export interface UserBase {
-  id: number;
+  id: string;
   name: string;
   email: string;
   team: TeamBase | {};
@@ -18,7 +18,7 @@ export class UserDetails implements UserBase {
   static cacheTimeout: number = 86400; // Cache timeout in seconds (24 hours)
   static cacheCreatedAt: number | null = null; // Cache creation timestamp
 
-  id: number;
+  id: string;
   name: string;
   email: string;
   team: TeamBase | {};
@@ -37,7 +37,7 @@ export class UserDetails implements UserBase {
   }
 
   // Singleton: Retrieve user details (cached if already fetched)
-  static async getUser(userId: number): Promise<UserDetails> {
+  static async getUser(userId: string): Promise<UserDetails> {
     if (
       UserDetails.cacheCreatedAt &&
       (Date.now() - UserDetails.cacheCreatedAt) < UserDetails.cacheTimeout * 1000 &&
@@ -82,7 +82,7 @@ export class UserDetails implements UserBase {
     }
   }
 
-  static async updateUserDetails(userId: number): Promise<void> {
+  static async updateUserDetails(userId: string): Promise<void> {
     console.log("Updating user details and clearing cache...");
     UserDetails.instance = null;
     UserDetails.cacheCreatedAt = null;

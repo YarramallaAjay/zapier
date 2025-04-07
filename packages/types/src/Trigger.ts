@@ -14,7 +14,7 @@ export interface TriggerBase {
     inputConfig?:Field<FieldType>[]
     outputConfig?: Field<FieldType>[]
    
-    createTrigger(appId:number,trigger:any,tx?:Prisma.TransactionClient):void
+    createTrigger(appId:string,trigger:any,tx?:Prisma.TransactionClient):void
     deleteTrigger(trigger:any,tx?:Prisma.TransactionClient):void
     updateTrigger(appId:any,fields:any,tx?:Prisma.TransactionClient):void
     getTriggers(appId:any,tx?:Prisma.TransactionClient):void

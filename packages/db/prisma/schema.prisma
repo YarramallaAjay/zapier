@@ -8,23 +8,23 @@ datasource db {
 }
 
 model User {
-  id       Int          @id @default(autoincrement())
+  id       String          @id @default(uuid())
   name     String
   password String
   email    String       @unique
-  teamId   Int?
+  teamId   String?
   tokens   TokenStore[]
   team     Team?        @relation(fields: [teamId], references: [id])
   zaps     Zap[]
 }
 
 model Team {
-  id          Int      @id @default(autoincrement())
+  id          String      @id @default(uuid())
   name        String
   metadata    Json     @default("{}")
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
-  createdById Int?     @unique
+  createdById String    @unique
   apps        App[]
   members     User[]
 }
@@ -32,8 +32,8 @@ model Team {
 model App {
   name        String
   description String
-  teamId      Int
-  id          Int                 @id @default(autoincrement())
+  teamId      String
+  id          String                 @id @default(uuid())
   team        Team                @relation(fields: [teamId], references: [id])
   authMethods AuthMethods[]
   actions     AvailableActions[]
@@ -41,9 +41,9 @@ model App {
 }
 
 model AuthMethods {
-  id            Int                  @id @default(autoincrement())
-  appId         Int
-  authId        Int
+  id            String                  @id @default(uuid())
+  appId         String
+  authId        String
   metadata      Json                 @default("{}")
   app           App                  @relation(fields: [appId], references: [id])
   availableAuth AvailableAuthMethods @relation(fields: [authId], references: [id])
@@ -54,7 +54,7 @@ model AvailableAuthMethods {
   provider    String
   description String
   metadata    Json          @default("{}")
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(uuid())
   authMethods AuthMethods[]
 }
 
@@ -63,7 +63,7 @@ model Zap {
   name        String
   description String
   metadata    Json     @default("{}")
-  userId      Int
+  userId      String
   image       String?
   actions     Action[]
   trigger     Trigger?
@@ -101,7 +101,7 @@ model AvailableTriggers {
   metadata       Json      @default("{}")
   configMetadata Json      @default("{}")
   type           String
-  appId          Int
+  appId          String
   app            App       @relation(fields: [appId], references: [id])
   triggers       Trigger[]
 }
@@ -113,7 +113,7 @@ model AvailableActions {
   metadata       Json     @default("{}")
   configMetadata Json     @default("{}")
   type           String
-  appId          Int
+  appId          String
   actions        Action[]
   app            App      @relation(fields: [appId], references: [id])
 }
@@ -133,12 +133,12 @@ model ZapRunOutBox {
 }
 
 model TokenStore {
-  id           Int      @id @default(autoincrement())
+  id           String      @id @default(uuid())
   createdAt    DateTime @default(now())
   provider     String
   updatedAt    DateTime @updatedAt
   accessToken  String
   refreshToken String
-  userId       Int
+  userId       String
   user         User     @relation(fields: [userId], references: [id])
 }

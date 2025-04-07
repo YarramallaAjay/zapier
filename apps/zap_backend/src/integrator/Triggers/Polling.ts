@@ -19,7 +19,7 @@ export class Polling implements TriggerBase{
     }
     inputConfig?: Field<FieldType>[] | undefined;
     outputConfig?: Field<FieldType>[] | undefined;
-    async createTrigger (appId: number, trigger: any, tx?: Prisma.TransactionClient) {
+    async createTrigger (appId: string, trigger: any, tx?: Prisma.TransactionClient) {
         const db=tx ||this.client;
         try{
             await db.availableTriggers.create({
@@ -61,7 +61,7 @@ export class Polling implements TriggerBase{
         };
 
 
-        async updateTrigger(appId: number, fields: Partial<TriggerBase>, tx?: Prisma.TransactionClient) {
+        async updateTrigger(appId: string, fields: Partial<TriggerBase>, tx?: Prisma.TransactionClient) {
             const db = tx || this.client;
         
             try {

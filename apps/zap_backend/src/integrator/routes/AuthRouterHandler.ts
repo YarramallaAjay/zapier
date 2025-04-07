@@ -1,8 +1,9 @@
 import { Auth } from "../middlewares/Auth";
 import { PrismaClient } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Express from "express";
 
-const router:Express.Router= Express.Router();
+const router: Express.Router = Express.Router();
 const prisma = new PrismaClient();
 
 // Add Auth Method to an App
@@ -12,34 +13,49 @@ router.post("/newauth/:appId/:authId", Auth, async (req, res) => {
     const { metadata } = req.body;
 
     // Manual validation
-    if (isNaN(Number(appId)) || isNaN(Number(authId))) {
-      res.status(400).json({ error: "Invalid appId or authId" });
+    if (!appId || !authId) {
+      res.status(400).json({ error: "appId and authId are required" });
       return;
     }
 
-    const app = await prisma.app.findFirst({
-      where: { id: Number(appId) },
-      include: { team: true, authMethods: true },
-    });
-
-    if (app?.authMethods.length !== 0) {
-      res.status(400).json({
-        message: "App already has an auth method. Delete the existing Auth method before adding a new one.",
-        auth: app?.authMethods,
+    try{
+      const app = await prisma.app.findFirstOrThrow({
+        where: { id: appId },
+        include: { team: true, authMethods: true },
       });
-      return;
+
+      if (app?.authMethods.length !== 0) {
+        res.status(400).json({
+          message: "App already has an auth method. Delete the existing Auth method before adding a new one.",
+          auth: app?.authMethods,
+        });
+        return;
+      }
+  
+      const auth = await prisma.authMethods.create({
+        data: {
+          appId,
+          authId,
+          metadata,
+        },
+        include: { app: true, availableAuth: true },
+      });
+  
+      res.json({ auth });
+
     }
+    catch(e){
+      if(e instanceof PrismaClientKnownRequestError && e.code=="P2025"){
+        res.json({"message":"Error Ocurred",
+          "Error":e
+        })
+        console.log("Error:"+e);
+      }
+    }
+   
 
-    const auth = await prisma.authMethods.create({
-      data: {
-        appId: Number(appId),
-        authId: Number(authId),
-        metadata,
-      },
-      include: { app: true, availableAuth: true },
-    });
 
-    res.json({ auth });
+  
   } catch (error) {
     console.error("Error adding auth method:", error);
     res.status(500).json({ error: "Failed to add auth method." });
@@ -52,15 +68,15 @@ router.delete("/deleteauth/:appId/:authId", Auth, async (req, res) => {
     const { appId, authId } = req.params;
 
     // Manual validation
-    if (isNaN(Number(appId)) || isNaN(Number(authId))) {
-      res.status(400).json({ error: "Invalid appId or authId" });
+    if (!appId || !authId) {
+      res.status(400).json({ error: "appId and authId are required" });
       return;
     }
 
     const auth = await prisma.authMethods.deleteMany({
       where: {
-        appId: Number(appId),
-        authId: Number(authId),
+        appId,
+        authId,
       },
     });
 
@@ -82,13 +98,13 @@ router.get("/authmethods/:appId", Auth, async (req, res) => {
     const { appId } = req.params;
 
     // Manual validation
-    if (isNaN(Number(appId))) {
-      res.status(400).json({ error: "Invalid appId" });
+    if (!appId) {
+      res.status(400).json({ error: "appId is required" });
       return;
     }
 
     const authMethods = await prisma.authMethods.findMany({
-      where: { appId: Number(appId) },
+      where: { appId },
       include: { availableAuth: true },
     });
 
@@ -106,27 +122,28 @@ router.put("/updateauth/:appId/:authId", Auth, async (req, res) => {
     const { metadata } = req.body;
 
     // Manual validation
-    if (isNaN(Number(appId)) || isNaN(Number(authId))) {
-      res.status(400).json({ error: "Invalid appId or authId" });
+    if (!appId || !authId) {
+      res.status(400).json({ error: "appId and authId are required" });
       return;
     }
 
     const auth = await prisma.authMethods.updateMany({
       where: {
-        appId: Number(appId),
-        id: Number(authId),
+        appId,
+        id: authId,
       },
       data: { metadata },
     });
 
-    if (auth.count== 0) {
+    if (auth.count == 0) {
       res.status(404).json({ message: "Auth method not found for the given appId and authId." });
       return;
     }
 
-    res.json({ message: "Auth method updated successfully.",
-        auth: auth,
-     });
+    res.json({
+      message: "Auth method updated successfully.",
+      auth: auth,
+    });
   } catch (error) {
     console.error("Error updating auth method:", error);
     res.status(500).json({ error: "Failed to update auth method." });
@@ -137,8 +154,14 @@ router.put("/updateauth/:appId/:authId", Auth, async (req, res) => {
 router.get("/apps/:id", Auth, async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({ error: "id is required" });
+      return;
+    }
+
     const app = await prisma.app.findUnique({
-      where: { id: Number(id) },
+      where: { id },
       include: { authMethods: true, triggers: true, actions: true },
     });
 
