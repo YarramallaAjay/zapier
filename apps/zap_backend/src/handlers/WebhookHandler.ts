@@ -19,7 +19,7 @@ export const WebhookHandler = async (req: Request, res: Response) => {
         actions: {
           orderBy: { sortingOrder: 'asc' }
         },
-        trigger: true,
+        trigger:true 
       },
     })
 

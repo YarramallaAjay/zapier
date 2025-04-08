@@ -30,7 +30,7 @@ export class KafkaProducer {
                 })
 
                 if (zaps.length === 0) {
-                    await this.sleep(1500)
+                    await this.sleep(1000)
                     continue
                 }
 

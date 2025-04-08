@@ -53,7 +53,18 @@ export class UserDetails implements UserBase {
       console.log("Fetching user details from DB...");
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        include: { team: true, zaps: true },
+        include: { team: {
+          include:{
+            apps:{
+              include:{
+                actions:true,
+                authMethods:true,
+                triggers:true,
+              }
+            }
+          },
+        }, zaps: true,tokens:true
+       },
       });
   
       if (!user) throw new Error("User details not found");

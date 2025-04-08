@@ -2,7 +2,7 @@ import { Polling } from "./Polling";
 import { WebHook } from "./Webhooks";
 
 export class TriggerFactory{
-    createInstance(type:String){
+    static createInstance(type:String){
         switch(type){
             case 'webhook':{
                 return new WebHook();
