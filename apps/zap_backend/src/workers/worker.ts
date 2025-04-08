@@ -59,7 +59,11 @@ export class KafkaConsumer {
     // Retrieve the zap run details and associated zap & actions
     const zapRun = await this.client.zapRun.findUnique({
       where: { id: zapRunId },
-      include: { zap: { include: { actions: true } } },
+      include: { zap: { include: { actions: {
+        include:{
+          available:true
+        }
+      } } } },
     });
 
     if (!zapRun || !zapRun.zap) {
@@ -84,11 +88,11 @@ export class KafkaConsumer {
 async executeAction(zapRunId: string, actionId: string, type: ActionType, inputData: any) {
   try {
     let result: any;
-    switch (type) {
-      case "SEND_EMAIL":
+    switch (type.toLowerCase()) {
+      case "send_email":
         result = await sendEmailHandler(inputData);
         break;
-      case "SEND_SOL_TRANSACTION":
+      case "send_sol_transaction":
         result = await sendSolTransactionHandler(inputData);
         break;
       default:

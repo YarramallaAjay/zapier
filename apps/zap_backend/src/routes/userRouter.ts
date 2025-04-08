@@ -3,7 +3,7 @@ import express,{Router} from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import "dotenv/config"
-import { signInSchema,signupSchema } from '../types'
+import { signInSchema,signupSchema } from '../types/zodSchema'
 
 const router:express.Router=Router()
 const client=new PrismaClient()

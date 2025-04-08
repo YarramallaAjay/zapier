@@ -1,4 +1,16 @@
-import { z } from "zod";
+import {z} from 'zod';
+
+export const signInSchema=z.object({
+    password:z.string().min(6),
+    email:z.string().email()
+})
+
+export const signupSchema=z.object({
+    name:z.string().min(5),
+    password:z.string().min(6),
+    email:z.string().email()
+})
+
 
 // User Schema
 export const UserSchema = z.object({
@@ -56,8 +68,9 @@ export const ZapSchema = z.object({
   description: z.string(),
   metadata: z.record(z.any()).optional(),
   userId: z.string(),
-  actions: z.array(z.string().uuid()), // Array of action IDs
-}) // For partial validation
+  actions: z.array(z.string().uuid()),
+  image :z.string()// Array of action IDs
+}) 
 
 // Trigger Schema
 export const TriggerSchema = z.object({
