@@ -71,6 +71,16 @@ export const WebhookHandler = async (req, res) => {
 export const zapStatusWebhook=async (payload) => {
 
   const {zaprunId,actionId,status, result}=await payload
+  const zapStatus=await prisma.zapRun.update({
+    where:{
+      id:zaprunId
+    },
+    data:{
+      metadata:{
+        status:"FINISHED"
+      }
+    }
+  })
 
   console.log(`${zaprunId}_${actionId}:${status} with result: ${result}`)
     
