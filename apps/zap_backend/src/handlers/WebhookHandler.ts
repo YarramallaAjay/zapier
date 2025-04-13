@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from 'uuid'
 
 const prisma = new PrismaClient()
 
-export const WebhookHandler = async (req: Request, res: Response) => {
+export const WebhookHandler = async (req, res) => {
+  console.log("WebHook Hit")
+    console.log(req.body)
   const { userId , zapId } = req.params
   const webhookPayload = req.body
 
@@ -52,14 +54,16 @@ export const WebhookHandler = async (req: Request, res: Response) => {
       }
     })
 
-    return res.status(200).json({
+     res.status(200).json({
       message: "Zap execution initialized",
       zapRunId,
     })
+    return
 
   } catch (error) {
     console.error("Webhook Handler Error:", error)
-    return res.status(500).json({ message: "Internal Server Error" })
+     res.status(500).json({ message: "Internal Server Error" })
+     return
   }
 }
 
