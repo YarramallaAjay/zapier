@@ -71,6 +71,13 @@ export default function() {
                             Login in Google
                         </PrimaryButton>
                     </div>
+                    <div>
+                        <PrimaryButton onClick={()=>{
+                            router.push(`${BACKEND_URL}/auth/github`)
+                        }}>
+                            Login in Github
+                        </PrimaryButton>
+                    </div>
                 </div>
             </div>
         </div>

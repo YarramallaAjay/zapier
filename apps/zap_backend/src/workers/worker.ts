@@ -73,7 +73,7 @@ export class KafkaConsumer {
     // Execute all actions in parallel; we assume each action has a field 'type' and optional 'inputData'
     const actions = zapRun.zap.actions;
     const actionPromises = actions.map((action) =>
-      this.executeAction(zapRunId, action.id, action.actionType as ActionType, action.metadata) // using metadata or a dedicated field for input
+      this.executeAction(zapRunId, action.id, action.available.type as ActionType, action.metadata) // using metadata or a dedicated field for input
     );
 
     await Promise.allSettled(actionPromises);

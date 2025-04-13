@@ -7,11 +7,11 @@ router.use(passport.initialize());
 router.use(passport.session());
 
 // 🔹 Google OAuth Login
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], accessType: "offline" }));
+router.get("/", passport.authenticate("google", { scope: ["profile", "email"], accessType: "offline" }));
 
 // 🔹 Google OAuth Callback
 router.get(
-  "/google/callback",
+  "/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     if (!req.user) {
