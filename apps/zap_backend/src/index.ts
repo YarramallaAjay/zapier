@@ -10,6 +10,7 @@ import session from "express-session";
 import google from "./routes/google";
 import integrator from "./routes/ApplicationRoute"
 import { UserDetails } from "@repo/types/dist/UserSession";
+import githubrouter from "./routes/githubrouter";
 
 
 export async function main(){
@@ -36,7 +37,8 @@ export async function main(){
       );
     app.use("/hooks", hooksRouter);
     app.use("/user",userRouter);
-    app.use("/auth",google)
+    app.use("/auth/google",google);
+    app.use("/auth/github",githubrouter);
     app.use("/integrator",integrator);
     app.use("/zap",zapRouter)
     app.get("/",async(req,res)=>{
