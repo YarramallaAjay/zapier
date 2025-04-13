@@ -7,13 +7,13 @@ export interface ActionBase{
     email: string;
     teamId:string;
     type:string,
-    timestamp: number,
+    timestamp: any,
     inputConfig:Field<FieldType>[]
-    createAction(appId:any,actions:any,tx?:Prisma.TransactionClient):void
-    deleteAction(action:any,tx?:Prisma.TransactionClient):void
-    updateAction(appId:any,actions:Partial<ActionBase>[],tx?:Prisma.TransactionClient):void
-    getActions(appId:any,tx?:Prisma.TransactionClient):void
-    getActionById(actionId:any,tx?:Prisma.TransactionClient):void
+    createAction(appId:any,actions:any,tx?:Prisma.TransactionClient):Promise<any>
+    deleteAction(action:any,tx?:Prisma.TransactionClient):Promise<any>
+    updateAction(appId:any,actions:Partial<ActionBase>[],tx?:Prisma.TransactionClient):Promise<any>
+    getActions(appId:any,tx?:Prisma.TransactionClient):Promise<any>
+    getActionById(actionId:any,tx?:Prisma.TransactionClient):Promise<any>
 }
 
 

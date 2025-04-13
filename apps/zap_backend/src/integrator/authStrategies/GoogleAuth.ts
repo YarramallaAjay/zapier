@@ -1,23 +1,30 @@
-import { Prisma, PrismaClient } from '@prisma/client';
-import { AuthenticationBase } from '@repo/types/src/Authentication';
+import { Prisma, PrismaClient } from "@prisma/client";
+import { AuthenticationBase } from "@repo/types/src/Authentication";
+import { Status } from "@repo/types/src/Status";
 
 export class GoogleAuth implements AuthenticationBase {
-  type: 'OAuth' | 'Basic' | 'JWT' = 'OAuth';
-  provider: string = 'Google';
-  description: string = 'Google OAuth2 Authentication';
-  authUrl: string = 'https://accounts.google.com/o/oauth2/v2/auth';
-  tokenUrl: string = 'https://oauth2.googleapis.com/token';
-  callbackUrl: string = 'https://your-platform.com/auth/google/callback'; // replace with dynamic if needed
-  clientID: string = '';
-  clientSecret: string = '';
+  type: "OAuth" | "Basic" | "JWT" = "OAuth";
+  provider: string = "Google";
+  description: string = "Google OAuth2 Authentication";
+  authUrl: string = "https://accounts.google.com/o/oauth2/v2/auth";
+  tokenUrl: string = "https://oauth2.googleapis.com/token";
+  callbackUrl: string = "https://your-platform.com/auth/google/callback";
+  clientID: string = "";
+  clientSecret: string = "";
 
   constructor() {}
 
-  /**
-   * Create a new Google OAuth authentication method for an app
-   */
-  async createAuth(appId: string, data: any, tx?: Prisma.TransactionClient) {
-    const prisma = tx ?? new PrismaClient();
+  private formatResponse(
+    message: string,
+    data: any = {},
+    error: any = {},
+    status: Status
+  ) {
+    return { message, data, error, status };
+  }
+
+  async createAuth(appId: string, data: any, tx?: Prisma.TransactionClient): Promise<any> {
+    const prisma = tx || new PrismaClient();
 
     try {
       const availableAuth = await prisma.availableAuthMethods.findFirst({
@@ -25,7 +32,12 @@ export class GoogleAuth implements AuthenticationBase {
       });
 
       if (!availableAuth) {
-        throw new Error(`Available auth method for provider '${this.provider}' not found.`);
+        return JSON.stringify({
+          messages:`Auth method for provider '${this.provider}' not found.`,
+          data:{},
+          error:{},
+          status:Status.PROCESSED_NOT_SUCCESSFUL
+      });
       }
 
       const authMethod = await prisma.authMethods.create({
@@ -42,35 +54,31 @@ export class GoogleAuth implements AuthenticationBase {
         },
       });
 
-      return authMethod;
+      return JSON.stringify({message:"Auth Created Successfully",data: authMethod, error:{},status: Status.SUCCESS});
     } catch (error) {
-      console.error(`[GoogleAuth][createAuth] Error:`, error);
-      throw error;
+      console.error("[createAuth] Error:", error);
+      return JSON.stringify({message:"Error Occurred", data:{}, error:error,status: Status.FAILED});
     }
   }
 
-  /**
-   * Delete an auth method by ID
-   */
-  async deleteAuth(authId: string, tx?: Prisma.TransactionClient) {
-    const prisma = tx ?? new PrismaClient();
+  async deleteAuth(authId: string, tx?: Prisma.TransactionClient): Promise<any> {
+    const prisma = tx || new PrismaClient();
 
     try {
       await prisma.authMethods.delete({ where: { id: authId } });
+
+      return JSON.stringify({message:"Auth Deleted Successfully", data:{},error: {}, status:Status.SUCCESS});
     } catch (error) {
-      console.error(`[GoogleAuth][deleteAuth] Error:`, error);
-      throw error;
+      console.error("[deleteAuth] Error:", error);
+      return JSON.stringify({message:"Error Occurred", data:{},error: error, status:Status.FAILED});
     }
   }
 
-  /**
-   * Update OAuth credentials or metadata
-   */
-  async updateAuth(authId: string, data: any, tx?: Prisma.TransactionClient) {
-    const prisma = tx ?? new PrismaClient();
+  async updateAuth(authId: string, data: any, tx?: Prisma.TransactionClient): Promise<any> {
+    const prisma = tx || new PrismaClient();
 
     try {
-      await prisma.authMethods.update({
+      const updatedAuth = await prisma.authMethods.update({
         where: { id: authId },
         data: {
           metadata: {
@@ -82,43 +90,51 @@ export class GoogleAuth implements AuthenticationBase {
           },
         },
       });
+
+      return JSON.stringify({message:"Auth Updated Successfully", data:updatedAuth,error: {},status: Status.SUCCESS});
     } catch (error) {
-      console.error(`[GoogleAuth][updateAuth] Error:`, error);
-      throw error;
+      console.error("[updateAuth] Error:", error);
+      return JSON.stringify({message:"Error Occurred", data:{},error: error,status: Status.FAILED});
     }
   }
 
-  /**
-   * Get all auths for an app
-   */
-  async getAuths(appId: string, tx?: Prisma.TransactionClient) {
-    const prisma = tx ?? new PrismaClient();
+  async getAuths(appId: string, tx?: Prisma.TransactionClient): Promise<any> {
+    const prisma = tx || new PrismaClient();
 
     try {
-      return await prisma.authMethods.findMany({
+      const auths = await prisma.authMethods.findMany({
         where: { appId },
         include: { availableAuth: true },
       });
+
+      if (auths.length === 0) {
+        return JSON.stringify({message:`No auth methods found for App ID: ${appId}`,data: {},error: {},status: Status.PROCESSED_NOT_SUCCESSFUL});
+      }
+
+      return JSON.stringify({message:"Auths Fetched Successfully",data: auths,error: {},status: Status.SUCCESS});
     } catch (error) {
-      console.error(`[GoogleAuth][getAuths] Error:`, error);
-      throw error;
+      console.error("[getAuths] Error:", error);
+      return JSON.stringify({message:"Error Occurred", data:{},error: error,status: Status.FAILED});
     }
   }
 
-  /**
-   * Get a single auth config by ID
-   */
-  async getAuthById(authId: string, tx?: Prisma.TransactionClient) {
-    const prisma = tx ?? new PrismaClient();
+  async getAuthById(authId: string, tx?: Prisma.TransactionClient): Promise<any> {
+    const prisma = tx || new PrismaClient();
 
     try {
-      return await prisma.authMethods.findUnique({
+      const auth = await prisma.authMethods.findUnique({
         where: { id: authId },
         include: { availableAuth: true },
       });
+
+      if (!auth) {
+        return JSON.stringify({message:`No auth found with ID: ${authId}`, data:{}, error:{},status: Status.PROCESSED_NOT_SUCCESSFUL});
+      }
+
+      return JSON.stringify({message:"Auth Fetched Successfully", data:auth,error: {},status: Status.SUCCESS});
     } catch (error) {
-      console.error(`[GoogleAuth][getAuthById] Error:`, error);
-      throw error;
+      console.error("[getAuthById] Error:", error);
+      return JSON.stringify({message:"Error Occurred", data:{}, error:error,status: Status.FAILED});
     }
   }
 }

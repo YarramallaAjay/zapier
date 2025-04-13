@@ -14,11 +14,12 @@ export interface TriggerBase {
     inputConfig?:Field<FieldType>[]
     outputConfig?: Field<FieldType>[]
    
-    createTrigger(appId:string,trigger:any,tx?:Prisma.TransactionClient):void
-    deleteTrigger(trigger:any,tx?:Prisma.TransactionClient):void
-    updateTrigger(appId:any,fields:any,tx?:Prisma.TransactionClient):void
-    getTriggers(appId:any,tx?:Prisma.TransactionClient):void
-    getTriggerById(triggerId:any,tx?:Prisma.TransactionClient):void
+    
+    createTrigger(appId:string,trigger:any,tx?:Prisma.TransactionClient):Promise<any>
+    deleteTrigger(trigger:any,tx?:Prisma.TransactionClient):Promise<any>
+    updateTrigger(appId:any,fields:any,tx?:Prisma.TransactionClient):Promise<any>
+    getTriggers(appId:any,tx?:Prisma.TransactionClient):Promise<any>
+    getTriggerById(triggerId:any,tx?:Prisma.TransactionClient):Promise<any>
 
 
 }

@@ -1,6 +1,6 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import  {UserDetails}  from "@repo/types/dist/UserSession";
+import  {UserDetails}  from "@repo/types/src/UserSession";
 import { JWT_SECRET } from '../config';
 
 // Replace with your secret key

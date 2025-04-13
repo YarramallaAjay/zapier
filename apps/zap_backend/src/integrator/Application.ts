@@ -5,30 +5,39 @@ import { ActionFactory } from "./Actions/ActionFactory";
 import { AuthenticationBase } from "@repo/types/src/Authentication";
 import { TriggerBase } from "@repo/types/src/Trigger";
 import { ActionBase } from "@repo/types/src/Actions";
+import { z } from "zod";
+import { Status } from "@repo/types/src/Status";
+import { stringify } from "uuid";
 
-export type ApplicationType = {
-    name: string;
-    teamId: string;
-    AppAuth: string[];
-    AppTriggers: string[];
-    AppActions: Partial<ActionBase>[];
-    description: string;
-};
+// export type ApplicationType =z.object( {
+//     name: z.string();
+//     teamId: z.string();
+//     AppAuth: z.string[];
+//     AppTriggers: string[];
+//     AppActions: Partial<ActionBase>[];
+//     description: string;
+// });
 
+
+//TODO:Unfinished Class.
 export abstract class Application {
-    authentication: AuthenticationBase;
-    triggers: TriggerBase;
-    actions: ActionBase;
+    authentication!: AuthenticationBase;
+    triggers!: TriggerBase;
+    actions!: ActionBase;
     client: PrismaClient;
 
-    constructor(auth: string, trigger: string, action: string) {
+
+    constructor(appData: {
+        name: string;
+        description: string;
+        teamId: string;
+    }) {
         this.client = new PrismaClient();
-        this.authentication = new AuthFactory().createInstance(auth);
-        this.triggers = new TriggerFactory().createInstance(trigger);
-        this.actions = new ActionFactory().createInstance(action);
+        this.createApplication(appData);
+       
     }
 
-    async createApplication(appData: Pick<ApplicationType, 'name' | 'teamId' | 'description'>) {
+    async createApplication(appData:{name:string,description:string,teamId:string}) {
         return this.client.$transaction(async (tx) => {
             try {
                 const app = await tx.app.create({
@@ -38,6 +47,7 @@ export abstract class Application {
                         teamId: appData.teamId
                     }
                 });
+                
                 console.log("Application Created:", app);
                 return app;
             } catch (error) {
@@ -47,7 +57,7 @@ export abstract class Application {
         });
     }
 
-    async updateApplication(appId: string, updateData: Partial<ApplicationType>) {
+    async updateApplication(appId: string, updateData: any) {
         return this.client.$transaction(async (tx) => {
             try {
                 if (updateData.AppAuth) {
@@ -88,20 +98,44 @@ export abstract class Application {
     async registerApplication(data: any) {
         return this.client.$transaction(async (tx) => {
             try {
-                const app = await tx.app.findFirstOrThrow({ where: { id: data.appId } });
-                const availableAuth = await tx.availableAuthMethods.findFirstOrThrow({ where: { provider: data.auth.provider } });
+                const app=await tx.app.upsert({
+                    where:{
+                        id:data.id
+                    },
+                    update:{
 
-                await tx.authMethods.create({
-                    data: {
-                        appId: app.id,
-                        authId: availableAuth.id,
-                        metadata: JSON.parse(data.auth.config)
+                    },
+                    create:{
+                        name:data.name,
+                            description:data.description,
+                            teamId:data.teamId,
+
                     }
-                });
+                })
+                console.log(`[Retrieved app at registering function]: ${app}`)
+                this.authentication=new AuthFactory().createInstance(data.auth.provider);
+                this.triggers=new TriggerFactory().createInstance(data.triggers.type)
+                this.actions=new ActionFactory().createInstance(data.actions.type)
+
+               const auth=await this.authentication.createAuth(data.id,data,this.client)
+
+                const trigger=await this.triggers.createTrigger(app.id,data.triggers,tx);
                 
-                await this.triggers.createTrigger(app.id,data.triggers,tx);
-                
-                await this.actions.createAction(app.id,data.actions,tx)
+                const action=await this.actions.createAction(app.id,data.actions,tx)
+
+                if(JSON.parse(action).status!=Status.SUCCESS || JSON.parse(trigger).status!=Status.SUCCESS || JSON.parse(auth).status!=Status.SUCCESS){
+                    return JSON.stringify({
+                        message:"Something Went Wrong",
+                        data:{},
+                        error:{
+                            auth:auth,
+                            trigger:trigger,
+                            action:action
+                        },
+                        status:Status.PROCESSED_NOT_SUCCESSFUL
+                    })
+
+                }
 
                 console.log("Application registered successfully.");
                 return app;

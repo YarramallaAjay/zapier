@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import session from "express-session";
 import google from "./routes/google";
 import integrator from "./routes/ApplicationRoute"
+import { UserDetails } from "@repo/types/src/UserSession";
 
 
 export async function main(){
@@ -37,7 +38,14 @@ export async function main(){
     app.use("/user",userRouter);
     app.use("/auth",google)
     app.use("/integrator",integrator);
-    app.use("/",zapRouter)
+    app.use("/zap",zapRouter)
+    app.get("/",async(req,res)=>{
+      const userId=await req.body.userId
+      console.log("ID:"+userId)
+      const user=await UserDetails.getUser(userId)
+      res.status(200).json(user)
+      return;
+    })
    
 
     app.listen(3001,()=>{

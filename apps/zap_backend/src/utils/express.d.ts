@@ -1,4 +1,4 @@
-import { UserBase } from "@repo/types/dist/UserSession";
+import { UserBase } from "@repo/types/src/UserSession";
 declare global {
   namespace Express {
     interface Request {
