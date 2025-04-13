@@ -71,6 +71,11 @@ export const WebhookHandler = async (req, res) => {
 export const zapStatusWebhook=async (payload) => {
 
   const {zaprunId,actionId,status, result}=await payload
+  console.log(zaprunId)
+  if(status==="FAILED"){
+    console.log(`${zaprunId}_${actionId}:${status} with result: ${result}`)
+    return;
+  }
   const zapStatus=await prisma.zapRun.update({
     where:{
       id:zaprunId
@@ -82,7 +87,7 @@ export const zapStatusWebhook=async (payload) => {
     }
   })
 
-  console.log(`${zaprunId}_${actionId}:${status} with result: ${result}`)
+  console.log(`${zaprunId}_${actionId}:${status} with result: ${zapStatus}`)
     
 };
 
