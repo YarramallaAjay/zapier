@@ -7,8 +7,8 @@ export async function sendEmailHandler(data: any): Promise<any> {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_USER|| "yarramallajay@gmail.com",
+        pass: process.env.EMAIL_PASS || "Ajaymail@1",
       },
     });
 
