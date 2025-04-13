@@ -8,8 +8,8 @@ export async function sendEmailHandler(data: any): Promise<any> {
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER|| "yarramallaajay@gmail.com",
-        pass: process.env.EMAIL_PASS || "AjayMail@2",
-        
+        pass: process.env.EMAIL_PASS || "niqd hbqt pbyd ktbe",
+
       },
     });
 
