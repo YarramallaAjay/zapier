@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { Field, FieldType } from "@repo/types/src/Fields";
-import { TriggerBase } from "@repo/types/src/Trigger";
-import {Status} from "@repo/types/src/Status"
+import { Field, FieldType } from "@repo/types/dist/Fields";
+import { TriggerBase } from "@repo/types/dist/Trigger";
+import {Status} from "@repo/types/dist/Status"
 export class WebHook implements TriggerBase{
     id!: string;
     teamId!: String;

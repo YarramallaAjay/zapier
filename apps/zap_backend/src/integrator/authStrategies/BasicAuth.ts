@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { AuthenticationBase } from "@repo/types/src/Authentication";
+import { AuthenticationBase } from "@repo/types/dist/Authentication";
 
 export class BasicAuth implements AuthenticationBase {
   type: "OAuth" | "Basic" | "JWT" = "Basic";

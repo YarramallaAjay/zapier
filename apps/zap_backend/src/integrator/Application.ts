@@ -2,11 +2,11 @@ import { PrismaClient } from "@prisma/client";
 import { AuthFactory } from "./authStrategies/authFactory";
 import { TriggerFactory } from "./Triggers/TriggerFactory";
 import { ActionFactory } from "./Actions/ActionFactory";
-import { AuthenticationBase } from "@repo/types/src/Authentication";
-import { TriggerBase } from "@repo/types/src/Trigger";
-import { ActionBase } from "@repo/types/src/Actions";
+import { AuthenticationBase } from "@repo/types/dist/Authentication";
+import { TriggerBase } from "@repo/types/dist/Trigger";
+import { ActionBase } from "@repo/types/dist/Actions";
 import { z } from "zod";
-import { Status } from "@repo/types/src/Status";
+import { Status } from "@repo/types/dist/Status";
 import { stringify } from "uuid";
 
 // export type ApplicationType =z.object( {
@@ -158,7 +158,7 @@ export abstract class Application {
       
     }
 
-    async addAction(appId: number, data: any) {
+    async addAction(appId: string, data: any) {
         return this.client.$transaction(async (tx) => {
             try {
                

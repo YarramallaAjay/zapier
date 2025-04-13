@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { AuthenticationBase } from "@repo/types/src/Authentication";
-import { Status } from "@repo/types/src/Status";
+import { AuthenticationBase } from "@repo/types/dist/Authentication";
+import { Status } from "@repo/types/dist/Status";
 
 export class GoogleAuth implements AuthenticationBase {
   type: "OAuth" | "Basic" | "JWT" = "OAuth";

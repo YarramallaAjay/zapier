@@ -1,16 +1,18 @@
 {
   "name": "@repo/types",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Shared TypeScript types for the monorepo",
   "dependencies": {
+    "@prisma/client": "^6.6.0",
     "@repo/types": "file:",
-    "@repo/typescript-config":"workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "prisma": "^6.6.0"
   }
 }

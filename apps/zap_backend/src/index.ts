@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 import session from "express-session";
 import google from "./routes/google";
 import integrator from "./routes/ApplicationRoute"
-import { UserDetails } from "@repo/types/src/UserSession";
+import { UserDetails } from "@repo/types/dist/UserSession";
 
 
 export async function main(){

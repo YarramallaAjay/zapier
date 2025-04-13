@@ -1,22 +1,24 @@
 import { PrismaClient, Zap, AvailableTriggers, AvailableActions } from "@prisma/client";
 import { response } from "../utils/Response";
 
+
 const prisma = new PrismaClient();
 
 export const ZapHandler = {
+
   async createZap(userId: string, inputData: any, res: any) {
     try {
         const inputtrigger=await inputData.trigger
         const inputactions=await inputData.actions
       const trigger = await prisma.availableTriggers.findFirst({ where: { name: inputtrigger.name }});
-      if (!trigger) return response(res, 404, "Trigger not found");
+      if (!trigger) return response(res, 404, "Trigger not found",{},{});
 
       const validActions = await prisma.availableActions.findMany({
         where: { id: { in: inputactions } },
       });
 
       if (validActions.length !== inputactions.length) {
-        return response(res, 400, "Some actions not found");
+        return response(res, 400, "Some actions not found",{},{});
       }
 
       const result = await prisma.$transaction(async (tx) => {
@@ -41,7 +43,7 @@ export const ZapHandler = {
         // if(trigger.type=="WebHook"){
         //     const webhookUrl = `/hooks/catch/${userId}/${zap.id}`;
         // }
-                    const webhookUrl = `/hooks/catch/${userId}/${zap.id}`;
+                    const webhookUrl = `localhost/hooks/catch/${userId}/${zap.id}`;
 
 
         const createdTrigger = await tx.trigger.create({
@@ -59,9 +61,10 @@ export const ZapHandler = {
         return { ...zap, trigger: createdTrigger, webhookUrl };
       });
 
-      return response(res, 201, "Zap created successfully", result);
+      return response(res, 201, "Zap created successfully", result,{});
     } catch (error) {
-      return response(res, 500, "Failed to create zap", error);
+      console.log(error)
+      response(res, 500, "Failed to create zap",{}, error);
     }
   },
 
@@ -77,18 +80,18 @@ export const ZapHandler = {
         },
       });
 
-      return response(res, 200, "Zap updated successfully", updatedZap);
+      return response(res, 200, "Zap updated successfully", updatedZap,{});
     } catch (error) {
-      return response(res, 500, "Failed to update zap", error);
+      return response(res, 500, "Failed to update zap", {},error);
     }
   },
 
   async deleteZap(zapId: string, res: any) {
     try {
       await prisma.zap.delete({ where: { id: zapId } });
-      return response(res, 200, "Zap deleted successfully");
+      return response(res, 200, "Zap deleted successfully",{},{});
     } catch (error) {
-      return response(res, 500, "Failed to delete zap", error);
+      return response(res, 500, "Failed to delete zap",{}, error);
     }
   },
 };

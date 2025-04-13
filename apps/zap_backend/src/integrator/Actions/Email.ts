@@ -1,9 +1,9 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { ActionBase } from "@repo/types/src/Actions";
-import { Field, FieldType } from "@repo/types/src/Fields";
-import { Status } from "@repo/types/src/Status";
+import { ActionBase } from "@repo/types/dist/Actions";
+import { Field, FieldType } from "@repo/types/dist/Fields";
+import { Status } from "@repo/types/dist/Status";
 
-export class Email implements ActionBase {
+export class Email  {
     id!: string;
     name!: string;
     email!: string;
@@ -25,7 +25,7 @@ export class Email implements ActionBase {
         ];
     }
 
-    async createAction(appId: string, action: any, tx?: Prisma.TransactionClient) {
+    async createAction(appId: string, action: any, tx?: Prisma.TransactionClient):Promise<any> {
         const db = tx || this.client;
         try {
             const created = await db.availableActions.create({
@@ -56,7 +56,7 @@ export class Email implements ActionBase {
         }
     }
 
-    async deleteAction(actionId: string, tx?: Prisma.TransactionClient) {
+    async deleteAction(actionId: string, tx?: Prisma.TransactionClient):Promise<any> {
         const db = tx || this.client;
         try {
             await db.availableActions.delete({
@@ -81,7 +81,7 @@ export class Email implements ActionBase {
         }
     }
 
-    async updateAction(actionId: string, fields: Partial<ActionBase>[], tx?: Prisma.TransactionClient) {
+    async updateAction(actionId: string, fields: Partial<ActionBase>[], tx?: Prisma.TransactionClient):Promise<any> {
         const db = tx || this.client;
         try {
             for (const field of fields) {
@@ -109,7 +109,7 @@ export class Email implements ActionBase {
         }
     }
 
-    async getActions(appId: string, tx?: Prisma.TransactionClient) {
+    async getActions(appId: string, tx?: Prisma.TransactionClient):Promise<any> {
         const db = tx || this.client;
         try {
             const actions = await db.availableActions.findMany({
@@ -142,7 +142,7 @@ export class Email implements ActionBase {
         }
     }
 
-    async getActionById(actionId: string, tx?: Prisma.TransactionClient) {
+    async getActionById(actionId: string, tx?: Prisma.TransactionClient):Promise<any> {
         const db = tx || this.client;
         try {
             const action = await db.availableActions.findFirst({

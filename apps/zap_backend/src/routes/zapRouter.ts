@@ -3,7 +3,7 @@ import { ZapSchema } from "../utils/zodSchema";
 import { AuthUser } from "../middlewares/userAuthMiddleware";
 import { ZapHandler } from "../handlers/zapHandler";
 import { response } from "../utils/Response";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 
 const router: Router = express.Router();
 router.use(express.json());
@@ -41,8 +41,8 @@ router.post("/newzap", AuthUser, async (req, res) => {
     response(res, 401, "User not authenticated");
   }
   else{
-    const { trigId, triggername, description, actions } = req.body;
-    if (!trigId || !triggername || !description || !actions)
+    const { name, trigger, actions } = req.body;
+    if ( !name ||!trigger || !actions)
        response(res, 400, "Missing required fields", { body: req.body });
   
      ZapHandler.createZap(String(user.id), req.body, res);

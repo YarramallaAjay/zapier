@@ -4,8 +4,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { PrismaClient } from "@prisma/client";
 import { Auth } from "../middlewares/Auth";
-import { UserDetails } from "@repo/types/src/UserSession";
-import { TeamBase } from "@repo/types/src/Team";
+import { UserDetails } from "@repo/types/dist/UserSession";
+import { TeamBase } from "@repo/types/dist/Team";
 
 
 const prisma = new PrismaClient();

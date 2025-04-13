@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "app/generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String       @id @default(uuid())
+  name     String
+  password String
+  email    String       @unique
+  teamId   String?
+  tokens   TokenStore[]
+  team     Team?        @relation(fields: [teamId], references: [id])
+  zaps     Zap[]
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  metadata    Json     @default("{}")
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  createdById String   @unique
+  apps        App[]
+  members     User[]
+}
+
+model App {
+  name        String
+  description String
+  teamId      String
+  id          String              @id @default(uuid())
+  team        Team                @relation(fields: [teamId], references: [id])
+  authMethods AuthMethods[]
+  actions     AvailableActions[]
+  triggers    AvailableTriggers[]
+}
+
+model AuthMethods {
+  id            String               @id @default(uuid())
+  appId         String
+  authId        String
+  metadata      Json                 @default("{}")
+  app           App                  @relation(fields: [appId], references: [id])
+  availableAuth AvailableAuthMethods @relation(fields: [authId], references: [id])
+}
+
+model AvailableAuthMethods {
+  name        String
+  provider    String
+  description String
+  metadata    Json          @default("{}")
+  id          String        @id @default(uuid())
+  authMethods AuthMethods[]
+}
+
+model Zap {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  metadata    Json     @default("{}")
+  userId      String
+  image       String?
+  actions     Action[]
+  trigger     Trigger?
+  user        User     @relation(fields: [userId], references: [id])
+  zapRuns     ZapRun[]
+}
+
+model Trigger {
+  id                 String            @id @default(uuid())
+  name               String
+  description        String
+  zapId              String            @unique
+  metadata           Json              @default("{}")
+  availableTriggerId String
+  available          AvailableTriggers @relation(fields: [availableTriggerId], references: [id])
+  zap                Zap               @relation(fields: [zapId], references: [id])
+}
+
+model Action {
+  id           String           @id @default(uuid())
+  name         String
+  description  String
+  metadata     Json             @default("{}")
+  zapId        String
+  sortingOrder Int              @default(0)
+  actionType   String
+  available    AvailableActions @relation(fields: [actionType], references: [id])
+  zap          Zap              @relation(fields: [zapId], references: [id])
+}
+
+model AvailableTriggers {
+  id             String    @id @default(uuid())
+  name           String
+  description    String
+  metadata       Json      @default("{}")
+  configMetadata Json      @default("{}")
+  type           String
+  appId          String
+  app            App       @relation(fields: [appId], references: [id])
+  triggers       Trigger[]
+}
+
+model AvailableActions {
+  id             String   @id @default(uuid())
+  name           String
+  description    String
+  metadata       Json     @default("{}")
+  configMetadata Json     @default("{}")
+  type           String
+  appId          String
+  actions        Action[]
+  app            App      @relation(fields: [appId], references: [id])
+}
+
+model ZapRun {
+  id           String        @id @default(uuid())
+  metadata     Json          @default("{}")
+  zapId        String
+  zap          Zap           @relation(fields: [zapId], references: [id])
+  ZapRunOutBox ZapRunOutBox?
+}
+
+model ZapRunOutBox {
+  id       String @id @default(uuid())
+  zaprunId String @unique
+  ZapRun   ZapRun @relation(fields: [zaprunId], references: [id])
+}
+
+model TokenStore {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  provider     String
+  updatedAt    DateTime @updatedAt
+  accessToken  String
+  refreshToken String
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+}
