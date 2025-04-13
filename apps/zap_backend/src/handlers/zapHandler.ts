@@ -43,7 +43,7 @@ export const ZapHandler = {
         // if(trigger.type=="WebHook"){
         //     const webhookUrl = `/hooks/catch/${userId}/${zap.id}`;
         // }
-                    const webhookUrl = `localhost/hooks/catch/${userId}/${zap.id}`;
+        const webhookUrl = `localhost/hooks/catch/${userId}/${zap.id}`;
 
 
         const createdTrigger = await tx.trigger.create({
