@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client"
 import { Request, Response } from "express"
 import { v4 as uuidv4 } from 'uuid'
 
+const zapProgressCache: Map<string, any> = new Map();
+
 const prisma = new PrismaClient()
 
 export const WebhookHandler = async (req, res) => {
@@ -42,7 +44,7 @@ export const WebhookHandler = async (req, res) => {
             order: action.sortingOrder,
           })),
           receivedAt: new Date().toISOString(),
-          webhookPayload
+          // webhookPayload
         }
       }
     })
@@ -66,29 +68,81 @@ export const WebhookHandler = async (req, res) => {
      return
   }
 }
+ // In-memory cache for zap progress
 
+export const zapStatusWebhook = async (payload: {
+  zapRunId: string;
+  actionId: string;
+  status: "SUCCESS" | "FAILED";
+  result: any;
+}): Promise<void> => {
+  const { zapRunId, actionId, status, result } = payload;
 
-export const zapStatusWebhook=async (payload) => {
+  try {
+    console.log(`[zapStatusWebhook] Processing action ${actionId} with status ${status}`);
 
-  const {zaprunId,actionId,status, result}=await payload
-  console.log(zaprunId)
-  if(status==="FAILED"){
-    console.log(`${zaprunId}_${actionId}:${status} with result: ${result}`)
-    return;
-  }
-  const zapStatus=await prisma.zapRun.update({
-    where:{
-      id:zaprunId
-    },
-    data:{
-      metadata:{
-        status:"FINISHED"
-      }
+    // Update the action's status in the database
+    await prisma.zapRun.update({
+      where: { id: zapRunId },
+      data: {
+        metadata: {
+          update: {
+            actions: {
+              update: {
+                where: { actionId },
+                data: {
+                   status, result },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Check if all actions are processed
+    const zapRun = await prisma.zapRun.findUnique({
+      where: { id: zapRunId },
+      include: { zap: { include: { actions: true } } },
+    });
+
+    if (!zapRun || !zapRun.zap) {
+      console.error(`[zapStatusWebhook] ZapRun or Zap not found for zapRunId ${zapRunId}`);
+      return;
     }
-  })
 
-  console.log(`${zaprunId}_${actionId}:${status} with result: ${zapStatus}`)
-    
+    const allActions = zapRun.zap.actions;
+    const processedActions = allActions.filter((action) => (action.metadata as any).status !== "PENDING");
+
+    // If all actions are processed, update the zap's status
+    if (processedActions.length === allActions.length) {
+      const zapStatus = processedActions.some((action) => (action.metadata as any).status === "FAILED")
+        ? "FAILED"
+        : "SUCCESS";
+
+      // Update the zap's status in the database
+      await prisma.zapRun.update({
+        where: { id: zapRunId },
+        data: {
+          metadata: {
+            update: { status: zapStatus },
+          },
+        },
+      });
+
+      // Notify the frontend with the zap's final status
+      console.log(`[zapStatusWebhook] All actions processed for zapRunId ${zapRunId}. Final status: ${zapStatus}`);
+      // Notify frontend (e.g., via WebSocket or HTTP)
+    } else {
+      // Cache the zap's progress in memory
+      zapProgressCache.set(zapRunId, {
+        zapRunId,
+        actions: processedActions,
+      });
+      console.log(`[zapStatusWebhook] Cached progress for zapRunId ${zapRunId}`);
+    }
+  } catch (error) {
+    console.error(`[zapStatusWebhook] Error processing zapRunId ${zapRunId}:`, error);
+  }
 };
 
 

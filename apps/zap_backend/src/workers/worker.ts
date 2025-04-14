@@ -56,56 +56,56 @@ export class KafkaConsumer {
   }
 
   async processZapRun(zapRunId: string) {
-    // Retrieve the zap run details and associated zap & actions
     const zapRun = await this.client.zapRun.findUnique({
       where: { id: zapRunId },
-      include: { zap: { include: { actions: {
-        include:{
-          available:true
-        }
-      } } } },
+      include: { zap: { include: { actions: { orderBy: { sortingOrder: "asc" }, include: { available: true } } } } },
     });
-
+  
     if (!zapRun || !zapRun.zap) {
       throw new Error("ZapRun or Zap not found");
     }
-
-    // Execute all actions in parallel; we assume each action has a field 'type' and optional 'inputData'
+  
     const actions = zapRun.zap.actions;
-    const actionPromises = actions.map((action) =>
-      this.executeAction(zapRunId, action.id, action.available.type as ActionType, action.metadata) // using metadata or a dedicated field for input
-    );
-
-    await Promise.allSettled(actionPromises);
-
-    // Optionally, update the final status of the zap run after all actions complete
-    // e.g. if any action failed, mark as "PARTIAL", otherwise "SUCCESS"
-    // This update might also be triggered by a separate Kafka consumer
+  
+    for (const action of actions) {
+      try {
+        console.log(`[KafkaConsumer] Executing action ${action.id} for zapRunId ${zapRunId}`);
+        const result = await this.executeAction(zapRunId, action.id, action.available.type as ActionType, action.metadata);
+        console.log(`[KafkaConsumer] Action ${action.id} succeeded with result:`, result);
+      } catch (error) {
+        console.error(`[KafkaConsumer] Action ${action.id} failed:`, error);
+        await this.notifyWebhook({
+          zapRunId,
+          actionId: action.id,
+          status: "FAILED",
+          result: { error: error },
+        });
+      }
+    }
+  
     console.log(`[KafkaConsumer] Finished processing zapRun ${zapRunId}`);
   }
-
-
-async executeAction(zapRunId: string, actionId: string, type: ActionType, inputData: any) {
-  try {
-    let result: any;
-    switch (type.toLowerCase()) {
-      case "send_email":
-        result = await sendEmailHandler(inputData);
-        break;
-      case "send_sol_transaction":
-        result = await sendSolTransactionHandler(inputData);
-        break;
-      default:
-        throw new Error("Unsupported action type: " + type);
+  
+  async executeAction(zapRunId: string, actionId: string, type: ActionType, inputData: any) {
+    try {
+      let result: any;
+      switch (type.toLowerCase()) {
+        case "send_email":
+          result = await sendEmailHandler(inputData);
+          break;
+        case "send_sol_transaction":
+          result = await sendSolTransactionHandler(inputData);
+          break;
+        default:
+          throw new Error("Unsupported action type: " + type);
+      }
+  
+      await this.notifyWebhook({ zapRunId, actionId, status: "SUCCESS", result });
+    } catch (error) {
+      console.error(`[executeAction] Action ${actionId} failed:`, error);
+      throw error;
     }
-
-    // Notify webhook handler with success status
-    await this.notifyWebhook({ zapRunId, actionId, status: "SUCCESS", result });
-  } catch (err: any) {
-    console.error(`[executeAction] Action ${actionId} failed:`, err);
-    await this.notifyWebhook({ zapRunId, actionId, status: "FAILED", result: { error: err.message } });
   }
-}
 
       
 
