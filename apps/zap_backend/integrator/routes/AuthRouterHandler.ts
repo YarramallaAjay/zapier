@@ -1,4 +1,4 @@
-import { Auth } from "../middlewares/Auth";
+import { Auth } from "../middlewares/Auth.js";
 import { PrismaClient } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Express from "express";
@@ -182,6 +182,8 @@ router.get("/apps/:id", Auth, async (req, res) => {
 // Get Available Auth Methods
 router.get("/auth-methods", Auth, async (req, res) => {
   try {
+    console.log(req)
+
     const methods = await prisma.availableAuthMethods.findMany();
     res.json({ methods });
   } catch (error) {

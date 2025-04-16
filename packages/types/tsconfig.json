@@ -1,11 +1,10 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "./dist", // Output directory for compiled files
-    "rootDir": "./src", // Root directory for source files
-    "declaration": true, // Emit .d.ts files
-    "declarationMap": true, // Emit .d.ts.map files for debugging
-    "emitDeclarationOnly": true // Only emit type declarations, no JavaScript
+    "lib": ["ES2020", "DOM"],
+    "outDir": "dist",
+    "rootDir": "src"
   },
-  "include": ["src/**/*"] // Include all files in the src directory
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

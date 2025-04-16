@@ -4,7 +4,7 @@ import { TriggerBase } from "@repo/types/dist/Trigger";
 import {Status} from "@repo/types/dist/Status"
 export class WebHook implements TriggerBase{
     id!: string;
-    teamId!: String;
+    teamId!: string;
     name!: string;
     description!: string;
     url!: string;
@@ -58,7 +58,7 @@ export class WebHook implements TriggerBase{
     async deleteTrigger (trigger:any, tx?:Prisma.TransactionClient):Promise<any> {
         const db=tx || this.client;
         try{
-            const _del=await db.availableTriggers.delete({
+            await db.availableTriggers.delete({
                 where:{
                     id:trigger.id
                     }

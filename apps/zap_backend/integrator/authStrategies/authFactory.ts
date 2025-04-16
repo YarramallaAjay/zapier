@@ -6,7 +6,7 @@ export class AuthFactory{
     constructor(){
         
     }
-    createInstance(type:String){
+    createInstance(type:string){
         switch(type){
             case 'oAuth':{
                 return new GoogleAuth()

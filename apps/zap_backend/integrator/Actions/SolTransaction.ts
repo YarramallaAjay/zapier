@@ -73,6 +73,7 @@ export class SolTransaction implements ActionBase{
             return actions;
         } catch (error) {
             console.error("Error retrieving actions:", error);
+            return;
         }
     }
 
@@ -86,6 +87,7 @@ export class SolTransaction implements ActionBase{
             return action;
         } catch (error) {
             console.error("Error retrieving action:", error);
+            return;
         }
     }
 

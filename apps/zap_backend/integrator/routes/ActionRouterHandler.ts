@@ -9,6 +9,8 @@ router.use(Auth)
 // Get all available actions
 router.get("/", async (req, res) => {
   try {
+    console.log(req)
+
     const actions = await prisma.availableActions.findMany({
 
     });

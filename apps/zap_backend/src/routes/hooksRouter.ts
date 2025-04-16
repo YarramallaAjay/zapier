@@ -1,13 +1,12 @@
-import express, { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { WebhookHandler } from "../handlers/WebhookHandler";
+import express from "express";
+// import { PrismaClient } from "@prisma/client";
+import { WebhookHandler } from "@/handlers/WebhookHandler";
 
 const router: express.Router = express.Router();
-const client = new PrismaClient();
 
 
 
-router.post("/catch/:userId/:zapId", WebhookHandler);
+router.post("/catch/:userId/:zapId", WebhookHandler.handleWebhook);
 
 export default router;
 

@@ -11,6 +11,7 @@ router.use(Auth);
 // Get all triggers
 router.get("/", async (req, res) => {
   try {
+    console.log(req)
     const triggers = await prisma.availableTriggers.findMany();
     if (triggers.length === 0) {
       res.status(404).json({ message: "No triggers found", data: {} });

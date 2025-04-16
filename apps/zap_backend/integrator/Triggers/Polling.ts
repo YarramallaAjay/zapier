@@ -4,7 +4,7 @@ import { TriggerBase } from "@repo/types/dist/Trigger";
 
 export class Polling implements TriggerBase{
     id!: string;
-    teamId!: String;
+    teamId!: string;
     name!: string;
     description!: string;
     url!: string;
@@ -107,6 +107,7 @@ export class Polling implements TriggerBase{
 
         }catch(e){
             console.log(e)
+            return
         }
 
     };
@@ -129,6 +130,7 @@ export class Polling implements TriggerBase{
 
         }catch(e){
             console.log(e)
+            return
         }
     };
 

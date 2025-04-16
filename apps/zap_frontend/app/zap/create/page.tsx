@@ -5,215 +5,299 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Loader2, Save, Zap } from "lucide-react"
-import { toast } from "@/hooks/use-toast"
-import { Toaster } from "@/components/ui/toaster"
-
-// Mock data - would be fetched from backend
-const TRIGGERS = [
-  { id: "webhook", name: "Webhook", description: "Trigger when a webhook is received" },
-  { id: "schedule", name: "Schedule", description: "Trigger on a schedule" },
-  { id: "blockchain-event", name: "Blockchain Event", description: "Trigger on blockchain events" },
-  { id: "wallet-change", name: "Wallet Change", description: "Trigger when wallet balance changes" },
-  { id: "nft-event", name: "NFT Event", description: "Trigger on NFT sales or transfers" },
-]
-
-const ACTIONS = [
-  { id: "send-transaction", name: "Send Transaction", description: "Send a blockchain transaction" },
-  { id: "send-notification", name: "Send Notification", description: "Send a notification via email, SMS, etc." },
-  { id: "call-api", name: "Call API", description: "Make an API call to an external service" },
-  { id: "update-database", name: "Update Database", description: "Update a database record" },
-  { id: "mint-nft", name: "Mint NFT", description: "Mint an NFT" },
-]
+import { useAuth } from "@/contexts/auth-context"
+import { appsApi, zapApi } from "@/lib/api"
+import { App, Trigger, Action, Zap } from "@/lib/types"
+import { ArrowLeft, Loader2 } from "lucide-react"
 
 export default function CreateZapPage() {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [zapName, setZapName] = useState("")
-  const [selectedTrigger, setSelectedTrigger] = useState("")
-  const [selectedAction, setSelectedAction] = useState("")
-  const [activeTab, setActiveTab] = useState("trigger")
-  const [isConfigComplete, setIsConfigComplete] = useState(false)
+  const { user } = useAuth()
+  const [step, setStep] = useState(1)
+  const [apps, setApps] = useState<App[]>([])
+  const [triggers, setTriggers] = useState<Trigger[]>([])
+  const [actions, setActions] = useState<Action[]>([])
+  const [selectedApp, setSelectedApp] = useState<string>("")
+  const [selectedTrigger, setSelectedTrigger] = useState<string>("")
+  const [selectedActions, setSelectedActions] = useState<string[]>([])
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  // Check if configuration is complete
   useEffect(() => {
-    setIsConfigComplete(!!zapName && !!selectedTrigger && !!selectedAction)
-  }, [zapName, selectedTrigger, selectedAction])
+    if (!user) {
+      router.push("/login")
+      return
+    }
+    loadApps()
+  }, [user, router])
 
-  const handleSaveProgress = async () => {
-    setIsLoading(true)
-
+  const loadApps = async () => {
     try {
-      // Simulate API call to save progress
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      toast({
-        title: "Progress saved",
-        description: "Your zap configuration has been saved.",
-      })
-    } catch (error) {
-      console.error("Failed to save progress:", error)
-      toast({
-        title: "Error",
-        description: "Failed to save progress. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
+      const response = await appsApi.getApps()
+      if (response.success) {
+        setApps(response.data || [])
+      }
+    } catch (err) {
+      setError("Failed to load apps")
     }
   }
 
-  const handleActivateZap = async () => {
-    if (!isConfigComplete) {
-      toast({
-        title: "Incomplete configuration",
-        description: "Please complete all required fields before activating your zap.",
-        variant: "destructive",
-      })
+  const loadTriggers = async (appId: string) => {
+    try {
+      const response = await appsApi.getAppTriggers(appId)
+      if (response.success) {
+        setTriggers(response.data || [])
+      }
+    } catch (err) {
+      setError("Failed to load triggers")
+    }
+  }
+
+  const loadActions = async (appId: string) => {
+    try {
+      const response = await appsApi.getAppActions(appId)
+      if (response.success) {
+        setActions(response.data || [])
+      }
+    } catch (err) {
+      setError("Failed to load actions")
+    }
+  }
+
+  const handleAppSelect = (appId: string) => {
+    setSelectedApp(appId)
+    setSelectedTrigger("")
+    setSelectedActions([])
+    loadTriggers(appId)
+    loadActions(appId)
+  }
+
+  const handleCreateZap = async () => {
+    if (!selectedTrigger || selectedActions.length === 0) {
+      setError("Please select a trigger and at least one action")
       return
     }
 
-    setIsLoading(true)
-
+    setLoading(true)
     try {
-      // Simulate API call to activate zap
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      toast({
-        title: "Zap activated",
-        description: "Your zap has been successfully activated.",
+      const response = await zapApi.createZap({
+        name,
+        description,
+        triggerId: selectedTrigger,
+        actionIds: selectedActions,
+        isActive: true,
+        status: 'active',
+        runCount: 0,
+        trigger: {
+          name: triggers.find((t) => t.id === selectedTrigger)?.name || '',
+          type: triggers.find((t) => t.id === selectedTrigger)?.type || '',
+        },
+        actions: selectedActions.map((actionId) => {
+          const action = actions.find((a) => a.id === actionId)
+          return {
+            name: action?.name || '',
+            type: action?.type || '',
+          }
+        }),
       })
 
-      // Redirect to dashboard after successful activation
-      setTimeout(() => {
+      if (response.success) {
         router.push("/dashboard")
-      }, 1000)
-    } catch (error) {
-      console.error("Failed to activate zap:", error)
-      toast({
-        title: "Error",
-        description: "Failed to activate zap. Please try again.",
-        variant: "destructive",
-      })
+      } else {
+        setError(response.error || "Failed to create zap")
+      }
+    } catch (err) {
+      setError("Failed to create zap")
     } finally {
-      setIsLoading(false)
+      setLoading(false)
+    }
+  }
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Choose an App</CardTitle>
+              <CardDescription>Select the app you want to connect</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {apps.map((app) => (
+                  <Button
+                    key={app.id}
+                    variant={selectedApp === app.id ? "default" : "outline"}
+                    className="h-auto p-4 flex flex-col items-start"
+                    onClick={() => handleAppSelect(app.id)}
+                  >
+                    <div className="text-2xl mb-2">{app.icon}</div>
+                    <div className="font-medium">{app.name}</div>
+                    <div className="text-sm text-gray-500">{app.description}</div>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )
+
+      case 2:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Configure Trigger</CardTitle>
+              <CardDescription>What will start your zap?</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Select value={selectedTrigger} onValueChange={setSelectedTrigger}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a trigger" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {triggers.map((trigger) => (
+                      <SelectItem key={trigger.id} value={trigger.id}>
+                        {trigger.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedTrigger && (
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium mb-2">Trigger Details</h4>
+                    <p className="text-sm text-gray-500">
+                      {triggers.find((t) => t.id === selectedTrigger)?.description}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )
+
+      case 3:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Configure Actions</CardTitle>
+              <CardDescription>What should happen when your trigger fires?</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {actions.map((action) => (
+                  <div
+                    key={action.id}
+                    className={`p-4 border rounded-lg cursor-pointer ${
+                      selectedActions.includes(action.id)
+                        ? "border-purple-500 bg-purple-50"
+                        : "hover:border-gray-300"
+                    }`}
+                    onClick={() => {
+                      setSelectedActions((prev) =>
+                        prev.includes(action.id)
+                          ? prev.filter((id) => id !== action.id)
+                          : [...prev, action.id]
+                      )
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium">{action.name}</h4>
+                        <p className="text-sm text-gray-500">{action.description}</p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={selectedActions.includes(action.id)}
+                        onChange={() => {}}
+                        className="h-4 w-4 text-purple-500"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )
+
+      case 4:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Finalize Your Zap</CardTitle>
+              <CardDescription>Give your zap a name and description</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Zap Name</Label>
+                  <Input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g., Send Slack notification when new email arrives"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Describe what this zap does"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )
+
+      default:
+        return null
     }
   }
 
   return (
-    <div className="container py-10">
-      <Toaster />
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Create a New Zap</h1>
-          <p className="text-muted-foreground">Configure your workflow automation</p>
+    <div className="container mx-auto p-6">
+      <div className="mb-8">
+        <Button
+          variant="ghost"
+          className="mb-4"
+          onClick={() => (step > 1 ? setStep(step - 1) : router.back())}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <h1 className="text-3xl font-bold">Create a New Zap</h1>
+        <p className="text-gray-600">Step {step} of 4</p>
+      </div>
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg">
+          {error}
         </div>
+      )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Zap Configuration</CardTitle>
-            <CardDescription>Name your zap and configure its trigger and actions</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="zap-name">Zap Name</Label>
-              <Input
-                id="zap-name"
-                placeholder="Enter a name for your zap"
-                value={zapName}
-                onChange={(e) => setZapName(e.target.value)}
-              />
-            </div>
+      {renderStep()}
 
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="trigger">Trigger</TabsTrigger>
-                <TabsTrigger value="action">Action</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="trigger" className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label>Select a Trigger</Label>
-                  <Select value={selectedTrigger} onValueChange={setSelectedTrigger}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a trigger" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TRIGGERS.map((trigger) => (
-                        <SelectItem key={trigger.id} value={trigger.id}>
-                          {trigger.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {selectedTrigger && (
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {TRIGGERS.find((t) => t.id === selectedTrigger)?.description}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex justify-end">
-                  <Button onClick={() => setActiveTab("action")}>Next: Configure Action</Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="action" className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label>Select an Action</Label>
-                  <Select value={selectedAction} onValueChange={setSelectedAction}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an action" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ACTIONS.map((action) => (
-                        <SelectItem key={action.id} value={action.id}>
-                          {action.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {selectedAction && (
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {ACTIONS.find((a) => a.id === selectedAction)?.description}
-                    </p>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={handleSaveProgress} disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Progress
-                </>
-              )}
-            </Button>
-            <Button onClick={handleActivateZap} disabled={isLoading || !isConfigComplete}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <Zap className="mr-2 h-4 w-4" />
-                  Let Zap
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
+      <div className="mt-8 flex justify-end">
+        {step < 4 ? (
+          <Button onClick={() => setStep(step + 1)}>Next</Button>
+        ) : (
+          <Button onClick={handleCreateZap} disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              "Create Zap"
+            )}
+          </Button>
+        )}
       </div>
     </div>
   )

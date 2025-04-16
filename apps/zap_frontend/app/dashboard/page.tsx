@@ -8,59 +8,46 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Plus, Zap, Info, Clock, CheckCircle, XCircle } from "lucide-react"
-
-// Mock data - would be fetched from backend
-const ZAPS = [
-  {
-    id: "zap-1",
-    name: "Monitor ETH Price",
-    trigger: "Schedule",
-    action: "Send Notification",
-    status: "active",
-    lastRun: "2023-04-14T10:30:00Z",
-    lastRunStatus: "success",
-    runCount: 42,
-  },
-  {
-    id: "zap-2",
-    name: "Track NFT Sales",
-    trigger: "NFT Event",
-    action: "Call API",
-    status: "active",
-    lastRun: "2023-04-14T08:15:00Z",
-    lastRunStatus: "error",
-    runCount: 17,
-  },
-  {
-    id: "zap-3",
-    name: "Wallet Balance Alert",
-    trigger: "Wallet Change",
-    action: "Send Notification",
-    status: "paused",
-    lastRun: "2023-04-13T22:45:00Z",
-    lastRunStatus: "success",
-    runCount: 8,
-  },
-]
+import { useAuth } from "@/contexts/auth-context"
+import { zapApi, appsApi } from "@/lib/api"
+import { Zap as ZapType, App } from "@/lib/types"
 
 export default function DashboardPage() {
-  const [zaps, setZaps] = useState(ZAPS)
-  const [selectedZap, setSelectedZap] = useState<(typeof ZAPS)[0] | null>(null)
+  const { user } = useAuth()
+  const [zaps, setZaps] = useState<ZapType[]>([])
+  const [apps, setApps] = useState<App[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [selectedZap, setSelectedZap] = useState<(typeof zaps)[0] | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate API call to fetch zaps
-    const fetchZaps = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setZaps(ZAPS)
-      setIsLoading(false)
+    if (user) {
+      loadData()
     }
+  }, [user])
 
-    fetchZaps()
-  }, [])
+  const loadData = async () => {
+    try {
+      const [zapsResponse, appsResponse] = await Promise.all([
+        zapApi.getZaps(),
+        appsApi.getApps(),
+      ])
 
-  const handleZapClick = (zap: (typeof ZAPS)[0]) => {
+      if (zapsResponse.success) {
+        setZaps(zapsResponse.data || [])
+      }
+      if (appsResponse.success) {
+        setApps(appsResponse.data || [])
+      }
+      setLoading(false)
+    } catch (err) {
+      setError("Failed to load data")
+      setLoading(false)
+    }
+  }
+
+  const handleZapClick = (zap: (typeof zaps)[0]) => {
     setSelectedZap(zap)
     setIsDialogOpen(true)
   }
@@ -69,131 +56,139 @@ export default function DashboardPage() {
     return new Date(dateString).toLocaleString()
   }
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    )
+  }
+
   return (
-    <div className="container py-10">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Manage your zaps and automations</p>
+    <div className="container mx-auto p-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Welcome back, {user?.name}</h1>
+        <p className="text-gray-600">Manage your automations and apps</p>
+      </div>
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg">
+          {error}
         </div>
-        <Button asChild>
-          <Link href="/zap/create">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Zap
-          </Link>
-        </Button>
-      </div>
+      )}
 
-      <div className="grid gap-6 md:grid-cols-3 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Zaps Section */}
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Zaps</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{zaps.length}</div>
-            <p className="text-xs text-muted-foreground">{zaps.filter((z) => z.status === "active").length} active</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Executions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{zaps.reduce((acc, zap) => acc + zap.runCount, 0)}</div>
-            <p className="text-xs text-muted-foreground">Across all zaps</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round((zaps.filter((z) => z.lastRunStatus === "success").length / zaps.length) * 100)}%
-            </div>
-            <p className="text-xs text-muted-foreground">Last execution success rate</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Zaps</CardTitle>
-          <CardDescription>View and manage your automated workflows</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="flex flex-col items-center gap-2">
-                <Zap className="h-8 w-8 animate-pulse text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">Loading your zaps...</p>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Your Zaps</CardTitle>
+                <CardDescription>Manage your automations</CardDescription>
               </div>
-            </div>
-          ) : zaps.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <div className="flex flex-col items-center gap-2 max-w-md text-center">
-                <Zap className="h-8 w-8 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">No zaps yet</h3>
-                <p className="text-sm text-muted-foreground">
-                  Create your first zap to start automating your web3 workflows.
-                </p>
-                <Button asChild className="mt-4">
-                  <Link href="/zap/create">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Zap
-                  </Link>
+              <Link href="/zap/create">
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Zap
                 </Button>
-              </div>
+              </Link>
             </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Trigger</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Last Run</TableHead>
-                  <TableHead>Details</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+          </CardHeader>
+          <CardContent>
+            {zaps.length === 0 ? (
+              <div className="text-center py-8">
+                <Zap className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-2 text-sm font-medium text-gray-900">No zaps</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Get started by creating a new zap.
+                </p>
+                <div className="mt-6">
+                  <Link href="/zap/create">
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Zap
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
                 {zaps.map((zap) => (
-                  <TableRow
-                    key={zap.id}
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => handleZapClick(zap)}
-                  >
-                    <TableCell className="font-medium">{zap.name}</TableCell>
-                    <TableCell>{zap.trigger}</TableCell>
-                    <TableCell>{zap.action}</TableCell>
-                    <TableCell>
-                      <Badge variant={zap.status === "active" ? "default" : "secondary"}>
-                        {zap.status === "active" ? "Active" : "Paused"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {zap.lastRunStatus === "success" ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <XCircle className="h-4 w-4 text-red-500" />
-                        )}
-                        <span className="text-sm">{formatDate(zap.lastRun)}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="icon">
-                        <Info className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  <Link key={zap.id} href={`/zap/${zap.id}`}>
+                    <Card className="hover:bg-gray-50 cursor-pointer">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-medium">{zap.name}</h3>
+                            <p className="text-sm text-gray-500">{zap.description}</p>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {zap.isActive ? "Active" : "Inactive"}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Apps Section */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Connected Apps</CardTitle>
+                <CardDescription>Manage your app integrations</CardDescription>
+              </div>
+              <Link href="/applications">
+                <Button variant="outline">View All</Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {apps.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="mx-auto h-12 w-12 text-gray-400">📱</div>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">No apps</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Connect your first app to get started.
+                </p>
+                <div className="mt-6">
+                  <Link href="/applications">
+                    <Button variant="outline">Connect Apps</Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {apps.slice(0, 3).map((app) => (
+                  <div key={app.id} className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      {app.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{app.name}</h3>
+                      <p className="text-sm text-gray-500">{app.description}</p>
+                    </div>
+                  </div>
+                ))}
+                {apps.length > 3 && (
+                  <div className="text-center">
+                    <Link href="/applications">
+                      <Button variant="link">
+                        View {apps.length - 3} more apps
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Zap Details Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

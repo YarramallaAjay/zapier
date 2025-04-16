@@ -1,35 +1,33 @@
 // EmailHandler.ts
 import nodemailer from "nodemailer";
+import { Apiresponse } from "@/utils/Response";
+import { Request, Response } from "express";
 
-export async function sendEmailHandler(data: any): Promise<any> {
-  try {
-    // Configure the transporter (using Gmail as an example)
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER|| "yarramallaajay@gmail.com",
-        pass: process.env.EMAIL_PASS || "niqd hbqt pbyd ktbe",
+export class EmailHandler {
+  static async sendEmail(req: Request, res: Response) {
+    try {
+      const { to, subject, text } = req.body;
 
-      },
-    });
+      // Create a transporter
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
 
-    // Setup email options
-    const mailOptions = {
-      from: data.from,
-      to: data.to,     
-      subject: data.subject,
-      text: data.body, 
-      cc: data.cc,
-      bcc: data.bcc,
-    };
+      // Send the email
+      const info = await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to,
+        subject,
+        text,
+      });
 
-    // Send email
-    const info = await transporter.sendMail(mailOptions);
-    console.log("[EmailHandler] Email sent:", info.response);
-
-    return { message: "Email sent successfully", info };
-  } catch (error) {
-    console.error("[EmailHandler] Error sending email:", error);
-    throw error;
+      Apiresponse.success(res, info, "Email sent successfully");
+    } catch (error) {
+      Apiresponse.error(res, "Failed to send email", 500, error);
+    }
   }
 }

@@ -38,7 +38,7 @@ router.get("/profile", async(req, res) => {
 // 🔹 Logout User (Clear correct cookie)
 router.get("/logout", (req, res) => {
   req.session.destroy((err) => {
-    if (err) return res.status(500).json({ error: "Logout failed" });
+    if (err)  res.status(500).json({ error: "Logout failed" });
     res.clearCookie("zapper"); // Fixed cookie name
     res.json({ message: "Logged out successfully" });
   });

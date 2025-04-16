@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import  {UserDetails}  from "@repo/types/dist/UserSession";
-import { JWT_SECRET } from '../config';
+import  {UserDetails}  from "@repo/types/dist/UserSession.js";
+import { JWT_SECRET } from '@/config';
 
 // Replace with your secret key
 const jwtSecret = JWT_SECRET || "jwtSecret";
@@ -31,7 +31,7 @@ export async function AuthUser(req: Request, res: Response, next: NextFunction) 
       }
 
     try {
-      const user = await UserDetails.getUser(decoded.userId);
+      const user:UserDetails = await UserDetails.getUser(decoded.userId);
       if (!user) {
          res.status(404).json({ message: 'User not found' });
          return;

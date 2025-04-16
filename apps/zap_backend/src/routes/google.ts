@@ -41,6 +41,7 @@ router.get("/logout", (req, res) => {
     if (err) return res.status(500).json({ error: "Logout failed" });
     res.clearCookie("zapper"); // Fixed cookie name
     res.json({ message: "Logged out successfully" });
+    return;
   });
 });
 

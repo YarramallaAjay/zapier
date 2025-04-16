@@ -14,15 +14,6 @@ export class GoogleAuth implements AuthenticationBase {
 
   constructor() {}
 
-  private formatResponse(
-    message: string,
-    data: any = {},
-    error: any = {},
-    status: Status
-  ) {
-    return { message, data, error, status };
-  }
-
   async createAuth(appId: string, data: any, tx?: Prisma.TransactionClient): Promise<any> {
     const prisma = tx || new PrismaClient();
 

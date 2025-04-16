@@ -1,6 +1,7 @@
 import { PrismaClient, Zap } from "@prisma/client";
 import { TeamBase } from "./Team";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { User } from './User';
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,18 @@ export interface UserBase {
   createdAt: string;
   updatedAt: string;
   Zaps: Zap[] | {};
+}
+
+export interface UserDetails {
+  id: string;
+  email: string;
+  name: string;
+  image?: string;
+}
+
+export interface UserSession {
+  user: User;
+  expires: string;
 }
 
 export class UserDetails implements UserBase {
@@ -46,11 +59,8 @@ export class UserDetails implements UserBase {
         UserDetails.instance &&
         UserDetails.instance.id === userId
       ) {
-        console.log("Returning cached user details...");
         return UserDetails.instance;
       }
-  
-      console.log("Fetching user details from DB...");
       const user = await prisma.user.findUnique({
         where: { id: userId },
         include: { team: {
@@ -81,7 +91,6 @@ export class UserDetails implements UserBase {
   
       UserDetails.cacheCreatedAt = Date.now();
       console.log("User details fetched and cached successfully.");
-      // Return the user details instance
       return UserDetails.instance;
 
     } catch (e) {

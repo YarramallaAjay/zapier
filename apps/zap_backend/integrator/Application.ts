@@ -5,9 +5,7 @@ import { ActionFactory } from "./Actions/ActionFactory";
 import { AuthenticationBase } from "@repo/types/dist/Authentication";
 import { TriggerBase } from "@repo/types/dist/Trigger";
 import { ActionBase } from "@repo/types/dist/Actions";
-import { z } from "zod";
 import { Status } from "@repo/types/dist/Status";
-import { stringify } from "uuid";
 
 // export type ApplicationType =z.object( {
 //     name: z.string();
@@ -38,9 +36,9 @@ export abstract class Application {
     }
 
     async createApplication(appData:{name:string,description:string,teamId:string}) {
-        return this.client.$transaction(async (tx) => {
+        return this.client.$transaction(async () => {
             try {
-                const app = await tx.app.create({
+                const app = await this.client.app.create({
                     data: {
                         name: appData.name,
                         description: appData.description,
@@ -58,19 +56,19 @@ export abstract class Application {
     }
 
     async updateApplication(appId: string, updateData: any) {
-        return this.client.$transaction(async (tx) => {
+        return this.client.$transaction(async () => {
             try {
                 if (updateData.AppAuth) {
                     this.authentication.updateAuth(appId,updateData.AppAuth);
                 }
                 if (updateData.AppTriggers) {
-                    this.triggers.updateTrigger(appId,updateData.AppTriggers,tx);
+                    this.triggers.updateTrigger(appId,updateData.AppTriggers);
                 }
                 if (updateData.AppActions) {
-                    this.actions.updateAction(appId,updateData.AppActions,tx);
+                    this.actions.updateAction(appId,updateData.AppActions);
                 }
 
-                const updatedApp = await tx.app.update({
+                const updatedApp = await this.client.app.update({
                     where: { id: appId },
                     data: updateData
                 });
@@ -84,9 +82,9 @@ export abstract class Application {
     }
 
     async deleteApplication(appId: string) {
-        return this.client.$transaction(async (tx) => {
+        return this.client.$transaction(async () => {
             try {
-                await tx.app.delete({ where: { id: appId } });
+                await this.client.app.delete({ where: { id: appId } });
                 console.log("Application deleted successfully.");
             } catch (error) {
                 console.error("Error deleting application:", error);
@@ -96,9 +94,9 @@ export abstract class Application {
     }
 
     async registerApplication(data: any) {
-        return this.client.$transaction(async (tx) => {
+        return this.client.$transaction(async () => {
             try {
-                const app=await tx.app.upsert({
+                const app=await this.client.app.upsert({
                     where:{
                         id:data.id
                     },
@@ -119,9 +117,9 @@ export abstract class Application {
 
                const auth=await this.authentication.createAuth(data.id,data,this.client)
 
-                const trigger=await this.triggers.createTrigger(app.id,data.triggers,tx);
+                const trigger=await this.triggers.createTrigger(app.id,data.triggers);
                 
-                const action=await this.actions.createAction(app.id,data.actions,tx)
+                const action=await this.actions.createAction(app.id,data.actions);
 
                 if(JSON.parse(action).status!=Status.SUCCESS || JSON.parse(trigger).status!=Status.SUCCESS || JSON.parse(auth).status!=Status.SUCCESS){
                     return JSON.stringify({
@@ -159,7 +157,7 @@ export abstract class Application {
     }
 
     async addAction(appId: string, data: any) {
-        return this.client.$transaction(async (tx) => {
+        return this.client.$transaction(async () => {
             try {
                
                 await this.actions.createAction(appId,data)

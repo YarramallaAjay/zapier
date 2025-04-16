@@ -9,30 +9,27 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Github, Mail } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function LoginPage() {
+  const { login, googleLogin, githubLogin } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setError("")
+    setLoading(true)
 
-    // Simulate API call
     try {
-      // Replace with actual login logic
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Store token in localStorage (for demo purposes)
-      localStorage.setItem("auth-token", "demo-token")
-
-      // Redirect to dashboard
-      window.location.href = "/dashboard"
-    } catch (error) {
-      console.error("Login failed:", error)
+      await login({email, password})
+      window.location.href = "/"
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed")
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
@@ -72,8 +69,13 @@ export default function LoginPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Logging in..." : "Login"}
+              {error && (
+                <div className="text-sm text-red-500">
+                  {error}
+                </div>
+              )}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
 
@@ -84,13 +86,21 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-4 space-y-2">
-              <Button variant="outline" className="w-full" type="button">
-                <Mail className="mr-2 h-4 w-4" />
-                Continue with Google
+              <Button
+                variant="outline"
+                className="flex items-center justify-center gap-2"
+                onClick={googleLogin}
+              >
+                <Mail className="h-4 w-4" />
+                Google
               </Button>
-              <Button variant="outline" className="w-full" type="button">
-                <Github className="mr-2 h-4 w-4" />
-                Continue with GitHub
+              <Button
+                variant="outline"
+                className="flex items-center justify-center gap-2"
+                onClick={githubLogin}
+              >
+                <Github className="h-4 w-4" />
+                GitHub
               </Button>
             </div>
           </CardContent>

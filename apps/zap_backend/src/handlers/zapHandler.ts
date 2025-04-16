@@ -1,97 +1,93 @@
-import { PrismaClient, Zap, AvailableTriggers, AvailableActions } from "@prisma/client";
-import { response } from "../utils/Response";
+import { Request, Response } from "express";
+import { Apiresponse } from "@/utils/Response";
+import { PrismaClient } from "@prisma/client";
 
-
-const prisma = new PrismaClient();
-
-export const ZapHandler = {
-
-  async createZap(userId: string, inputData: any, res: any) {
+const prisma=new PrismaClient()
+export class ZapHandler {
+  static async createZap(req: Request, res: Response) {
     try {
-        const inputtrigger=await inputData.trigger
-        const inputactions=await inputData.actions
-      const trigger = await prisma.availableTriggers.findFirst({ where: { name: inputtrigger.name }});
-      if (!trigger) return response(res, 404, "Trigger not found",{},{});
+      const { name, triggerId, actionIds, userId, description,metadata,image } = req.body;
 
-      const validActions = await prisma.availableActions.findMany({
-        where: { id: { in: inputactions } },
+      // Validate trigger exists
+      const trigger = await prisma.trigger.findUnique({
+        where: { id: triggerId },
       });
 
-      if (validActions.length !== inputactions.length) {
-        return response(res, 400, "Some actions not found",{},{});
+      if (!trigger) {
+        Apiresponse.error(res, "Trigger not found", 404, null);
+        return;
       }
 
-      const result = await prisma.$transaction(async (tx) => {
-        const zap = await tx.zap.create({
-          data: {
-            name: inputData.name || trigger.name,
-            description: trigger.description || " ",
-            userId,
-            actions: {
-              create: validActions.map((action, index = 0) => ({
-                sortingOrder: index++,
-                name: action.name,
-                description: action.description,
-                metadata: action.metadata || { input: "testInputs" },
-                available: { connect: { id: action.id } },
-              })),
-            },
-          },
-        });
-        
-        //TODO: Need to add this if polling is also added.
-        // if(trigger.type=="WebHook"){
-        //     const webhookUrl = `/hooks/catch/${userId}/${zap.id}`;
-        // }
-        const webhookUrl = `localhost/hooks/catch/${userId}/${zap.id}`;
-
-
-        const createdTrigger = await tx.trigger.create({
-          data: {
-            name: inputtrigger.name ||trigger.name,
-            zapId: zap.id,
-            description: inputtrigger.description || trigger.description || " ",
-            availableTriggerId: trigger.id,
-            metadata: {
-                webhookurl:webhookUrl
-            },
-          },
-        });
-
-        return { ...zap, trigger: createdTrigger, webhookUrl };
+      // Validate all actions exist
+      const actions = await prisma.action.findMany({
+        where: { id: { in: actionIds } },
       });
 
-      return response(res, 201, "Zap created successfully", result,{});
-    } catch (error) {
-      console.log(error)
-      response(res, 500, "Failed to create zap",{}, error);
-    }
-  },
+      if (actions.length !== actionIds.length) {
+        Apiresponse.error(res, "Some actions not found", 400, null);
+        return;
+      }
 
-  async updateZap(zapId: string, body: any, res: any) {
-    try {
-      const updatedZap = await prisma.zap.update({
-        where: { id: zapId },
+      // Create the zap
+      const result = await prisma.zap.create({
         data: {
-          name: body.name,
-          description: body.description,
-          image: body.image,
-          metadata: body.metadata,
+          name,
+          userId,
+          description,
+          metadata,
+          image,
+          actions: {
+            connect: actionIds.map((id) => ({ id })),
+          },
+        },
+        include: {
+          trigger: true,
+          actions: true,
         },
       });
 
-      return response(res, 200, "Zap updated successfully", updatedZap,{});
+      Apiresponse.success(res, result, "Zap created successfully", 201);
     } catch (error) {
-      return response(res, 500, "Failed to update zap", {},error);
+      Apiresponse.error(res, "Failed to create zap", 500, error);
     }
-  },
+  }
 
-  async deleteZap(zapId: string, res: any) {
+  static async updateZap(req: Request, res: Response) {
     try {
-      await prisma.zap.delete({ where: { id: zapId } });
-      return response(res, 200, "Zap deleted successfully",{},{});
+      const { id } = req.params;
+      const { name, actionIds } = req.body;
+
+      const updatedZap = await prisma.zap.update({
+        where: { id },
+        data: {
+          name,
+          actions: {
+            set: actionIds.map((id) => ({ id })),
+          },
+        },
+        include: {
+          trigger: true,
+          actions: true,
+        },
+      });
+
+      Apiresponse.success(res, updatedZap, "Zap updated successfully");
     } catch (error) {
-      return response(res, 500, "Failed to delete zap",{}, error);
+      Apiresponse.error(res, "Failed to update zap", 500, error);
     }
-  },
-};
+  }
+
+  static async deleteZap(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      await prisma.zap.delete({
+        where: { id },
+      });
+
+      Apiresponse.success(res, {}, "Zap deleted successfully");
+    } catch (error) {
+      Apiresponse.error(res, "Failed to delete zap", 500, error);
+    }
+  }
+}

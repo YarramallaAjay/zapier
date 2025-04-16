@@ -1,26 +1,19 @@
 import { Response } from "express";
-import { Status } from "@repo/types/dist/Status";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export const response = (
-  res: Response,
-  code: number,
-  message: string,
-  data: any={} ,
-  error: any={}
-) => {
-  if(error && error instanceof PrismaClientKnownRequestError){
-    return res.status(500).json({
+export const Apiresponse = {
+  success: (res: Response, data: any, message: string = 'Success', status: number = 200) => {
+    return res.status(status).json({
+      success: true,
       message,
-      status:Status.FAILED,
-      data:{},
-      error:error
-    })
+      data
+    });
+  },
+  error: (res: Response, message: string = 'Error', status: number = 400, error) => {
+    
+    return res.status(status).json({
+      success: false,
+      message, 
+      error
+    });
   }
-  return res.status(code).json({
-    message,
-    status: code < 400 ? Status.SUCCESS : Status.FAILED,
-    data,
-    error,
-  });
 };

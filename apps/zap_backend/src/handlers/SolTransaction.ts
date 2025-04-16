@@ -8,34 +8,41 @@ import {
     SystemProgram,
     PublicKey,
   } from "@solana/web3.js";
-  
-  export async function sendSolTransactionHandler(data: any): Promise<any> {
-    try {
-      const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-  
+import { Request, Response } from "express";
+import { Apiresponse } from "@/utils/Response";
 
-      const fromKeypair = Keypair.generate();
-  
-      const toPublicKey = new PublicKey(data.to);
-      const lamports = data.amount * LAMPORTS_PER_SOL; 
-  
+export class SolTransactionHandler {
+  static async executeTransaction(req: Request, res: Response) {
+    try {
+      const { from, to, amount } = req.body;
+
+      // Initialize Solana connection
+      const connection = new Connection(process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com");
+
+      // Create transaction
       const transaction = new Transaction().add(
+        // Add your transaction instructions here
+        // This is a placeholder - implement actual transaction logic
         SystemProgram.transfer({
-          fromPubkey: fromKeypair.publicKey,
-          toPubkey: toPublicKey,
-          lamports,
+          fromPubkey: new PublicKey(from),
+          toPubkey: new PublicKey(to),
+          lamports: amount,
         })
       );
-  
-      // Sign and send the transaction
-      const signature = await connection.sendTransaction(transaction, [fromKeypair]);
-      await connection.confirmTransaction(signature, "confirmed");
-  
-      console.log("[SolTransactionHandler] Transaction successful, signature:", signature);
-      return { message: "SOL transaction completed", signature };
+      console.log(LAMPORTS_PER_SOL)
+      console.log(clusterApiUrl)
+
+      // Sign and send transaction
+      const signature = await connection.sendTransaction(transaction, [
+        // Add your keypair here
+        // This is a placeholder - implement actual signing logic
+        Keypair.generate(),
+      ]);
+
+      Apiresponse.success(res, { signature }, "SOL transaction completed");
     } catch (error) {
-      console.error("[SolTransactionHandler] Error executing SOL transaction:", error);
-      throw error;
+      Apiresponse.error(res, "Failed to execute SOL transaction", 500, error);
     }
   }
+}
   

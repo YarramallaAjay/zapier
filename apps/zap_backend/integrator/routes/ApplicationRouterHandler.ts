@@ -1,11 +1,11 @@
-import express, { Request, Response, Router } from "express";
+import express, {  Router } from "express";
 
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { PrismaClient } from "@prisma/client";
-import { Auth } from "../middlewares/Auth";
-import { UserDetails } from "@repo/types/dist/UserSession";
-import { TeamBase } from "@repo/types/dist/Team";
+import { Auth } from "../middlewares/Auth.js";
+import { UserDetails } from "@repo/types/dist/UserSession.js";
+import { TeamBase } from "@repo/types/dist/Team.js";
 
 
 const prisma = new PrismaClient();
@@ -27,7 +27,7 @@ router.use(cookieParser());
 // 1. Create Team
 router.post("/team", Auth, async (req, res) => {
   try {
-    const user = await req.user; // Use cached user details
+    const user = await (req.user as UserDetails); // Use cached user details
     if (!user) {
       res.status(401).json({ message: "User not authenticated" });
       return;
@@ -40,6 +40,8 @@ router.post("/team", Auth, async (req, res) => {
     }
 
     const { name, metadata, createdById } = req.body;
+    console.log(createdById)
+
 
     const newTeam = await prisma.team.create({
       data: {
@@ -67,7 +69,7 @@ router.post("/team", Auth, async (req, res) => {
 // 2. Update Team Details
 router.put("/team", Auth, async (req, res) => {
   try {
-    const user = await req.user; // Use cached user details
+    const user = await (req.user)as UserDetails; // Use cached user details
     if (!user) {
       res.status(401).json({ message: "User not authenticated" });
       return;
@@ -98,14 +100,14 @@ router.put("/team", Auth, async (req, res) => {
 // 3. Delete Team
 router.delete("/team", Auth, async (req, res) => {
   try {
-    const user = req.user; // Use cached user details
+    const user = (req.user)as UserDetails; // Use cached user details
     if (!user) {
       res.status(401).json({ message: "User not authenticated" });
       return;
     }
 
     await prisma.team.delete({
-      where: { createdById: (user.id) as unknown as string  },
+      where: { createdById: (user as UserDetails).id   },
     });
 
     // Clear user session since team is deleted
@@ -121,7 +123,7 @@ router.delete("/team", Auth, async (req, res) => {
 // 4. Get Apps for the User's Team
 router.get("/allapps", Auth, async (req, res) => {
   try {
-    const user = req.user; // Use cached user details
+    const user = (req.user) as UserDetails; // Use cached user details
     if (!user) {
       res.status(401).json({ message: "User not authenticated" });
       return;
@@ -152,7 +154,7 @@ router.get("/allapps", Auth, async (req, res) => {
 // 5. Create New App
 router.post("/newapp", Auth, async (req, res) => {
   try {
-    const user = req.user; // Use cached user details
+    const user = await (req.user) as UserDetails; // Use cached user details
     if (!user) {
       res.status(401).json({ message: "User not authenticated" });
       return;

@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import { response } from "express";
 import { Kafka, Consumer, KafkaMessage } from "kafkajs";
-import { sendEmailHandler } from "../handlers/EmailHandler";
-import { sendSolTransactionHandler } from "../handlers/SolTransaction";
-import { zapStatusWebhook } from "../handlers/WebhookHandler";
+import { EmailHandler } from "src/handlers/EmailHandler.js";
+import { SolTransactionHandler } from "src/handlers/SolTransaction.js";
+import { zapStatusWebhook } from "src/handlers/WebhookHandler.js";
 
 export type ActionType = "SEND_EMAIL" | "SEND_SOL_TRANSACTION";
 
@@ -28,10 +29,10 @@ export class KafkaConsumer {
 
       await this.consumer.run({
         autoCommit: false,
-        eachMessage: async ({ topic, partition, message }: { topic: string; partition: number; message: KafkaMessage }) => {
+        eachMessage: async ({ partition, message }: { partition: number; message: KafkaMessage }) => {
           const value = message.value?.toString();
           if (!value) return;
-
+          console.log(this.TOPIC_NAME)
           const payload = JSON.parse(value);
           const zapRunId: string = payload.zapRunId;
 
@@ -91,10 +92,10 @@ export class KafkaConsumer {
       let result: any;
       switch (type.toLowerCase()) {
         case "send_email":
-          result = await sendEmailHandler(inputData);
+          result = await  EmailHandler.sendEmail(inputData, response);
           break;
         case "send_sol_transaction":
-          result = await sendSolTransactionHandler(inputData);
+          result = await  SolTransactionHandler.executeTransaction(inputData, response);
           break;
         default:
           throw new Error("Unsupported action type: " + type);

@@ -1,74 +1,67 @@
 import { PrismaClient } from "@prisma/client"
 import { Request, Response } from "express"
-import { v4 as uuidv4 } from 'uuid'
+import { Apiresponse } from "@/utils/Response"
+// import { v4 as uuidv4 } from 'uuid'
 
 const zapProgressCache: Map<string, any> = new Map();
 
 const prisma = new PrismaClient()
 
-export const WebhookHandler = async (req, res) => {
-  console.log("WebHook Hit")
-    console.log(req.body)
-  const { userId , zapId } = req.params
-  const webhookPayload = req.body
+export class WebhookHandler {
+  static async handleWebhook(req: Request, res: Response) {
+    try {
+      const { zapId } = req.params;
+      const zap = await prisma.zap.findUnique({
+        where: { id: zapId },
+        include: { actions: true },
+      });
 
-  try {
-    // Step 1: Get zap
-    const zap = await prisma.zap.findFirst({
-      where: {
-        id: zapId,
-        userId: userId
-      },
-      include: {
-        actions: {
-          orderBy: { sortingOrder: 'asc' }
+      if (!zap) {
+        Apiresponse.error(res, "Zap not found", 404, null);
+        return;
+      }
+
+      // Create a new zap run
+      const zapRun = await prisma.zapRun.create({
+        data: {
+          zapId: zap.id,
+          metadata:{
+          status: "running",
+          startedAt: new Date(),
+          }
+         
         },
-        trigger:true 
-      },
-    })
+      });
 
-    if (!zap) return res.status(404).json({ message: "Zap not found" })
-
-    // Step 2: Create ZapRun
-    const zapRunId = uuidv4()
-
-    await prisma.zapRun.create({
-      data: {
-        id: zapRunId,
-        zapId: zap.id,
-        metadata: {
-          status: "PENDING",
-          actions: zap.actions.map(action => ({
-            actionId: action.id,
-            status: "PENDING",
-            order: action.sortingOrder,
-          })),
-          receivedAt: new Date().toISOString(),
-          // webhookPayload
-        }
+      // Execute the zap's actions
+      for (const action of zap.actions) {
+        // Execute the action
+        // This is a placeholder - implement actual action execution logic
+        console.log(`Executing action: ${action.id}`);
       }
-    })
 
-    // Step 3: Create ZapRunOutBox for Kafka to pick
-    await prisma.zapRunOutBox.create({
-      data: {
-        zaprunId: zapRunId,
-      }
-    })
+      // Update the zap run status
+      await prisma.zapRun.update({
+        where: { id: zapRun.id },
+        data: {
+          metadata:{
+            status: "completed",
+          completedAt: new Date(),
+          }
+          
+        },
+      });
 
-     res.status(200).json({
-      message: "Zap execution initialized",
-      zapRunId,
-    })
-    return
-
-  } catch (error) {
-    console.error("Webhook Handler Error:", error)
-     res.status(500).json({ message: "Internal Server Error" })
-     return
+      Apiresponse.success(res, { zapRunId: zapRun.id }, "Zap execution initialized");
+      return;
+    } catch (error) {
+      Apiresponse.error(res, "Internal Server Error", 500, error);
+      return;
+    }
   }
 }
- // In-memory cache for zap progress
+
+// In-memory cache for zap progress
 
 export const zapStatusWebhook = async (payload: {
   zapRunId: string;
