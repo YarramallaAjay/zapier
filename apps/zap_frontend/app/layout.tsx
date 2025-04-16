@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex flex-col items-center justify-center min-h-screen ">
+          <div className="flex flex-col items-center justify-center min-h-screen">
             <Header />
             <main className="flex flex-col items-center justify-center w-full max-w-4xl px-4">
               {children}
