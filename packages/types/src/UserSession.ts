@@ -1,7 +1,6 @@
 import { PrismaClient, Zap } from "@prisma/client";
 import { TeamBase } from "./Team";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { User } from './User';
 
 const prisma = new PrismaClient();
 
@@ -13,6 +12,11 @@ export interface UserBase {
   createdAt: string;
   updatedAt: string;
   Zaps: Zap[] | {};
+  tokens:TokenBase | TokenBase[]
+}
+
+export interface TokenBase{
+  id: string; updatedAt: Date; createdAt: Date; userId: string; provider: string; accessToken: string; refreshToken: string; 
 }
 
 export interface UserDetails {
@@ -23,7 +27,7 @@ export interface UserDetails {
 }
 
 export interface UserSession {
-  user: User;
+  user: UserBase;
   expires: string;
 }
 
@@ -39,6 +43,7 @@ export class UserDetails implements UserBase {
   createdAt: string;
   updatedAt: string;
   Zaps: Zap[] | {};
+  tokens:TokenBase|TokenBase[]
 
   private constructor(userData: UserBase) {
     this.id = userData.id;
@@ -48,6 +53,7 @@ export class UserDetails implements UserBase {
     this.createdAt = userData.createdAt || new Date().toISOString();
     this.updatedAt = userData.updatedAt || new Date().toISOString();
     this.Zaps = userData.Zaps || {};
+    this.tokens=userData.tokens
   }
 
   // Singleton: Retrieve user details (cached if already fetched)
@@ -71,7 +77,7 @@ export class UserDetails implements UserBase {
                 authMethods:true,
                 triggers:true,
               }
-            }
+            },
           },
         }, zaps: true,tokens:true
        },
@@ -87,6 +93,7 @@ export class UserDetails implements UserBase {
         Zaps: user.zaps || [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        tokens:user.tokens
       });
   
       UserDetails.cacheCreatedAt = Date.now();
@@ -119,7 +126,7 @@ export class UserDetails implements UserBase {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { team: true, zaps: true },
+      include: { team: true, zaps: true, tokens:true },
     });
 
     if (!user) throw new Error("User details not found");
@@ -132,6 +139,7 @@ export class UserDetails implements UserBase {
       Zaps: user.zaps || [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      tokens:user.tokens
     });
 
     UserDetails.cacheCreatedAt = Date.now();

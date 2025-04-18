@@ -10,13 +10,16 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Github, Mail } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
-export default function LoginPage() {
-  const { login, googleLogin, githubLogin } = useAuth()
+export default function signInPage() {
+  const { signIn, googleLogin, githubLogin } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  const pagerouter=useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,10 +27,10 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await login({email, password})
-      window.location.href = "/"
+      await signIn({email, password})
+      pagerouter.push("/")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed")
+      setError(err instanceof Error ? err.message : "signIn failed")
     } finally {
       setLoading(false)
     }
@@ -38,7 +41,7 @@ export default function LoginPage() {
       <div className="grid w-full max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
         <Card className="w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Login to Zapper</CardTitle>
+            <CardTitle className="text-2xl font-bold">signIn to Zapper</CardTitle>
             <CardDescription>Enter your credentials to access your account</CardDescription>
           </CardHeader>
           <CardContent>

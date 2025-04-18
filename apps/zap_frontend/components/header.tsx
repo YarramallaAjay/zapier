@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useAuthStore } from "@/store/userStore"
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -14,7 +15,7 @@ export default function Header() {
   // Check if user is logged in (this would be replaced with your auth logic)
   useEffect(() => {
     // Example: Check localStorage or session for auth token
-    const token = localStorage.getItem("auth-token")
+    const token =
     setIsLoggedIn(!!token)
   }, [])
 

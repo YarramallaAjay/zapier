@@ -3,7 +3,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET } from "@/config";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET } from "@/config.js";
 import {  UserDetails } from "@repo/types/dist/UserSession.js";
 
 dotenv.config();
@@ -13,8 +13,9 @@ const client = new PrismaClient();
 passport.use(
   new GoogleStrategy(
     {
-      clientID: GOOGLE_CLIENT_ID || "",
-      clientSecret: GOOGLE_CLIENT_SECRET || "",
+      clientID: GOOGLE_CLIENT_ID || "822077570195-ttulc0bbpkg9ibbni70lq2qpdg4eb11u.apps.googleusercontent.com",
+      clientSecret: GOOGLE_CLIENT_SECRET || "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",
+      
       callbackURL: "http://localhost:3001/auth/google/callback",
       scope: ["profile", "email"],
       

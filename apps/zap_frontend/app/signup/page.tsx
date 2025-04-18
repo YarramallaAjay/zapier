@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { useState } from "react";
 import { Github, Mail } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const { signup, googleLogin, githubLogin } = useAuth();
@@ -14,6 +15,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const pageRouter=useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ export default function SignupPage() {
 
     try {
       await signup({name, email, password});
-      window.location.href = "/";
+      pageRouter.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");
     } finally {
