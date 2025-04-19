@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-  const { signup, googleLogin, githubLogin } = useAuth();
+  const { signUp, googleLogin, githubLogin } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +23,16 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      await signup({name, email, password});
-      pageRouter.push("/");
+      await signUp({name, email, password}).then((res)=>{
+        console.log("Successfully created user..login to the account")
+        pageRouter.push("/login")
+      }).catch(err=>{
+        console.log("something went wrong...try again...!")
+        console.log(err)
+
+      });
+      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");
     } finally {

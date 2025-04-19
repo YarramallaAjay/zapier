@@ -2,7 +2,6 @@ import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 
 import { useAuthStore } from '@/store/userStore';
 import { useRouter } from 'next/navigation';
 
-const router=useRouter()
 
 const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({
@@ -23,7 +22,7 @@ const createAxiosInstance = (): AxiosInstance => {
         config.headers['Authorization'] = `Bearer ${token}`;
       } else {
         console.warn('token not found in store..login again');
-        router.push("/login");
+        window.location.href="/login"
       }
 
       return config;
@@ -40,10 +39,9 @@ const createAxiosInstance = (): AxiosInstance => {
         success: true,
         data: response.data,
         status: response.status,
-        message: response.statusText,
+        statusText: response.data.message,
         config:response.config,
         headers:response.headers,
-        statusText:response.statusText
       };
     },
     (error) => {

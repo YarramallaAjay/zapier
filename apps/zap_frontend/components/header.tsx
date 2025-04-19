@@ -1,23 +1,26 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useAuthStore } from "@/store/userStore"
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Menu } from 'lucide-react'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { useAuthStore, useUserStore } from '@/store/userStore'
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const pathname = usePathname()
 
-  // Check if user is logged in (this would be replaced with your auth logic)
+  const user = useUserStore((state) => state.user)
+
   useEffect(() => {
-    // Example: Check localStorage or session for auth token
-    const token =
-    setIsLoggedIn(!!token)
-  }, [])
+    const hasTokensInStore = user && user.tokens
+
+    // Fallback to localStorage if store is empty
+    const userPresent = localStorage.getItem('zapper_user_session') !== null
+    hasTokensInStore && userPresent?setIsLoggedIn(true):setIsLoggedIn(false)
+  }, [user])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -31,30 +34,17 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex gap-6 ml-6">
-            <Link
-              href="/features"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === "/features" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              Features
-            </Link>
-            <Link
-              href="/pricing"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === "/pricing" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/docs"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === "/docs" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              Docs
-            </Link>
+            {['/features', '/pricing', '/docs'].map((route) => (
+              <Link
+                key={route}
+                href={route}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  pathname === route ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                {route.replace('/', '').charAt(0).toUpperCase() + route.slice(2)}
+              </Link>
+            ))}
           </nav>
         </div>
 
@@ -89,15 +79,15 @@ export default function Header() {
           </SheetTrigger>
           <SheetContent side="right">
             <div className="flex flex-col gap-4 mt-8">
-              <Link href="/features" className="text-sm font-medium transition-colors hover:text-primary">
-                Features
-              </Link>
-              <Link href="/pricing" className="text-sm font-medium transition-colors hover:text-primary">
-                Pricing
-              </Link>
-              <Link href="/docs" className="text-sm font-medium transition-colors hover:text-primary">
-                Docs
-              </Link>
+              {['/features', '/pricing', '/docs'].map((route) => (
+                <Link
+                  key={route}
+                  href={route}
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  {route.replace('/', '').charAt(0).toUpperCase() + route.slice(2)}
+                </Link>
+              ))}
 
               <div className="h-px bg-border my-4" />
 

@@ -27,8 +27,13 @@ export default function signInPage() {
     setLoading(true)
 
     try {
-      await signIn({email, password})
-      pagerouter.push("/")
+      signIn({email, password}).then((res)=>{
+        console.log("logged in...!")
+        pagerouter.push("/dashboard")
+      })
+      .catch((err)=>{
+        console.error(err)
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : "signIn failed")
     } finally {

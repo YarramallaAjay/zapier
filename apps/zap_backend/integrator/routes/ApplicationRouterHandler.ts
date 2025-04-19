@@ -1,6 +1,5 @@
 import express, {  Router } from "express";
 
-import cors from "cors";
 import cookieParser from "cookie-parser";
 import { PrismaClient } from "@prisma/client";
 import { Auth } from "../middlewares/Auth.js";
@@ -12,15 +11,15 @@ const prisma = new PrismaClient();
 const router: Router = express.Router();
 
 // Middlewares
-router.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+// router.use(
+//   cors({
+//     origin: ["http://localhost:3000"],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     exposedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true,
+//   })
+// );
 router.use(express.json());
 router.use(cookieParser());
 

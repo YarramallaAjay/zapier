@@ -69,11 +69,11 @@ export interface Zap {
   updatedAt: string;
 }
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
+export interface ApiResponse {
+  code: boolean;
+  data?: any;
+  error?: any;
+  message: string;
 }
 
 export interface AuthResponse {

@@ -1,4 +1,3 @@
-// context/AuthContext.tsx
 'use client';
 
 import {
@@ -8,9 +7,11 @@ import {
   useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserBase, UserSession } from '@repo/types/src/UserSession';
+import { TokenBase, UserBase, UserSession } from '@repo/types/src/UserSession';
 import { useAuthStore, useUserStore } from '@/store/userStore';
 import { axiosInstance } from '@/apiHandlers/ApiInstance';
+import { ApiResponse, LoginCredentials, SignupCredentials } from '@/lib/types';
+import { toast } from '@/hooks/use-toast';
 import axios from 'axios';
 
 interface AuthContextType {
@@ -18,8 +19,9 @@ interface AuthContextType {
   loading: boolean;
   signIn: (credentials: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
-  googleLogin:()=>void;
-  githubLogin:()=>void;
+  googleLogin: () => void;
+  githubLogin: () => void;
+  signUp:(credentials:SignupCredentials)=>Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,37 +34,72 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((state) => state.setUser);
   const clearUser = useUserStore((state) => state.clearUser);
 
-  const token = useAuthStore((state) => state.token);
+  const tokens = useAuthStore((state) => state.tokens);
+  const setTokens = useAuthStore((state) => state.setTokens);
   const setToken = useAuthStore((state) => state.setToken);
   const clearToken = useAuthStore((state) => state.clearToken);
+  const getTokenByProvider = useAuthStore((state) => state.getTokenByType);
 
   useEffect(() => {
     checkSession();
   }, []);
 
   const checkSession = async () => {
-    try {
-      const res = await axiosInstance.get<UserSession>('/');
-      console.log(res.data)
-      setToken(res.data.user.tokens)
-      setUser(res.data.user);
-    } catch (err) {
+    const storedToken = getTokenByProvider('basic') || getTokenByProvider('google') || getTokenByProvider('github');
+    if (!storedToken) {
       clearToken();
       clearUser();
+      // router.push('/login');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await axiosInstance.get<UserSession>('/');
+      setUser(res.data.user);
+      setTokens(res.data.user.tokens as TokenBase[]);
+      console.log(res.data.user)
+    } catch (err) {
+      console.error('Session check failed', err);
+      clearToken();
+      clearUser();
+      router.push('/login');
     } finally {
       setLoading(false);
     }
   };
 
-  const signIn = async (credentials: { email: string; password: string }) => {
+  const signUp=async(Credentials:SignupCredentials):Promise<void>=>{
+
+    return new Promise((resolve, reject)=>{
+      axios.post<{response:ApiResponse}>(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL|| "htpp://localhost:3001"}/auth/signup`,
+        Credentials
+      ).then((res)=>{
+        console.log("Successfully signup..login")
+        router.push("/login")
+        resolve()
+      }).catch(err=>{
+        console.log(`Error creatimg user. refresh and retry...`)
+        console.log(err)
+        reject()
+      })
+    })
+
+  }
+
+  const signIn = async (credentials: LoginCredentials) => {
     try {
       const res = await axiosInstance.post<{ token: string; user: UserBase }>(
         '/auth/login',
         credentials
       );
 
-      const { token, user } = res.data;
-      setToken(token);
+      const { user } = res.data;
+
+      const basicToken = (user.tokens as TokenBase[]).find((token) => token.provider === 'basic');
+      if (basicToken) setToken(basicToken);
+
       setUser(user);
       router.push('/dashboard');
     } catch (err) {
@@ -78,30 +115,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       clearToken();
       clearUser();
-      router.push('/');
+      router.push('/login');
     }
   };
 
-  const googleLogin=async ()=>{
-    try{
-      router.push("http://localhost:3001/auth/google")
-    }
-    catch(e){
-      throw new Error;
-    }
-  }
+  const googleLogin = () => {
+    router.push('http://localhost:3001/auth/google');
+  };
 
-  const githubLogin=async ()=>{
-    try{
-      router.push("http://localhost:3001/auth/github")
-    }
-    catch(e){
-      throw new Error;
-    }
-  }
+  const githubLogin = () => {
+    router.push('http://localhost:3001/auth/github');
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut, googleLogin,githubLogin }}>
+    <AuthContext.Provider
+      value={{ user, loading, signIn,signUp, signOut, googleLogin, githubLogin }}
+    >
       {children}
     </AuthContext.Provider>
   );

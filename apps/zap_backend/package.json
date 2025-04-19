@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run build && pm2 start ./dist/index.js",
+    "dev": "npm run build && nodemon ./dist/index.js",
     "test": "jest --detectOpenHandles --forceExit --watchAll",
     "build": "tsc -b"
   },

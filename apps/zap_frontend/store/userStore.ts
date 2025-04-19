@@ -7,6 +7,7 @@ interface AuthState {
   setToken: (token: TokenBase) => void;
   clearToken: () => void;
   getTokenByType: (provider: string) => TokenBase | undefined;
+  setTokens:(existingTokens:TokenBase[])=>void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -19,6 +20,9 @@ export const useAuthStore = create<AuthState>()(
       },
       clearToken: () => set({ tokens: [] }),
       getTokenByType: (type: string) => get().tokens.find(t => t.provider === type),
+      setTokens:(existingTokens:TokenBase[])=>{
+        set({tokens:[...existingTokens]})
+      }
     }),
     {
       name: 'zapper_user_auth', 

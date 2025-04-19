@@ -1,3 +1,4 @@
+import { LOCAL_URL } from "@/config";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { AuthenticationBase } from "@repo/types/dist/Authentication";
 import { Status } from "@repo/types/dist/Status";
@@ -8,7 +9,7 @@ export class GoogleAuth implements AuthenticationBase {
   description: string = "Google OAuth2 Authentication";
   authUrl: string = "https://accounts.google.com/o/oauth2/v2/auth";
   tokenUrl: string = "https://oauth2.googleapis.com/token";
-  callbackUrl: string = "https://your-platform.com/auth/google/callback";
+  callbackUrl: string = `${LOCAL_URL}/auth/google/callback`;
   clientID: string = "";
   clientSecret: string = "";
 
