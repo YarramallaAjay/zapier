@@ -1,13 +1,14 @@
 import express, { Router } from "express";
-import { ZapSchema } from "src/utils/zodSchema.js";
-import { AuthUser } from "src/middlewares/userAuthMiddleware.js";
-import { ZapHandler } from "src/handlers/zapHandler.js";
-import { Apiresponse } from "src/utils/Response.js";
+import { ZapSchema } from "@/utils/zodSchema";
+import { AuthUser } from "@/middlewares/userAuthMiddleware";
+import { ZapHandler } from "@/handlers/zapHandler";
+import { Apiresponse } from "@/utils/Response";
 import { PrismaClient } from "@prisma/client";
 
 const router: Router = express.Router();
 router.use(express.json());
 const prisma=new PrismaClient();
+
 
 router.get("/", AuthUser, async (req, res) => {
   try {

@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { response } from "express";
 import { Kafka, Consumer, KafkaMessage } from "kafkajs";
-import { EmailHandler } from "src/handlers/EmailHandler.js";
-import { SolTransactionHandler } from "src/handlers/SolTransaction.js";
-import { zapStatusWebhook } from "src/handlers/WebhookHandler.js";
+import { EmailHandler } from "@/handlers/EmailHandler";
+import { SolTransactionHandler } from "@/handlers/SolTransaction";
+import { zapStatusWebhook } from "@/handlers/WebhookHandler";
 
 export type ActionType = "SEND_EMAIL" | "SEND_SOL_TRANSACTION";
 

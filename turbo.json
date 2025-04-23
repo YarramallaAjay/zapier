@@ -5,7 +5,11 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [
+        "apps/zap_backend/dist/**",
+        "apps/zap_frontend/.next/**", 
+        "packages/**/dist/**" 
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -18,4 +22,6 @@
       "persistent": true
     }
   }
+    
+    
 }

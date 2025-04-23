@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return new Promise((resolve, reject)=>{
       axios.post<{response:ApiResponse}>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL|| "htpp://localhost:3001"}/auth/signup`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL|| "http://localhost:3001"}/auth/signup`,
         Credentials
       ).then((res)=>{
         console.log("Successfully signup..login")

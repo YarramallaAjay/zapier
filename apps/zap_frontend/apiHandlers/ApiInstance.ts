@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL|| "htpp://localhost:3001",
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL|| "http://localhost:3001",
     timeout: 10000,
     headers: {
       'Content-Type': 'application/json',

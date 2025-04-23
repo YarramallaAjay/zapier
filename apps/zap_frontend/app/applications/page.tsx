@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Settings, Trash2 } from "lucide-react"
 import { useAuth } from '@/contexts/auth-context'
-import { appsApi } from '@/lib/api'
-import { App } from '@/lib/types'
+import { ApiResponse, App } from '@/lib/types'
+import { axiosInstance } from "@/apiHandlers/ApiInstance"
 
 export default function ApplicationsPage() {
   const { user } = useAuth()
@@ -24,11 +24,11 @@ export default function ApplicationsPage() {
 
   const loadApps = async () => {
     try {
-      const response = await appsApi.getApps()
-      if (response.success) {
-        setApps(response.data || [])
+      const response = await axiosInstance.get<{response:ApiResponse}>("/integrator/apps")
+      if (response.status===200) {
+        setApps(response.data.response.data || [])
       } else {
-        setError(response.error || 'Failed to load apps')
+        setError(response.data.response.error || 'Failed to load apps')
       }
       setLoading(false)
     } catch {

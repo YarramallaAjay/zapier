@@ -1,12 +1,64 @@
 import express from "express";
-// import { PrismaClient } from "@prisma/client";
-import { WebhookHandler } from "@/handlers/WebhookHandler";
+import { Apiresponse } from "@/utils/Response";
+import { PrismaClient } from "@prisma/client";
 
 const router: express.Router = express.Router();
 
 
+const prisma=new PrismaClient()
 
-router.post("/catch/:userId/:zapId", WebhookHandler.handleWebhook);
+router.post("/catch/:userId/:zapId", async (req, res)=> {
+    try {
+      const { zapId } = req.params;
+      const zap = await prisma.zap.findUnique({
+        where: { id: zapId },
+        include: { actions: true },
+      });
+
+      if (!zap) {
+        Apiresponse.error(res, "Zap not found", 404, null);
+        return;
+      }
+
+      // Create a new zap run
+      const zapRun = await prisma.zapRun.create({
+        data: {
+          zapId: zap.id,
+          metadata:{
+          status: "running",
+          startedAt: new Date(),
+          }
+         
+        },
+      });
+
+      // Execute the zap's actions
+      for (const action of zap.actions) {
+        // Execute the action
+        // This is a placeholder - implement actual action execution logic
+        console.log(`Executing action: ${action.id}`);
+      }
+
+      // Update the zap run status
+      await prisma.zapRun.update({
+        where: { id: zapRun.id },
+        data: {
+          metadata:{
+            status: "completed",
+          completedAt: new Date(),
+          }
+          
+        },
+      });
+
+      Apiresponse.success(res, { zapRunId: zapRun.id }, "Zap execution initialized");
+      return;
+    } catch (error) {
+      Apiresponse.error(res, "Internal Server Error", 500, error);
+      return;
+    }
+  }
+);
 
 export default router;
 

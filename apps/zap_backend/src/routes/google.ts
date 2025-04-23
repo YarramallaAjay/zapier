@@ -1,5 +1,5 @@
 import express from "express";
-import passport from "../auth/google";
+import passport from "@/auth/google";
 
 const router: express.Router = express.Router();
 

@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client';
-import express, { Router } from 'express';
+import express from 'express';
 import bcrypt from 'bcrypt';
 import "dotenv/config";
-import { signInSchema, signupSchema } from '../utils/zodSchema';
+import { signInSchema, signupSchema } from '@/utils/zodSchema';
 import { Apiresponse } from '@/utils/Response';
 import passport from 'passport';
 import Jwt  from 'jsonwebtoken';
 
-const router: Router = express.Router();
+const router: express.Router = express.Router();
 const client = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "jwtsecret";
 
