@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../../generated/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { Auth } from "../middlewares/Auth";
 

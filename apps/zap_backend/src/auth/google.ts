@@ -2,9 +2,9 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET } from "@/config";
-import {  UserDetails } from "@repo/types/dist/UserSession.js";
+import  {PrismaClient} from "../../../../generated/prisma";
+import {  UserDetails } from "@repo/types/src/UserSession";
 
 dotenv.config();
 
@@ -100,7 +100,7 @@ passport.use(
 
 // Serialize user into session
 passport.serializeUser(
-  (user:Express.User, done: (err: any, id: string) => void) => {
+  (user, done: (err: any, id: string) => void) => {
     done(null,(user as any).id);
   }
 );
@@ -109,7 +109,7 @@ passport.serializeUser(
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await UserDetails.getUser(String(id));
-    done(null, user);
+    done(null, user as unknown as Express.User);
   } catch (error) {
     done(error, null);
   }

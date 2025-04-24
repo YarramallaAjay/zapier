@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "../../../../generated/prisma"
 import { Kafka, Producer } from "kafkajs"
 
 export class KafkaProducer {

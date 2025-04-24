@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "../../../../generated/prisma"
 import { Request, Response } from "express"
 import { Apiresponse } from "@/utils/Response"
 // import { v4 as uuidv4 } from 'uuid'

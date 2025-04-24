@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "app/generated/prisma/client"
+  output   = "../../generated/prisma"
 }
 
 datasource db {
@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id       String          @id @default(uuid())
+  id       String       @id @default(uuid())
   name     String
   password String
   email    String       @unique
@@ -20,12 +20,12 @@ model User {
 }
 
 model Team {
-  id          String      @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   metadata    Json     @default("{}")
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
-  createdById String    @unique
+  createdById String   @unique
   apps        App[]
   members     User[]
 }
@@ -34,7 +34,7 @@ model App {
   name        String
   description String
   teamId      String
-  id          String                 @id @default(uuid())
+  id          String              @id @default(uuid())
   team        Team                @relation(fields: [teamId], references: [id])
   authMethods AuthMethods[]
   actions     AvailableActions[]
@@ -42,7 +42,7 @@ model App {
 }
 
 model AuthMethods {
-  id            String                  @id @default(uuid())
+  id            String               @id @default(uuid())
   appId         String
   authId        String
   metadata      Json                 @default("{}")
@@ -134,7 +134,7 @@ model ZapRunOutBox {
 }
 
 model TokenStore {
-  id           String      @id @default(uuid())
+  id           String   @id @default(uuid())
   createdAt    DateTime @default(now())
   provider     String
   updatedAt    DateTime @updatedAt

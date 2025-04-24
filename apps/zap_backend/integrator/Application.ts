@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../generated/prisma"
 import { AuthFactory } from "./authStrategies/authFactory";
 import { TriggerFactory } from "./Triggers/TriggerFactory";
 import { ActionFactory } from "./Actions/ActionFactory";
-import { AuthenticationBase } from "@repo/types/dist/Authentication";
-import { TriggerBase } from "@repo/types/dist/Trigger";
-import { ActionBase } from "@repo/types/dist/Actions";
-import { Status } from "@repo/types/dist/Status";
+import { AuthenticationBase } from "@repo/types/src/Authentication";
+import { TriggerBase } from "@repo/types/src/Trigger";
+import { ActionBase } from "@repo/types/src/Actions";
+import { Status } from "@repo/types/src/Status";
 
 // export type ApplicationType =z.object( {
 //     name: z.string();

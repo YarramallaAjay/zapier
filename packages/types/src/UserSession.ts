@@ -1,4 +1,4 @@
-import { PrismaClient, Zap } from "@prisma/client";
+import { PrismaClient, Zap } from "../../../generated/prisma";
 import { TeamBase } from "./Team";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 

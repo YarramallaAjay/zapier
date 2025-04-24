@@ -1,6 +1,6 @@
 import express from "express";
 import { Apiresponse } from "@/utils/Response";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../../generated/prisma";
 
 const router: express.Router = express.Router();
 

@@ -1,7 +1,7 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { ActionBase } from "@repo/types/dist/Actions";
-import { Field, FieldType } from "@repo/types/dist/Fields";
-import { Status } from "@repo/types/dist/Status";
+import { Prisma, PrismaClient } from "../../../../generated/prisma";
+import { ActionBase } from "@repo/types/src/Actions";
+import { Field, FieldType } from "@repo/types/src/Fields";
+import { Status } from "@repo/types/src/Status";
 
 export class Email  {
     id!: string;

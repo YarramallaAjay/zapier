@@ -1,7 +1,6 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { AuthenticationBase } from "@repo/types/dist/Authentication";
-import { Status } from "@repo/types/src/Status"
-import { LOCAL_URL } from "@/config";
+import { Prisma, PrismaClient } from "../../../../generated/prisma";
+import { AuthenticationBase } from "@repo/types/src/Authentication";
+import { Status } from "@repo/types/src/Status";
 
 export class GoogleAuth implements AuthenticationBase {
   type: "OAuth" | "Basic" | "JWT" = "OAuth";
@@ -9,11 +8,20 @@ export class GoogleAuth implements AuthenticationBase {
   description: string = "Google OAuth2 Authentication";
   authUrl: string = "https://accounts.google.com/o/oauth2/v2/auth";
   tokenUrl: string = "https://oauth2.googleapis.com/token";
-  callbackUrl: string = `${LOCAL_URL}/auth/google/callback`;
+  callbackUrl: string = "https://your-platform.com/auth/google/callback";
   clientID: string = "";
   clientSecret: string = "";
 
   constructor() {}
+
+  private formatResponse(
+    message: string,
+    data: any = {},
+    error: any = {},
+    status: Status
+  ) {
+    return { message, data, error, status };
+  }
 
   async createAuth(appId: string, data: any, tx?: Prisma.TransactionClient): Promise<any> {
     const prisma = tx || new PrismaClient();
@@ -24,12 +32,12 @@ export class GoogleAuth implements AuthenticationBase {
       });
 
       if (!availableAuth) {
-        return JSON.stringify({
-          messages:`Auth method for provider '${this.provider}' not found.`,
-          data:{},
-          error:{},
-          status:Status.PROCESSED_NOT_SUCCESSFUL
-      });
+        return this.formatResponse(
+          `Auth method for provider '${this.provider}' not found.`,
+          {},
+          {},
+          Status.PROCESSED_NOT_SUCCESSFUL
+      );
       }
 
       const authMethod = await prisma.authMethods.create({

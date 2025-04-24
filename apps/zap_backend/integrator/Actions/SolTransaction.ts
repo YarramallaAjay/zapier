@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { ActionBase } from "@repo/types/dist/Actions";
-import { Field, FieldType } from "@repo/types/dist/Fields";
+import { Prisma, PrismaClient } from "../../../../generated/prisma";
+import { ActionBase } from "@repo/types/src/Actions";
+import { Field, FieldType } from "@repo/types/src/Fields";
 
 export class SolTransaction implements ActionBase{
     id!: string;

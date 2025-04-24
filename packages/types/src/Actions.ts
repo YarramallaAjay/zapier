@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../generated/prisma";
 import { Field, FieldType } from "./Fields";
 
 export interface ActionBase{

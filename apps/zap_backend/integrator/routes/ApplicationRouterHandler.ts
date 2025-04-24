@@ -1,10 +1,9 @@
 import express, {  Router } from "express";
-
+import {PrismaClient} from "../../../../generated/prisma";
 import cookieParser from "cookie-parser";
-import { PrismaClient } from "@prisma/client";
-import { Auth } from "../middlewares/Auth.js";
-import { UserDetails } from "@repo/types/dist/UserSession.js";
-import { TeamBase } from "@repo/types/dist/Team.js";
+import { Auth } from "../middlewares/Auth";
+import { UserDetails } from "@repo/types/src/UserSession";
+import { TeamBase } from "@repo/types/src/Team";
 
 
 const prisma = new PrismaClient();

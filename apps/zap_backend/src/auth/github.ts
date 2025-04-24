@@ -2,7 +2,7 @@
 // import { Strategy as GitHubStrategy } from "passport-github2";
 // import jwt from "jsonwebtoken";
 // import dotenv from "dotenv";
-// import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from ../../../generated/prisma;
 // import { GITHUB_CALLBACK_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, JWT_SECRET } from "../config.js";
 // import { UserDetails } from "@repo/types/dist/UserSession.js";
 // import { Profile } from "passport-github2";

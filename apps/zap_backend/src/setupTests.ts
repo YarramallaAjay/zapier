@@ -1,4 +1,4 @@
-// import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from ../../../generated/prisma;
 
 // // Mock Prisma Client for testing
 // const prisma = new PrismaClient();

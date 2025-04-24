@@ -3,7 +3,8 @@ import { ZapSchema } from "@/utils/zodSchema";
 import { AuthUser } from "@/middlewares/userAuthMiddleware";
 import { ZapHandler } from "@/handlers/zapHandler";
 import { Apiresponse } from "@/utils/Response";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../../generated/prisma";
+import { UserDetails } from "@repo/types/src/UserSession";
 
 const router: Router = express.Router();
 router.use(express.json());
@@ -18,7 +19,7 @@ router.get("/", AuthUser, async (req, res) => {
     }
 
     const userZaps = await prisma.zap.findMany({
-      where: { userId: req.user.id },
+      where: { userId: (req.user as UserDetails).id},
       include: {
         actions: { include: { available: true } },
         trigger: { include: { available: true } },

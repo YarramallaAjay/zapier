@@ -38,7 +38,7 @@ export default function CreateZapPage() {
   const loadApps = async () => {
     try {
       const response = await appsApi.getApps()
-      if (response.success) {
+      if (response.code) {
         setApps(response.data || [])
       }
     } catch (err) {
@@ -49,7 +49,7 @@ export default function CreateZapPage() {
   const loadTriggers = async (appId: string) => {
     try {
       const response = await appsApi.getAppTriggers(appId)
-      if (response.success) {
+      if (response.code) {
         setTriggers(response.data || [])
       }
     } catch (err) {
@@ -60,7 +60,7 @@ export default function CreateZapPage() {
   const loadActions = async (appId: string) => {
     try {
       const response = await appsApi.getAppActions(appId)
-      if (response.success) {
+      if (response.code) {
         setActions(response.data || [])
       }
     } catch (err) {
@@ -105,7 +105,7 @@ export default function CreateZapPage() {
         }),
       })
 
-      if (response.success) {
+      if (response.code) {
         router.push("/dashboard")
       } else {
         setError(response.error || "Failed to create zap")

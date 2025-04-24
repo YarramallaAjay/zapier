@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client";
 import { Field, FieldType } from "./Fields";
+import { Prisma } from "../../../generated/prisma";
 
 export interface TriggerBase {
     id: string;

@@ -1,5 +1,5 @@
 import { Auth } from "../middlewares/Auth.js";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../../generated/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Express from "express";
 

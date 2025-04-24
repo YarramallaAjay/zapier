@@ -1,5 +1,4 @@
-import 'tsconfig-paths/register';
-import express, { Express, Router } from 'express';
+import  express,{ Express, Router } from 'express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import listEndpoints from 'express-list-endpoints';
@@ -62,6 +61,7 @@ async function main() {
         routes,
       });
     });
+    console.log('tsconfig-paths/register loaded');
 
     // Log individual routers
     console.log('Hooks Router Routes:');

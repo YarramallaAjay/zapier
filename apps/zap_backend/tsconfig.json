@@ -1,15 +1,24 @@
 {
   "extends": "@repo/typescript-config/base.json",
+
+  "exclude": ["node_modules"],
+  "include": [
+    "./src/**/*.ts",
+    "./integrator/**/*.ts"
+  ],
   "compilerOptions": {
-    "baseUrl": ".", // Base directory for module resolution
     "paths": {
-      "@/*": ["./src/*"], // Maps @/ to the src directory
-      "@integrator/*": ["./integrator/*"] // Maps @integrator/ to the integrator directory
-    },
-    "outDir": "./dist", // Output directory for compiled files
-    "rootDir": ".", // Includes both src and integrator folders
-    "moduleResolution": "node" // Ensures Node.js-style module resolution
+    "@/*": [
+      "./src/*"
+    ],
+    "@integrator/*": [
+      "./integrator/*"
+    ],
+    "@repo/*": [
+      "../../packages/*"
+    ]
   },
-  "include": ["src/**/*", "integrator/**/*"], // Includes src and integrator folders
-  "exclude": ["node_modules", "dist"] // Excludes node_modules and dist folders
+  "baseUrl": ".",
+  }
+
 }

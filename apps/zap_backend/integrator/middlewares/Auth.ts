@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import {  Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { UserDetails } from "@repo/types/dist/UserSession.js";
+import { UserDetails } from "@repo/types/src/UserSession";
 
-export const Auth = async (req: Request, res: Response, next: NextFunction) => {
+export const Auth = async (req, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -16,7 +16,7 @@ export const Auth = async (req: Request, res: Response, next: NextFunction) => {
        res.status(401).json({ message: "Invalid token" });
        return;
     }
-    // Attach user to request
+    
     req.user = user;
     next();
   } catch (error) {
