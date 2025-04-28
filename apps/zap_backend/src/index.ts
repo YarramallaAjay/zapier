@@ -8,6 +8,8 @@ import integrator from '@/routes/ApplicationRoute';
 import authRouter from '@/routes/authRouter';
 import { KafkaProducer } from '@/processor/processor';
 import { KafkaConsumer } from '@/workers/worker';
+import { UserDetails } from '@repo/types/src/UserSession';
+import cors from 'cors'
 
 async function main() {
   try {
@@ -30,6 +32,16 @@ async function main() {
         cookie: { secure: false },
       })
     );
+    app.use(
+      cors({
+        origin: ["http://localhost:3000"], // Allow requests from localhost:3000
+        credentials: true, // Allow cookies and credentials
+      })
+    );
+
+    
+    // Handle preflight requests
+    app.options('*', cors());
 
     // Register Routes
     console.log('Registering routes...');
@@ -41,11 +53,12 @@ async function main() {
     // Sample GET route
     app.get('/', async (req, res) => {
       try {
-        const userId = req.query.userId as string;
+        const {userId} = req.body;
         if (!userId) { res.status(400).json({ error: 'userId required' });
       return
     }
-        res.status(200).json({ message: 'Welcome', userId });
+      const user=await UserDetails.getUser(userId)
+        res.status(200).json({ message: 'Welcome', user });
       } catch (err) {
         res.status(500).json({ error: 'Server error' });
       }

@@ -13,15 +13,18 @@ import { axiosInstance } from '@/apiHandlers/ApiInstance';
 import { ApiResponse, LoginCredentials, SignupCredentials } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import axios from 'axios';
-
+import dotenv from "dotenv";
+import { NEXT_PUBLIC_BACKEND_URL } from '@/config';
+dotenv.config();
 interface AuthContextType {
   user: UserBase | null;
   loading: boolean;
+  isAuthenticated: boolean;
   signIn: (credentials: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
   googleLogin: () => void;
   githubLogin: () => void;
-  signUp:(credentials:SignupCredentials)=>Promise<void>;
+  signUp: (credentials: SignupCredentials) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,106 +37,115 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((state) => state.setUser);
   const clearUser = useUserStore((state) => state.clearUser);
 
-  const tokens = useAuthStore((state) => state.tokens);
-  const setTokens = useAuthStore((state) => state.setTokens);
-  const setToken = useAuthStore((state) => state.setToken);
-  const clearToken = useAuthStore((state) => state.clearToken);
-  const getTokenByProvider = useAuthStore((state) => state.getTokenByType);
+  const { tokens, isAuthenticated, setTokens, setToken, clearToken, getTokenByType } = useAuthStore();
 
   useEffect(() => {
     checkSession();
   }, []);
 
   const checkSession = async () => {
-    const storedToken = getTokenByProvider('basic') || getTokenByProvider('google') || getTokenByProvider('github');
-    if (!storedToken) {
-      clearToken();
-      clearUser();
-      // router.push('/login');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const res = await axiosInstance.get<UserSession>('/');
-      setUser(res.data.user);
-      setTokens(res.data.user.tokens as TokenBase[]);
-      console.log(res.data.user)
+      const res = await axios.get<UserSession>('/');
+      if (res.data.user) {
+        setUser(res.data.user);
+        if(res.data.user.tokens){}
+        setTokens(res.data.user.tokens as TokenBase[]);
+      }
     } catch (err) {
       console.error('Session check failed', err);
       clearToken();
       clearUser();
-      router.push('/login');
     } finally {
       setLoading(false);
     }
   };
 
-  const signUp=async(Credentials:SignupCredentials):Promise<void>=>{
-
-    return new Promise((resolve, reject)=>{
-      axios.post<{response:ApiResponse}>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL|| "http://localhost:3001"}/auth/signup`,
-        Credentials
-      ).then((res)=>{
-        console.log("Successfully signup..login")
-        router.push("/login")
-        resolve()
-      }).catch(err=>{
-        console.log(`Error creatimg user. refresh and retry...`)
-        console.log(err)
-        reject()
-      })
-    })
-
-  }
+  const signUp = async (credentials: SignupCredentials): Promise<void> => {
+    try {
+      const res = await axios.post<ApiResponse>(`${NEXT_PUBLIC_BACKEND_URL}/auth/signup`, credentials);
+      if (res.data.success) {
+        toast({
+          title: "Success",
+          description: "Account created successfully. Please login.",
+        });
+        router.push("/login");
+      }
+    } catch (err) {
+      console.error('Signup failed', err);
+      toast({
+        title: "Error",
+        description: "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
 
   const signIn = async (credentials: LoginCredentials) => {
     try {
-      const res = await axiosInstance.post<{ token: string; user: UserBase }>(
-        '/auth/login',
-        credentials
-      );
-
+      const res = await axios.post<{ user: UserBase }>(`${NEXT_PUBLIC_BACKEND_URL}/auth/signin`, credentials);
       const { user } = res.data;
 
-      const basicToken = (user.tokens as TokenBase[]).find((token) => token.provider === 'basic');
-      if (basicToken) setToken(basicToken);
-
-      setUser(user);
-      router.push('/dashboard');
+      if (user) {
+        setUser(user);
+        setTokens(user.tokens as TokenBase[]);
+        toast({
+          title: "Success",
+          description: "Logged in successfully",
+        });
+        router.push("/dashboard");
+      }
     } catch (err) {
       console.error('Login failed', err);
+      toast({
+        title: "Error",
+        description: "Invalid credentials. Please try again.",
+        variant: "destructive",
+      });
+      throw err;
     }
   };
 
   const signOut = async () => {
     try {
-      await axiosInstance.post('/auth/logout');
-    } catch (err) {
-      console.error('Logout failed', err);
-    } finally {
+      await axiosInstance.get('/auth/logout');
       clearToken();
       clearUser();
-      router.push('/login');
+      toast({
+        title: "Success",
+        description: "Logged out successfully",
+      });
+      router.push("/login");
+    } catch (err) {
+      console.error('Logout failed', err);
+      toast({
+        title: "Error",
+        description: "Failed to logout. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const googleLogin = () => {
-    router.push('http://localhost:3001/auth/google');
+    window.location.href = `${NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/auth/google`;
   };
 
   const githubLogin = () => {
-    router.push('http://localhost:3001/auth/github');
+    window.location.href = `${NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/auth/github`;
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ user, loading, signIn,signUp, signOut, googleLogin, githubLogin }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    user,
+    loading,
+    isAuthenticated,
+    signIn,
+    signOut,
+    googleLogin,
+    githubLogin,
+    signUp,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

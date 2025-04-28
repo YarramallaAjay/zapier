@@ -2,10 +2,9 @@ import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 
 import { useAuthStore } from '@/store/userStore';
 import { useRouter } from 'next/navigation';
 
-
 const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL|| "http://localhost:3001",
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001",
     timeout: 10000,
     headers: {
       'Content-Type': 'application/json',
@@ -15,14 +14,15 @@ const createAxiosInstance = (): AxiosInstance => {
 
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      const token = useAuthStore.getState().tokens;
+      const { tokens, isAuthenticated } = useAuthStore.getState();
+      const basicToken = tokens.find(t => t.provider === 'basic');
 
-      if (token) {
+      if (basicToken && isAuthenticated) {
         config.headers = config.headers || {};
-        config.headers['Authorization'] = `Bearer ${token}`;
-      } else {
-        console.warn('token not found in store..login again');
-        window.location.href="/login"
+        config.headers['Authorization'] = `Bearer ${basicToken.accessToken}`;
+      } else if (!isAuthenticated && !config.url?.includes('/auth/')) {
+        console.warn('User not authenticated. Redirecting to login...');
+        window.location.href = "/login";
       }
 
       return config;
@@ -34,14 +34,14 @@ const createAxiosInstance = (): AxiosInstance => {
   );
 
   instance.interceptors.response.use(
-    (response:AxiosResponse) => {
+    (response: AxiosResponse) => {
       return {
         success: true,
         data: response.data,
         status: response.status,
         statusText: response.data.message,
-        config:response.config,
-        headers:response.headers,
+        config: response.config,
+        headers: response.headers,
       };
     },
     (error) => {
@@ -49,6 +49,11 @@ const createAxiosInstance = (): AxiosInstance => {
       const message = response?.data?.message || 'Something went wrong';
 
       console.error('[Response Error]', message);
+
+      if (response?.status === 401) {
+        useAuthStore.getState().clearToken();
+        window.location.href = "/login";
+      }
 
       return Promise.reject({
         success: false,

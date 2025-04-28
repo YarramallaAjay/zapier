@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import "dotenv/config";
 import { signInSchema, signupSchema } from '@/utils/zodSchema';
 import { Apiresponse } from '@/utils/Response';
-import passport from 'passport';
+import passport from "@/auth/google";
 import Jwt  from 'jsonwebtoken';
 
 const router: express.Router = express.Router();
@@ -18,7 +18,9 @@ router.use(passport.session());
 
 //  SIGNUP
 router.post("/signup", async (req, res) => {
-  const parsedData = signupSchema.safeParse(req.body);
+  console.log(req.body)
+  const parsedData = await signupSchema.safeParse(await req.body)
+  console.log(parsedData)
   if (!parsedData.success) {
     Apiresponse.error(res, "Invalid input. Please check your details.", 400,{});
     return;
@@ -26,7 +28,7 @@ router.post("/signup", async (req, res) => {
 
   const { name, email, password } = parsedData.data;
 
-  const userExisted = await client.user.findFirst({ where: { name } });
+  const userExisted = await client.user.findFirst({ where: { email } });
   if (userExisted) {
      Apiresponse.success(res, userExisted, "User already exists. Please log in.", 200);
      return;
@@ -47,7 +49,7 @@ router.post("/signup", async (req, res) => {
     id:createUser.id
   },JWT_SECRET)
 
-  client.tokenStore.create({
+  await client.tokenStore.create({
     data:{
         accessToken:token,
         refreshToken:token,
@@ -133,11 +135,11 @@ router.get("/github/profile", async (req, res) => {
 
 
 // GitHub OAuth Login
-router.get("/google", passport.authenticate("github", { scope: ['user:email'] }));
+router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
 
 // GitHub OAuth Callback
 router.get("/google/callback",
-  passport.authenticate("github", { failureRedirect: "/login" }),
+  passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     if (!req.user) {
       return res.redirect("/login");

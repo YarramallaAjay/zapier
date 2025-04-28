@@ -2,25 +2,16 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useAuthStore, useUserStore } from '@/store/userStore'
+import { useAuth } from '@/contexts/auth-context'
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const pathname = usePathname()
-
+  const { isAuthenticated, signOut } = useAuth()
   const user = useUserStore((state) => state.user)
-
-  useEffect(() => {
-    const hasTokensInStore = user && user.tokens
-
-    // Fallback to localStorage if store is empty
-    const userPresent = localStorage.getItem('zapper_user_session') !== null
-    hasTokensInStore && userPresent?setIsLoggedIn(true):setIsLoggedIn(false)
-  }, [user])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -49,13 +40,16 @@ export default function Header() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <>
               <Button variant="outline" asChild>
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
               <Button asChild>
                 <Link href="/applications">My Applications</Link>
+              </Button>
+              <Button variant="ghost" onClick={signOut}>
+                Sign Out
               </Button>
             </>
           ) : (
@@ -91,13 +85,16 @@ export default function Header() {
 
               <div className="h-px bg-border my-4" />
 
-              {isLoggedIn ? (
+              {isAuthenticated ? (
                 <>
                   <Button variant="outline" asChild className="w-full">
                     <Link href="/dashboard">Dashboard</Link>
                   </Button>
                   <Button asChild className="w-full">
                     <Link href="/applications">My Applications</Link>
+                  </Button>
+                  <Button variant="ghost" onClick={signOut} className="w-full">
+                    Sign Out
                   </Button>
                 </>
               ) : (

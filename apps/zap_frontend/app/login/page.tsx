@@ -29,7 +29,6 @@ export default function SignInPage() {
     try {
       signIn({email, password}).then((res)=>{
         console.log("logged in...!")
-        router.push("/dashboard")
       })
       .catch((err)=>{
         console.error(err)

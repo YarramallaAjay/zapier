@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2, Key, Webhook, Zap, Plus, Copy, Check } from "lucide-react"
+import Link from "next/link"
 
 // Mock application data - would be fetched from backend
 const APPLICATION = {
@@ -73,7 +74,7 @@ export default function ApplicationPage() {
             The application you're looking for doesn't exist or you don't have access to it.
           </p>
           <Button asChild>
-            <a href="/applications">Back to Applications</a>
+            <Link href="/applications">Back to Applications</Link>
           </Button>
         </div>
       </div>
