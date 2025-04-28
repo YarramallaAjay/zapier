@@ -1,27 +1,20 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
+  "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [
-        "apps/zap_backend/dist/**",
-        "apps/zap_frontend/.next/**", 
-        "packages/**/dist/**" 
-      ]
+      "outputs": ["dist/**", ".next/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+      "outputs": []
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "clean": {
+      "cache": false
     }
   }
-    
-    
 }

@@ -46,7 +46,6 @@
     "supertest": "^7.1.0",
     "tsconfig-paths": "^4.2.0",
     "uuid": "^11.1.0",
-    "zap_backend": "file:",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -65,7 +64,7 @@
       "./src/*"
     ],
     "@integrator/*": [
-      "./integrator/*"
+      "./src/integrator/*"
     ],
     "@repo/*": [
       "../../packages/*"
