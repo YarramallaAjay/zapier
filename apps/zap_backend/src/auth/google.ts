@@ -3,8 +3,8 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET } from "@/config";
-import  {PrismaClient} from "../../../../generated/prisma";
-import {  UserDetails } from "@repo/types/src/UserSession";
+import { PrismaClient } from "@repo/db/src";
+import { UserDetails } from "@repo/types/src/UserSession";
 
 dotenv.config();
 

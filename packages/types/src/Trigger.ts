@@ -1,5 +1,5 @@
 import { Field, FieldType } from "./Fields";
-import { Prisma } from "../../../generated/prisma";
+import { Prisma } from "@repo/db/src";
 
 export interface TriggerBase {
     id: string;

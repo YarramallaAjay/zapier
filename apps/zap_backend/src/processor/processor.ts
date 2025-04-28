@@ -1,11 +1,11 @@
-import { PrismaClient } from "../../../../generated/prisma"
+import { PrismaClient } from "@repo/db/src"
 import { Kafka, Producer } from "kafkajs"
 
 export class KafkaProducer {
     private client: PrismaClient
     private kafka: Kafka
     private producer: Producer
-    private readonly TOPIC_NAME = "zapsTopic"
+private readonly TOPIC_NAME = "zapsTopic"
 
     constructor(clientId: string = "zapConsumers", brokers: string[] = ["localhost:9092"]) {
         this.client = new PrismaClient()

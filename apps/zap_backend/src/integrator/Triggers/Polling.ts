@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@repo/db";
+import { Prisma, PrismaClient } from "@repo/db/src";
 import { Field, FieldType } from "@repo/types/src/Fields";
 import { TriggerBase } from "@repo/types/src/Trigger";
 

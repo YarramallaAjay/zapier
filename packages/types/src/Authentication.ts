@@ -1,4 +1,4 @@
-import { Prisma } from "../../../generated/prisma"
+import { Prisma } from "@repo/db/src"
 
 export interface AuthenticationBase{
     type:"OAuth" |"Basic" |"JWT"

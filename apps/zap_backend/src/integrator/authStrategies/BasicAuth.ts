@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@repo/db";
+import { Prisma, PrismaClient } from "@repo/db/src";
 import { AuthenticationBase } from "@repo/types/src/Authentication";
 
 export class BasicAuth implements AuthenticationBase {

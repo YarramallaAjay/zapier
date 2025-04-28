@@ -3,10 +3,13 @@
   "compilerOptions": {
     "lib": ["ES2020", "DOM"],
     "outDir": "dist",
-    "rootDir": "src",
     "composite": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@repo/db": ["../db/src"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Apiresponse } from "@/utils/Response";
-import { PrismaClient } from "../../../../generated/prisma";
+import { PrismaClient } from "@repo/db/src";
 
 const prisma=new PrismaClient()
 export class ZapHandler {

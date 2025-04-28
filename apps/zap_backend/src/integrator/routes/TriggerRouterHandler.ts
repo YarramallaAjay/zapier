@@ -1,8 +1,8 @@
 import express, { Router } from "express";
-import { Prisma, PrismaClient } from "@repo/db";
+import {  PrismaClient } from "@repo/db/src";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Auth } from "../middlewares/Auth";
-import { TriggerBase } from "@repo/types/src/Trigger";
+// import { TriggerBase } from "@repo/types/src/Trigger";
 
 const router: Router = express.Router();
 const prisma = new PrismaClient();

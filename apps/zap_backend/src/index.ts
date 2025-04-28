@@ -2,7 +2,7 @@ import  express,{ Express, Router } from 'express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import listEndpoints from 'express-list-endpoints';
-import hooksRouter from '@/routes/hooksRouter';
+import hooksRouter from "@/routes/hooksRouter";
 import zapRouter from '@/routes/zapRouter';
 import integrator from '@/routes/ApplicationRoute';
 import authRouter from '@/routes/authRouter';

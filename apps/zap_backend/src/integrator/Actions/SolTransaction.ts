@@ -1,7 +1,7 @@
-import { Prisma, PrismaClient } from "@repo/db";
+import { Prisma, PrismaClient } from "@repo/db/src";
 import { ActionBase } from "@repo/types/src/Actions";
 import { Field, FieldType } from "@repo/types/src/Fields";
-import { Status } from "@repo/types/src/Status";
+// import { Status } from "@repo/types/src/Status";
 
 export class SolTransaction implements ActionBase{
     id!: string;

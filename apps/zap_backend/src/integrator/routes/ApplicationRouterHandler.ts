@@ -1,7 +1,7 @@
 import express, {  Router } from "express";
-import {  PrismaClient, User } from "@repo/db/src/index";
+import {  PrismaClient } from "@repo/db/src";
 import cookieParser from "cookie-parser";
-import { Auth } from "../middlewares/Auth";
+import { Auth } from "@integrator/middlewares/Auth";
 import { UserDetails, UserSession } from "@repo/types/src/UserSession";
 import { TeamBase } from "@repo/types/src/Team";
 

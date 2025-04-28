@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../../../generated/prisma";
+import { PrismaClient } from "@repo/db/src";
 import { response } from "express";
 import { Kafka, Consumer, KafkaMessage } from "kafkajs";
 import { EmailHandler } from "@/handlers/EmailHandler";

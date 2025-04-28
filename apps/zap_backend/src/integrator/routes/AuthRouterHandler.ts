@@ -1,8 +1,8 @@
-import { Auth } from "../middlewares/Auth.js";
-import { Prisma, PrismaClient } from "@repo/db";
+import { Auth } from "@integrator/middlewares/Auth";
+import {  PrismaClient } from "@repo/db/src";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Express from "express";
-import { AuthenticationBase } from "@repo/types/src/Authentication";
+// import { AuthenticationBase } from "@repo/types/src/Authentication";
 
 const router: Express.Router = Express.Router();
 const prisma = new PrismaClient();

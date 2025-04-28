@@ -1,4 +1,4 @@
-import { PrismaClient } from '../.././../../generated/prisma';
+import { PrismaClient } from '@repo/db/src';
 import express from 'express';
 import bcrypt from 'bcrypt';
 import "dotenv/config";

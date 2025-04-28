@@ -1,4 +1,4 @@
-import { Prisma } from "../../../generated/prisma";
+import { Prisma } from "@repo/db/src";
 import { Field, FieldType } from "./Fields";
 
 export interface ActionBase{

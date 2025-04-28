@@ -3,7 +3,7 @@ import { ZapSchema } from "@/utils/zodSchema";
 import { AuthUser } from "@/middlewares/userAuthMiddleware";
 import { ZapHandler } from "@/handlers/zapHandler";
 import { Apiresponse } from "@/utils/Response";
-import { PrismaClient } from "../../../../generated/prisma";
+import { PrismaClient } from "@repo/db/src";
 import { UserDetails } from "@repo/types/src/UserSession";
 
 const router: Router = express.Router();

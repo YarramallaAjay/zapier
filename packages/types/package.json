@@ -10,10 +10,10 @@
   "license": "ISC",
   "description": "Shared TypeScript types for the monorepo",
   "dependencies": {
-    "@prisma/client": "^6.6.0",
-    "@repo/types": "file:",
-    "@repo/typescript-config": "workspace:*",
-    "prisma": "^6.6.0",
-    "@repo/db":"workspace:*"
+    "@repo/db": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
 }

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@repo/db";
+import {  PrismaClient } from "@repo/db/src";
 import { AuthFactory } from "./authStrategies/authFactory";
 import { TriggerFactory } from "./Triggers/TriggerFactory";
 import { ActionFactory } from "./Actions/ActionFactory";
