@@ -1,0 +1,26 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+
+# Copy workspace packages
+COPY packages/ ./packages/
+COPY apps/backend ./apps/backend
+
+# Install dependencies
+RUN pnpm install
+
+# Build the backend
+RUN pnpm --filter backend build
+
+# Expose the port
+EXPOSE 3001
+
+# Start the backend
+CMD ["pnpm", "--filter", "backend", "start"] 

@@ -70,7 +70,7 @@ export interface Zap {
 }
 
 export interface ApiResponse {
-  code: boolean;
+  success: boolean;
   data?: any;
   error?: any;
   message: string;

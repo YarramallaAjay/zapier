@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Github, Mail } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SignInPage() {
   const { signIn, googleLogin, githubLogin } = useAuth()
@@ -18,25 +19,82 @@ export default function SignInPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
+  const { toast } = useToast()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault() // Prevent form submission and page reload
     setError("")
     setLoading(true)
 
     try {
-      signIn({email, password}).then((res)=>{
-        console.log("logged in...!")
-      })
-      .catch((err)=>{
-        console.error(err)
-      })
+      console.log("Attempting sign in with:", { email })
+      const success = await signIn({ email, password })
+      
+      if (success) {
+        console.log("Sign in successful, redirecting to dashboard")
+        toast({
+          title: "Success",
+          description: "You have been signed in successfully",
+        })
+        router.push("/dashboard")
+      } else {
+        console.error("Sign in failed: No success response")
+        toast({
+          title: "Error",
+          description: "Invalid email or password",
+          variant: "destructive",
+        })
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "signIn failed")
+      console.error("Sign in error:", err)
+      const errorMessage = err instanceof Error ? err.message : "Sign in failed"
+      setError(errorMessage)
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    try {
+      console.log("Attempting Google login")
+      await googleLogin()
+      toast({
+        title: "Success",
+        description: "Google login successful",
+      })
+      router.push("/dashboard")
+    } catch (err) {
+      console.error("Google login error:", err)
+      toast({
+        title: "Error",
+        description: "Google login failed",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleGithubLogin = async () => {
+    try {
+      console.log("Attempting GitHub login")
+      await githubLogin()
+      toast({
+        title: "Success",
+        description: "GitHub login successful",
+      })
+      router.push("/dashboard")
+    } catch (err) {
+      console.error("GitHub login error:", err)
+      toast({
+        title: "Error",
+        description: "GitHub login failed",
+        variant: "destructive",
+      })
     }
   }
 
@@ -45,7 +103,7 @@ export default function SignInPage() {
       <div className="grid w-full max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
         <Card className="w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">signIn to Zapper</CardTitle>
+            <CardTitle className="text-2xl font-bold">Sign in to Zapper</CardTitle>
             <CardDescription>Enter your credentials to access your account</CardDescription>
           </CardHeader>
           <CardContent>
@@ -96,7 +154,7 @@ export default function SignInPage() {
               <Button
                 variant="outline"
                 className="flex items-center justify-center gap-2"
-                onClick={googleLogin}
+                onClick={handleGoogleLogin}
               >
                 <Mail className="h-4 w-4" />
                 Google
@@ -104,7 +162,7 @@ export default function SignInPage() {
               <Button
                 variant="outline"
                 className="flex items-center justify-center gap-2"
-                onClick={githubLogin}
+                onClick={handleGithubLogin}
               >
                 <Github className="h-4 w-4" />
                 GitHub

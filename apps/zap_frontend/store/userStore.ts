@@ -1,6 +1,7 @@
 import { TokenBase, UserBase } from '@repo/types/src/UserSession';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { safeLocalStorage } from '@/lib/client-utils';
 
 interface AuthState {
   tokens: TokenBase[];
@@ -23,13 +24,20 @@ export const useAuthStore = create<AuthState>()(
       },
       clearToken: () => set({ tokens: [], isAuthenticated: false }),
       getTokenByType: (type: string) => get().tokens.find(t => t.provider === type),
-      setTokens: (existingTokens: TokenBase[]) => {
-        set({ tokens: [...existingTokens], isAuthenticated: existingTokens.length > 0 });
+      setTokens: (existingTokens) => {
+        console.log(existingTokens)
+        set({ tokens: existingTokens, isAuthenticated: existingTokens.length > 0 });
       },
       setAuthenticated: (value: boolean) => set({ isAuthenticated: value })
     }),
     {
       name: 'zapper_user_auth',
+      storage: createJSONStorage(() => ({
+        getItem: (name) => safeLocalStorage.getItem(name),
+        setItem: (name, value) => safeLocalStorage.setItem(name, value),
+        removeItem: (name) => safeLocalStorage.removeItem(name),
+      })),
+      skipHydration: true,
     }
   )
 );
@@ -43,7 +51,7 @@ interface UserState {
 
 export const useUserStore = create<UserState>()(
   persist(
-    (set) => ({
+    (set,get) => ({
       user: null,
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
@@ -53,6 +61,12 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: 'zapper_user_session',
+      storage: createJSONStorage(() => ({
+        getItem: (name) => safeLocalStorage.getItem(name),
+        setItem: (name, value) => safeLocalStorage.setItem(name, value),
+        removeItem: (name) => safeLocalStorage.removeItem(name),
+      })),
+      skipHydration: true,
     }
   )
 );

@@ -15,5 +15,30 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka_container
+    ports:
+      - '9092:9092'
+      - '9093:9093'
+    
+
+  zapier-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zapier_container
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://postgresuser:db_owner@postgres:5432/zapper
+      - KAFKA_BROKERS=kafka:9092
+      - PORT=3001
+    depends_on:
+      - postgres
+      - kafka
+
+
+
 volumes:
   postgres_data:
+  kafka_data:

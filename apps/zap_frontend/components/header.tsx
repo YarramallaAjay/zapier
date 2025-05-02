@@ -5,13 +5,23 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Menu } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { useAuthStore, useUserStore } from '@/store/userStore'
 import { useAuth } from '@/contexts/auth-context'
+import { useEffect, useState } from 'react'
 
 export default function Header() {
   const pathname = usePathname()
   const { isAuthenticated, signOut } = useAuth()
-  const user = useUserStore((state) => state.user)
+  const [mounted, setMounted] = useState(false)
+
+  // Handle hydration
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Don't render anything until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return null
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

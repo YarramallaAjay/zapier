@@ -1,26 +1,27 @@
 import {  Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { UserDetails } from "@repo/types/src/UserSession";
+import { Apiresponse } from "@/utils/Response";
 
 export const Auth = async (req, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.token;
     if (!token) {
-       res.status(401).json({ message: "cookie token not found.." });
+      Apiresponse.error(res,"cookie not found",401,{})
+      return;
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { id: string };
     const user:UserDetails = await UserDetails.getUser(decoded.id);
     
     if (!user) {
-       res.status(401).json({ message: "Invalid token" });
+      Apiresponse.error(res,"Invalid token",401,{})
        return;
     }
     
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
-    return;
+    Apiresponse.error(res,"Internal server error",401,error)
   }
 };

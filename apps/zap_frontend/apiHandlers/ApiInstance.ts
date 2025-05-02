@@ -1,6 +1,14 @@
+"use client";
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/userStore';
-import { useRouter } from 'next/navigation';
+import { ApiResponse } from '@/lib/types';
+
+// interface ApiResponse<T = any> {
+//   success: boolean;
+//   data?: T;
+//   message?: string;
+//   error?: any;
+// }
 
 const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({
@@ -14,15 +22,24 @@ const createAxiosInstance = (): AxiosInstance => {
 
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      const { tokens, isAuthenticated } = useAuthStore.getState();
-      const basicToken = tokens.find(t => t.provider === 'basic');
+      // First try to get token from cookies
+      const cookieToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('zapper='))
+        ?.split('=')[1];
 
-      if (basicToken && isAuthenticated) {
+      if (cookieToken) {
         config.headers = config.headers || {};
-        config.headers['Authorization'] = `Bearer ${basicToken.accessToken}`;
-      } else if (!isAuthenticated && !config.url?.includes('/auth/')) {
-        console.warn('User not authenticated. Redirecting to login...');
-        window.location.href = "/login";
+        config.headers['Authorization'] = cookieToken;
+      } else {
+        // If no cookie token, try to get from store
+        const { tokens, isAuthenticated } = useAuthStore.getState();
+        const basicToken = tokens.find(t => t.provider === 'basic');
+
+        if (basicToken && isAuthenticated) {
+          config.headers = config.headers || {};
+          config.headers['Authorization'] = `Bearer ${basicToken.accessToken}`;
+        }
       }
 
       return config;
@@ -36,12 +53,12 @@ const createAxiosInstance = (): AxiosInstance => {
   instance.interceptors.response.use(
     (response: AxiosResponse) => {
       return {
-        success: true,
-        data: response.data,
-        status: response.status,
-        statusText: response.data.message,
-        config: response.config,
-        headers: response.headers,
+        config:response.config,
+        data:response.data.data,
+        headers:response.headers,
+        status:response.status,
+        statusText:response.data.message,
+        request:response.request
       };
     },
     (error) => {
@@ -51,8 +68,14 @@ const createAxiosInstance = (): AxiosInstance => {
       console.error('[Response Error]', message);
 
       if (response?.status === 401) {
-        useAuthStore.getState().clearToken();
-        window.location.href = "/login";
+        const store = useAuthStore.getState();
+        store.clearToken();
+        // Clear all cookies
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
       }
 
       return Promise.reject({
