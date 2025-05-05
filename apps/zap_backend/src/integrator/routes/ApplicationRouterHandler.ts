@@ -1,9 +1,10 @@
 import express, {  Router } from "express";
 import {  PrismaClient } from "@repo/db/src";
 import cookieParser from "cookie-parser";
-import { Auth } from "@integrator/middlewares/Auth";
+import { AuthUser } from "@/middlewares/userAuthMiddleware";
 import { UserDetails, UserSession } from "@repo/types/src/UserSession";
 import { TeamBase } from "@repo/types/src/Team";
+import { Apiresponse } from "@/utils/Response";
 
 
 const prisma = new PrismaClient();
@@ -23,60 +24,61 @@ router.use(express.json());
 router.use(cookieParser());
 
 // 1. Create Team
-router.post("/team", Auth, async (req, res) => {
+router.post("/team", AuthUser, async (req, res) => {
   try {
-    const user = await (req.user as unknown as UserSession).user; // Use cached user details
+    const user = await req.user as unknown as UserDetails; // Use cached user details
     if (!user) {
-      res.status(401).json({ message: "User not authenticated" });
+      Apiresponse.error(res, "User not authUserenticated", 401, {});
       return;
     }
 
     // Check if user already has a team
-    if (user.team  && (user.team as TeamBase).id) {
-      res.status(400).json({ message: "User can only create one team." });
+    if (user.team && (user.team as TeamBase).id) {
+      Apiresponse.error(res, "User can only create one team.", 400, {});
       return;
     }
 
     const { name, metadata, createdById } = req.body;
-    console.log(createdById)
-
+    console.log(createdById);
 
     const newTeam = await prisma.team.create({
       data: {
         name,
         metadata: metadata || {},
-        createdById: (user.id ) as unknown as string,
-        members:{
-          connect:{
+        createdById: (user.id) as unknown as string,
+        members: {
+          connect: {
             id: String(user.id)
           }
-        } 
+        }
       }, // Add user as team member
     });
 
     // Update user session to include the new team
     await UserDetails.updateUserDetails(user.id);
 
-    res.status(201).json({ message: "Team created successfully.", team: newTeam });
+    Apiresponse.success(res, { team: newTeam }, "Team created successfully.", 201);
+    return;
   } catch (error) {
     console.error("Error creating team:", error);
-    res.status(500).json({ error: "Failed to create team." });
+    Apiresponse.error(res, "Failed to create team.", 500, error);
+    return;
   }
 });
 
 // 2. Update Team Details
-router.put("/team", Auth, async (req, res) => {
+router.put("/team", AuthUser, async (req, res) => {
   try {
-    const user = await (req.user as unknown as UserSession).user; // Use cached user details
+    const user = await req.user as unknown as UserDetails; // Use cached user details
     if (!user) {
-      res.status(401).json({ message: "User not authenticated" });
+      Apiresponse.error(res, "User not authenticated", 401, {});
       return;
     }
 
     const { name, metadata } = req.body;
 
     if (!user.team || !(user.team as any).id) {
-      res.status(400).json({ error: "User not part of a team." });
+      Apiresponse.error(res, "User not part of a team.", 400, {});
       return;
     }
 
@@ -88,47 +90,47 @@ router.put("/team", Auth, async (req, res) => {
     // Update user session to reflect team changes
     await UserDetails.updateUserDetails(user.id);
 
-    res.json({ message: "Team updated successfully.", team: updatedTeam });
+    Apiresponse.success(res, { team: updatedTeam }, "Team updated successfully.", 200);
   } catch (error) {
     console.error("Error updating team:", error);
-    res.status(500).json({ error: "Failed to update team." });
+    Apiresponse.error(res, "Failed to update team.", 500, error);
   }
 });
 
 // 3. Delete Team
-router.delete("/team", Auth, async (req, res) => {
+router.delete("/team", AuthUser, async (req, res) => {
   try {
-    const user = (req.user as unknown as UserSession).user; // Use cached user details
+    const user = req.user as unknown as UserDetails; // Use cached user details
     if (!user) {
-      res.status(401).json({ message: "User not authenticated" });
+      Apiresponse.error(res, "User not authenticated", 401, {});
       return;
     }
 
     await prisma.team.delete({
-      where: { createdById: (user as unknown as  UserSession).user.id   },
+      where: { createdById: (user as unknown as UserSession).user.id },
     });
 
     // Clear user session since team is deleted
     await UserDetails.updateUserDetails(user.id);
 
-    res.json({ message: "Team deleted successfully." });
+    Apiresponse.success(res, {}, "Team deleted successfully.", 200);
   } catch (error) {
     console.error("Error deleting team:", error);
-    res.status(500).json({ error: "Failed to delete team." });
+    Apiresponse.error(res, "Failed to delete team.", 500, error);
   }
 });
 
 // 4. Get Apps for the User's Team
-router.get("/allapps", Auth, async (req, res) => {
+router.get("/teamapps", AuthUser, async (req, res) => {
   try {
-    const user = (req.user as unknown as UserSession).user; // Use cached user details
+    const user = await req.user as unknown as UserDetails; // Use cached user details
     if (!user) {
-      res.status(401).json({ message: "User not authenticated" });
+      Apiresponse.error(res, "User not authenticated", 401, {});
       return;
     }
 
     if (!user.team || !(user.team as any).id) {
-      res.status(400).json({ error: "User not part of a team." });
+      Apiresponse.success(res, [],"User not part of a team....create one", 201);
       return;
     }
 
@@ -142,26 +144,26 @@ router.get("/allapps", Auth, async (req, res) => {
       },
     });
 
-    res.json({ apps });
+    Apiresponse.success(res, apps , "Apps fetched successfully.", 200);
   } catch (error) {
     console.error("Error fetching apps:", error);
-    res.status(500).json({ error: "Failed to fetch apps." });
+    Apiresponse.error(res, "Failed to fetch apps.", 500, error);
   }
 });
 
 // 5. Create New App
-router.post("/newapp", Auth, async (req, res) => {
+router.post("/newapp", AuthUser, async (req, res) => {
   try {
-    const user = await (req.user as unknown as UserSession).user; // Use cached user details
+    const user = await req.user as unknown as UserDetails; // Use cached user details
     if (!user) {
-      res.status(401).json({ message: "User not authenticated" });
+      Apiresponse.error(res, "User not authenticated", 401, {});
       return;
     }
 
     const { name, description } = req.body;
 
     if (!user.team || !(user.team as any).id) {
-      res.status(400).json({ error: "User not part of a team." });
+      Apiresponse.error(res, "User not part of a team.", 400, {});
       return;
     }
 
@@ -169,12 +171,38 @@ router.post("/newapp", Auth, async (req, res) => {
       data: { name, description, teamId: (user.team as any).id },
     });
 
-    res.json({ app: newApp });
-    return;
+    Apiresponse.success(res, { app: newApp }, "App created successfully.", 201);
   } catch (error) {
     console.error("Error creating app:", error);
-    res.status(500).json({ error: "Failed to create app." });
-    return;
+    Apiresponse.error(res, "Failed to create app.", 500, error);
+  }
+});
+
+router.get("/allapps", AuthUser, async (req, res) => {
+  try {
+    const user = await req.user as unknown as UserDetails; // Use cached user details
+    if (!user) {
+      Apiresponse.error(res, "User not authenticated", 401, {});
+      return;
+    }
+
+
+    const apps = await prisma.app.findMany({
+      include: {
+        team: true,
+        actions: true,
+        triggers: true,
+        authMethods: { include: { availableAuth: true } },
+      },
+    });
+    if(!apps){
+      Apiresponse.error(res, "Apps not found/ mis-fetch",400, []);
+    }
+
+    Apiresponse.success(res, apps , "Apps fetched successfully.", 200);
+  } catch (error) {
+    console.error("Error fetching apps:", error);
+    Apiresponse.error(res, "Failed to fetch apps.", 500, error);
   }
 });
 

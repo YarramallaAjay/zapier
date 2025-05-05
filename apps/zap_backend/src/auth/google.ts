@@ -70,6 +70,7 @@ passport.use(
                 data: {
                   email,
                   name: profile.displayName,
+                  image:profile._json.profile,
                   password: accessToken, // Use real flow in production!
                   tokens: {
                     create: [
@@ -90,7 +91,7 @@ passport.use(
             );
         
             const cachedUser = await UserDetails.getUser(finalUser.id);
-        
+            console.log("completed...successfully loggedIn")
             return done(null, { ...cachedUser, jwtToken } as any);
           } catch (error) {
             return done(error, false);

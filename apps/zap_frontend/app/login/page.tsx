@@ -37,7 +37,6 @@ export default function SignInPage() {
           title: "Success",
           description: "You have been signed in successfully",
         })
-        router.push("/dashboard")
       } else {
         console.error("Sign in failed: No success response")
         toast({

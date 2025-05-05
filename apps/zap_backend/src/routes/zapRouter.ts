@@ -12,6 +12,7 @@ const prisma=new PrismaClient();
 
 
 router.get("/", AuthUser, async (req, res) => {
+  console.log("came...")
   try {
     if (!req.user) {
       Apiresponse.error(res, "User not authenticated", 401, null);
@@ -25,9 +26,10 @@ router.get("/", AuthUser, async (req, res) => {
         trigger: { include: { available: true } },
       },
     });
+    console.log("after DB call: "+userZaps)
 
-    if (!userZaps.length) {
-      Apiresponse.success(res, [], "No zaps found. Create one!");
+    if (userZaps.length===0) {
+      Apiresponse.success(res, userZaps, "No zaps found. Create one!");
       return;
     }
 

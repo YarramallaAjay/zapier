@@ -8,9 +8,11 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/contexts/auth-context"
-import { appsApi, zapApi } from "@/lib/api"
-import { App, Trigger, Action, Zap } from "@/lib/types"
+import { App, Trigger, Action, Zap, AvailableTriggers, AvailableActions } from "@/lib/types"
 import { ArrowLeft, Loader2 } from "lucide-react"
+import { axiosInstance } from "@/apiHandlers/ApiInstance"
+import { AxiosResponse } from "axios"
+import { NEXT_PUBLIC_BACKEND_URL } from "@/config"
 
 export default function CreateZapPage() {
   const router = useRouter()
@@ -35,35 +37,58 @@ export default function CreateZapPage() {
     loadApps()
   }, [user, router])
 
+  useEffect(()=>{
+    if(user.zaps){
+      setTriggers(user?.Zaps.triggers)
+      setActions(user?.Zaps.actions)
+    }
+    else{
+     loadApps()
+    }
+  },[])
+
   const loadApps = async () => {
     try {
-      const response = await appsApi.getApps()
-      if (response.code) {
-        setApps(response.data || [])
+      const response = await axiosInstance.get<AxiosResponse>(`${NEXT_PUBLIC_BACKEND_URL}/integrator/apps/allapps`)
+      if (response.status===200) {
+        console.log(response.data)
+        setApps((response.data.data.apps) as App[] || [])
+        setTriggers((response.data.data.apps.triggers) as AvailableTriggers[] || [])
+        setActions((response.data.data.apps.actions)as AvailableActions || [])
       }
+      else{
+        console.log( `Error Occured: ${response.status} : ${response.data.data.errorMessage}`)
+        setApps([])
+      }
+      
     } catch (err) {
+      console.log(err)
       setError("Failed to load apps")
     }
   }
 
   const loadTriggers = async (appId: string) => {
     try {
-      const response = await appsApi.getAppTriggers(appId)
-      if (response.code) {
-        setTriggers(response.data || [])
+      const response = await axiosInstance<AxiosResponse>(`${NEXT_PUBLIC_BACKEND_URL}/integrator/triggers`)
+      if (response.status===200) {
+        setTriggers(response.data.data.triggers || [])
       }
     } catch (err) {
+      console.log(err)
+
       setError("Failed to load triggers")
     }
   }
 
   const loadActions = async (appId: string) => {
     try {
-      const response = await appsApi.getAppActions(appId)
-      if (response.code) {
-        setActions(response.data || [])
+      const response = await axiosInstance.get<AxiosResponse>(`${NEXT_PUBLIC_BACKEND_URL}/integrator/actions`)
+      if (response.status) {
+        setActions(response.data.data.actions || [])
       }
     } catch (err) {
+      console.log(err)
+
       setError("Failed to load actions")
     }
   }
@@ -276,7 +301,7 @@ export default function CreateZapPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg">
+        <div className="mb-4 p-4 bg-red-10 text-red-600 rounded-lg">
           {error}
         </div>
       )}

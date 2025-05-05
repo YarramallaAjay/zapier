@@ -15,7 +15,7 @@ export async function AuthUser(req, res: Response, next: NextFunction) {
        return;
     }
   
-    const token = authHeader.split(" ")[1]?.trim(); // Ensure the token exists and trim spaces
+    const token = authHeader.split(' ')[1]?.trim(); // Ensure the token exists and trim spaces
   
     if (!token) {
        res.status(401).json({ message: 'Token missing from Authorization header' });
@@ -24,20 +24,21 @@ export async function AuthUser(req, res: Response, next: NextFunction) {
   
     try {
       const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+      console.log(decoded)
   
-      if (!decoded?.userId) {
+      if (!decoded?.id) {
          res.status(401).json({ message: 'Invalid token payload' });
          return;
       }
 
     try {
-      const user = await UserDetails.getUser(decoded.userId);
+      const user = await UserDetails.getUser(decoded.id);
       if (!user) {
          res.status(404).json({ message: 'User not found' });
          return;
 
       }
-
+      console.log(user)
       req.user = user; 
       next();
     } catch (error) {

@@ -2,6 +2,7 @@ import { Auth } from "@integrator/middlewares/Auth";
 import {  PrismaClient } from "@repo/db/src";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Express from "express";
+import { Apiresponse } from "@/utils/Response";
 // import { AuthenticationBase } from "@repo/types/src/Authentication";
 
 const router: Express.Router = Express.Router();
@@ -15,24 +16,21 @@ router.post("/newauth/:appId/:authId", Auth, async (req, res) => {
 
     // Manual validation
     if (!appId || !authId) {
-      res.status(400).json({ error: "appId and authId are required" });
+      Apiresponse.error(res, "appId and authId are required", 400, {});
       return;
     }
 
-    try{
+    try {
       const app = await prisma.app.findFirstOrThrow({
         where: { id: appId },
         include: { team: true, authMethods: true },
       });
 
       if (app?.authMethods.length !== 0) {
-        res.status(400).json({
-          message: "App already has an auth method. Delete the existing Auth method before adding a new one.",
-          auth: app?.authMethods,
-        });
+        Apiresponse.error(res, "App already has an auth method. Delete the existing Auth method before adding a new one.", 400, { auth: app?.authMethods });
         return;
       }
-  
+
       const auth = await prisma.authMethods.create({
         data: {
           appId,
@@ -41,25 +39,24 @@ router.post("/newauth/:appId/:authId", Auth, async (req, res) => {
         },
         include: { app: true, availableAuth: true },
       });
-  
-      res.json({ auth });
 
-    }
-    catch(e){
-      if(e instanceof PrismaClientKnownRequestError && e.code=="P2025"){
-        res.json({"message":"Error Ocurred",
-          "Error":e
-        })
-        console.log("Error:"+e);
+      Apiresponse.success(res, { auth }, "Auth method added successfully", 201);
+      return;
+
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError && e.code == "P2025") {
+        console.log("Error:" + e);
+        Apiresponse.error(res, "Error occurred", 404, e);
+        return;
       }
+      Apiresponse.error(res, "Internal server error", 500, e);
+      return;
     }
-   
 
-
-  
   } catch (error) {
     console.error("Error adding auth method:", error);
-    res.status(500).json({ error: "Failed to add auth method." });
+    Apiresponse.error(res, "Failed to add auth method.", 500, error);
+    return;
   }
 });
 

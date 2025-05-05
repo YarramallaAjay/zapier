@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import {  PrismaClient } from "@repo/db/src";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { Auth } from "@integrator/middlewares/Auth";
+import { Apiresponse } from "@/utils/Response";
 // import { ActionBase } from "@repo/types/src/Actions";
 
 const router: Router = express.Router();
@@ -10,19 +11,18 @@ router.use(Auth)
 // Get all available actions
 router.get("/", async (req, res) => {
   try {
-    console.log(req)
+    console.log(req);
 
-    const actions = await prisma.availableActions.findMany({
+    const actions = await prisma.availableActions.findMany({});
 
-    });
     if (actions.length === 0) {
-      res.status(404).json({ message: "No actions found", data: {} });
+      Apiresponse.error(res, "No actions found", 404, {});
       return;
     }
-    res.status(200).json({ message: "Actions fetched successfully", data: actions });
+    Apiresponse.success(res, { data: actions }, "Actions fetched successfully", 200);
   } catch (err) {
     console.error("Error fetching actions:", err);
-    res.status(500).json({ error: "Internal server error", data: {} });
+    Apiresponse.error(res, "Internal server error", 500, {});
   }
 });
 
@@ -32,7 +32,7 @@ router.get("/:appId", async (req, res) => {
     const { appId } = req.params;
 
     if (!appId) {
-      res.status(400).json({ message: "Invalid appId parameter", data: {} });
+      Apiresponse.error(res, "Invalid appId parameter", 400, {});
       return;
     }
 
@@ -42,23 +42,23 @@ router.get("/:appId", async (req, res) => {
     });
 
     if (!app || app.actions.length === 0) {
-      res.status(404).json({ message: "No actions found for this application", data: {} });
+      Apiresponse.error(res, "No actions found for this application", 404, {});
       return;
     }
 
-    res.status(200).json({ message: "Actions fetched successfully", data: app.actions });
+    Apiresponse.success(res, { data: app.actions }, "Actions fetched successfully", 200);
   } catch (err) {
     console.error("Error fetching actions:", err);
-    res.status(500).json({ error: "Internal server error", data: {} });
+    Apiresponse.error(res, "Internal server error", 500, {});
   }
 });
 
 // Add a new available action
 router.post("/:appId", async (req, res) => {
-  const { name, description, metadata,configMetadata,type } =await  req.body;
-  const appId= await req.params.appId
-  if (!name || !description || !appId  || !configMetadata || !type) {
-    res.status(400).json({ message: "Missing required fields", data: {} });
+  const { name, description, metadata, configMetadata, type } = await req.body;
+  const appId = await req.params.appId;
+  if (!name || !description || !appId || !configMetadata || !type) {
+    Apiresponse.error(res, "Missing required fields", 400, {});
     return;
   }
 
@@ -71,13 +71,12 @@ router.post("/:appId", async (req, res) => {
         metadata: metadata || {},
         configMetadata,
         type
-
       },
     });
-    res.status(201).json({ message: "Action created successfully", data: action });
+    Apiresponse.success(res, { data: action }, "Action created successfully", 201);
   } catch (err) {
     console.error("Error creating action:", err);
-    res.status(400).json({ error: "Invalid data or database error", data: {} });
+    Apiresponse.error(res, "Invalid data or database error", 400, {});
   }
 });
 
@@ -86,7 +85,7 @@ router.put("/:appId/:id", async (req, res) => {
   const { id, appId } = req.params;
 
   if (!id || !appId) {
-    res.status(400).json({ message: "Action ID and appId are required", data: {} });
+    Apiresponse.error(res, "Action ID and appId are required", 400, {});
     return;
   }
 
@@ -95,14 +94,14 @@ router.put("/:appId/:id", async (req, res) => {
       where: { id, appId },
       data: { ...req.body },
     });
-    res.status(200).json({ message: "Action updated successfully", data: updated });
+    Apiresponse.success(res, { data: updated }, "Action updated successfully", 200);
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
-      res.status(404).json({ message: "Action not found", data: {} });
+      Apiresponse.error(res, "Action not found", 404, {});
       return;
     }
     console.error("Error updating action:", err);
-    res.status(400).json({ error: "Invalid data or database error", data: {} });
+    Apiresponse.error(res, "Invalid data or database error", 400, {});
   }
 });
 
@@ -111,20 +110,20 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ message: "Action ID is required", data: {} });
+    Apiresponse.error(res, "Action ID is required", 400, {});
     return;
   }
 
   try {
     await prisma.availableActions.delete({ where: { id } });
-    res.status(200).json({ message: "Action deleted successfully", data: {} });
+    Apiresponse.success(res, {}, "Action deleted successfully", 200);
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
-      res.status(404).json({ message: "Action not found", data: {} });
+      Apiresponse.error(res, "Action not found", 404, {});
       return;
     }
     console.error("Error deleting action:", err);
-    res.status(400).json({ error: "Invalid data or database error", data: {} });
+    Apiresponse.error(res, "Invalid data or database error", 400, {});
   }
 });
 

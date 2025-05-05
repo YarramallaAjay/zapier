@@ -30,18 +30,22 @@ async function main() {
         resave: false,
         saveUninitialized: false,
         cookie: { secure: false },
+        
       })
     );
     app.use(
       cors({
         origin: ["http://localhost:3000"], // Allow requests from localhost:3000
-        credentials: true, // Allow cookies and credentials
+        credentials: true, 
+        
+        // Allow cookies and credentials
       })
     );
 
     
     // Handle preflight requests
     app.options('*', cors());
+    
 
     // Register Routes
     console.log('Registering routes...');

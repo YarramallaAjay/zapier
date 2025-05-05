@@ -6,10 +6,13 @@ import { signInSchema, signupSchema } from '@/utils/zodSchema';
 import { Apiresponse } from '@/utils/Response';
 import passport from "@/auth/google";
 import Jwt  from 'jsonwebtoken';
+import { JWT_SECRET } from '@/config';
+
+
 
 const router: express.Router = express.Router();
 const client = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "jwtsecret";
+const jwtSecret = JWT_SECRET || "jwtsecret";
 
 
 router.use(express.json())
@@ -49,7 +52,7 @@ router.post("/signup", async (req, res) => {
 
     const token = await Jwt.sign(
       { id: createUser.id },
-      JWT_SECRET,
+      jwtSecret,
       { expiresIn: '30d' }
     );
 
@@ -145,7 +148,7 @@ router.get("/me", async (req, res) => {
     }
 
     // Verify token
-    const decoded = Jwt.verify(token, JWT_SECRET) as { id: string };
+    const decoded = Jwt.verify(token, jwtSecret) as { id: string };
     
     if (!decoded?.id) {
        Apiresponse.error(res, "Invalid token", 401, {});
@@ -210,7 +213,8 @@ router.get("/github/profile", async (req, res) => {
 
 
 // GitHub OAuth Login
-router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
+router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }), 
+);
 
 // GitHub OAuth Callback
 router.get("/google/callback",

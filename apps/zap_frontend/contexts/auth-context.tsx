@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { TokenBase, UserBase, UserSession } from '@repo/types/src/UserSession';
 import { useAuthStore, useUserStore } from '@/store/userStore';
 import { axiosInstance } from '@/apiHandlers/ApiInstance';
-import { ApiResponse, LoginCredentials, SignupCredentials } from '@/lib/types';
+import { LoginCredentials, SignupCredentials } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import axios, { AxiosResponse } from 'axios';
 import dotenv from "dotenv";
@@ -48,13 +48,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (mounted) {
-      checkSession();
+      // Only check session if we have tokens
+      if (tokens.length > 0) {
+        checkSession();
+      } else {
+        setLoading(false);
+      }
     }
   }, [mounted]);
 
   const checkSession = async () => {
     try {
-      const res = await axios.get<UserSession>(`${NEXT_PUBLIC_BACKEND_URL}/auth/me`);
+      const res = await axiosInstance.get<AxiosResponse>(`${NEXT_PUBLIC_BACKEND_URL}/auth/me`);
       if (res.data.user) {
         setUser(res.data.user);
         if(res.data.user.tokens) {
@@ -62,9 +67,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch (err) {
-      console.error('Session check failed', err);
-      clearToken();
-      clearUser();
+     
+      // Only clear if the error is 401 (unauthorized)
+      if (err.response?.status === 401) {
+        // clearToken();
+        // clearUser();
+        console.log("session not found..login again")
+        router.replace("/login")
+      }
     } finally {
       setLoading(false);
     }
@@ -74,11 +84,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosInstance.post<AxiosResponse>(`${NEXT_PUBLIC_BACKEND_URL}/auth/signup`, credentials);
       if (res.status===200) {
-        console.log(res.data)
+        console.log(res)
+
         const userData = res.data as UserBase;
-        setUser(userData);
         console.log(userData)
-        if(userData.tokens as TokenBase[]) {
+        setUser(userData);
+        if(userData.tokens) {
           setTokens(userData.tokens as TokenBase[]);
         }
         toast({
@@ -100,35 +111,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (credentials: LoginCredentials) => {
     try {
       console.log("Attempting sign in with:", credentials.email);
-      const res:AxiosResponse = await axiosInstance.post<AxiosResponse>(`${NEXT_PUBLIC_BACKEND_URL}/auth/signin`, credentials);
-      console.log(res)
-      if (res.status===200 && res.data) {
-        const userData = res.data.user as UserBase;
-        console.log("Sign in successful for user:", userData);
-
-        try{
-          console.log(userData.tokens)
+      const res = await axiosInstance.post<AxiosResponse>(`${NEXT_PUBLIC_BACKEND_URL}/auth/signin`, credentials);
+      
+      if (res.status === 200 && res.data) {
+        const userData = res.data.data.user as UserBase;
+        console.log(userData)
+        console.log("Sign in successful for user:", userData.email);
+        if (userData.tokens && userData.tokens.length > 0) {
           setTokens(userData.tokens as TokenBase[]);
-
-        }catch(e){
-          throw new Error(e)
         }
+        else {
+          const cookieToken = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('zapper='))
+          ?.split('=')[1];
 
-        // Get token from cookies
-        // const cookieToken = document.cookie
-        //   .split('; ')
-        //   .find(row => row.startsWith('zapper='))
-        //   ?.split('=')[1];
+        if (cookieToken) {
+          const tokenObj: TokenBase = {
+            provider: "basic",
+            accessToken: cookieToken
+          };
+          setToken(tokenObj);
+        } 
 
-        // if (cookieToken) {
-        //   const tokenObj: TokenBase = {
-        //     provider: "basic",
-        //     accessToken: cookieToken.replace('Bearer ', '')
-        //   };
-        //   setToken(tokenObj);
-        // } else if (userData.tokens && userData.tokens.length > 0) {
-        // }
-
+        }
+        
         setUser(userData);
         router.push("/dashboard");
         return true;
@@ -158,7 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         title: "Success",
         description: "Logged out successfully",
       });
-      router.push("/login");
+      router.replace("/login");
     } catch (err) {
       console.error('Logout failed', err);
       toast({
@@ -169,12 +176,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const googleLogin = () => {
-    window.location.href = `${NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/auth/google`;
+  const googleLogin = async () => {
+     router.push(`${NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/auth/google`);
   };
 
-  const githubLogin = () => {
-    window.location.href = `${NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/auth/github`;
+  const githubLogin =async () => {
+    router.push(`${NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/auth/github`);
   };
 
   // Only render children when mounted to avoid hydration mismatch

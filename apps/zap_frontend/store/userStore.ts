@@ -25,7 +25,6 @@ export const useAuthStore = create<AuthState>()(
       clearToken: () => set({ tokens: [], isAuthenticated: false }),
       getTokenByType: (type: string) => get().tokens.find(t => t.provider === type),
       setTokens: (existingTokens) => {
-        console.log(existingTokens)
         set({ tokens: existingTokens, isAuthenticated: existingTokens.length > 0 });
       },
       setAuthenticated: (value: boolean) => set({ isAuthenticated: value })
@@ -37,7 +36,9 @@ export const useAuthStore = create<AuthState>()(
         setItem: (name, value) => safeLocalStorage.setItem(name, value),
         removeItem: (name) => safeLocalStorage.removeItem(name),
       })),
-      skipHydration: true,
+      onRehydrateStorage: () => (state) => {
+        console.log('Auth store hydrated:', state);
+      },
     }
   )
 );
@@ -51,7 +52,7 @@ interface UserState {
 
 export const useUserStore = create<UserState>()(
   persist(
-    (set,get) => ({
+    (set) => ({
       user: null,
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
@@ -66,7 +67,9 @@ export const useUserStore = create<UserState>()(
         setItem: (name, value) => safeLocalStorage.setItem(name, value),
         removeItem: (name) => safeLocalStorage.removeItem(name),
       })),
-      skipHydration: true,
+      onRehydrateStorage: () => (state) => {
+        console.log('User store hydrated:', state);
+      },
     }
   )
 );

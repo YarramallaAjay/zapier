@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import {  PrismaClient } from "@repo/db/src";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Auth } from "../middlewares/Auth";
+import { Apiresponse } from "@/utils/Response";
 // import { TriggerBase } from "@repo/types/src/Trigger";
 
 const router: Router = express.Router();
@@ -12,16 +13,16 @@ router.use(Auth);
 // Get all triggers
 router.get("/", async (req, res) => {
   try {
-    console.log(req)
+    console.log(req);
     const triggers = await prisma.availableTriggers.findMany();
     if (triggers.length === 0) {
-      res.status(404).json({ message: "No triggers found", data: {} });
+      Apiresponse.error(res, "No triggers found", 404, []);
       return;
     }
-    res.status(200).json({ message: "Triggers fetched successfully", data: triggers });
+    Apiresponse.success(res, { triggers }, "Triggers fetched successfully", 200);
   } catch (err) {
     console.error("Error fetching triggers:", err);
-    res.status(500).json({ error: "Internal server error", data: {} });
+    Apiresponse.error(res, "Internal server error", 500, []);
   }
 });
 
@@ -31,7 +32,7 @@ router.get("/:appId", async (req, res) => {
     const appId = req.params.appId;
 
     if (typeof appId !== "string") {
-      res.status(400).json({ message: "Invalid appId parameter", data: {} });
+      Apiresponse.error(res, "Invalid appId parameter", 400, []);
       return;
     }
 
@@ -41,17 +42,14 @@ router.get("/:appId", async (req, res) => {
     });
 
     if (!app || app.triggers.length === 0) {
-      res.status(404).json({
-        message: "No triggers created by the team for this application",
-        data: {},
-      });
+      Apiresponse.error(res, "No triggers created by the team for this application", 404, []);
       return;
     }
 
-    res.status(200).json({ message: "Triggers fetched successfully", data: app.triggers });
+    Apiresponse.success(res, { data: app.triggers }, "Triggers fetched successfully", 200);
   } catch (err) {
     console.error("Error fetching triggers:", err);
-    res.status(500).json({ error: "Internal server error", data: {} });
+    Apiresponse.error(res, "Internal server error", 500, []);
   }
 });
 
@@ -60,7 +58,7 @@ router.post("/", async (req, res) => {
   const { name, description, appId, metadata, configMetadata, type } = req.body;
 
   if (!name || !description || !appId || !configMetadata || !metadata || !type) {
-    res.status(400).json({ message: "Missing required fields", data: {} });
+    Apiresponse.error(res, "Missing required fields", 400, {});
     return;
   }
 
@@ -76,10 +74,10 @@ router.post("/", async (req, res) => {
       },
     });
 
-    res.status(201).json({ message: "Trigger created successfully", data: trigger });
+    Apiresponse.success(res, { data: trigger }, "Trigger created successfully", 201);
   } catch (err) {
     console.error("Error creating trigger:", err);
-    res.status(400).json({ error: "Invalid data or database error", data: {} });
+    Apiresponse.error(res, "Invalid data or database error", 400, {});
   }
 });
 
@@ -88,7 +86,7 @@ router.put("/:appId/:id", async (req, res) => {
   const { id, appId } = req.params;
 
   if (!id || !appId) {
-    res.status(400).json({ message: "Trigger ID and appId are required", data: {} });
+    Apiresponse.error(res, "Trigger ID and appId are required", 400, {});
     return;
   }
 
@@ -98,14 +96,14 @@ router.put("/:appId/:id", async (req, res) => {
       data: { ...req.body },
     });
 
-    res.status(200).json({ message: "Trigger updated successfully", data: updated });
+    Apiresponse.success(res, { data: updated }, "Trigger updated successfully", 200);
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
-      res.status(404).json({ message: "Trigger not found", data: {} });
+      Apiresponse.error(res, "Trigger not found", 404, {});
       return;
     }
     console.error("Error updating trigger:", err);
-    res.status(400).json({ error: "Invalid data or database error", data: {} });
+    Apiresponse.error(res, "Invalid data or database error", 400, {});
   }
 });
 
@@ -114,20 +112,20 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ message: "Trigger ID is required", data: {} });
+    Apiresponse.error(res, "Trigger ID is required", 400, {});
     return;
   }
 
   try {
     await prisma.availableTriggers.delete({ where: { id } });
-    res.status(200).json({ message: "Trigger deleted successfully", data: {} });
+    Apiresponse.success(res, {}, "Trigger deleted successfully", 200);
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
-      res.status(404).json({ message: "Trigger not found", data: {} });
+      Apiresponse.error(res, "Trigger not found", 404, {});
       return;
     }
     console.error("Error deleting trigger:", err);
-    res.status(400).json({ error: "Invalid data or database error", data: {} });
+    Apiresponse.error(res, "Invalid data or database error", 400, {});
   }
 });
 

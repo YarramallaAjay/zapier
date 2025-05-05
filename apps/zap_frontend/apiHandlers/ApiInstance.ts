@@ -23,6 +23,7 @@ const createAxiosInstance = (): AxiosInstance => {
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       // First try to get token from cookies
+
       const cookieToken = document.cookie
         .split('; ')
         .find(row => row.startsWith('zapper='))
@@ -54,8 +55,8 @@ const createAxiosInstance = (): AxiosInstance => {
     (response: AxiosResponse) => {
       return {
         config:response.config,
-        data:response.data.data,
         headers:response.headers,
+        data:response.data,
         status:response.status,
         statusText:response.data.message,
         request:response.request
@@ -69,7 +70,7 @@ const createAxiosInstance = (): AxiosInstance => {
 
       if (response?.status === 401) {
         const store = useAuthStore.getState();
-        store.clearToken();
+        // store.clearToken();
         // Clear all cookies
         document.cookie.split(";").forEach((c) => {
           document.cookie = c

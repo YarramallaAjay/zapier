@@ -15,7 +15,11 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     if (!req.user) {
-      return res.redirect("/login");
+      console.log(`issue while logging in: ${res}`)
+       res.json({
+        "mesage":"issue occured!"
+      })
+      return
     }
 
     const user = req.user as any; 

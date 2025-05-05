@@ -25,6 +25,7 @@ export default function SignupPage() {
     try {
       await signUp({name, email, password}).then((res)=>{
         console.log("Successfully created user..login to the account")
+        
         pageRouter.push("/login")
       }).catch(err=>{
         console.log("something went wrong...try again...!")
