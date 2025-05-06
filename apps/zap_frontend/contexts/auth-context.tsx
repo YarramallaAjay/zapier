@@ -31,7 +31,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
+  const router = useRouter()
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
 
@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         
         setUser(userData);
-        router.push("/dashboard");
+        router.push("/dashboard/zaps");
         return true;
       }
       

@@ -86,7 +86,7 @@ passport.use(
             }
         
             const jwtToken = jwt.sign(
-              { userId: finalUser.id, accesstoken: accessToken },
+              { id: finalUser.id, accesstoken: accessToken },
               JWT_SECRET || "jwtSecret"
             );
         

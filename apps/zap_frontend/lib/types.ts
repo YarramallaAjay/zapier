@@ -19,7 +19,7 @@ export interface Team {
   updatedAt: string;
   createdAt: string;
   createdById: string;
-  apps: App[];
+  apps: App[] |[];
   members: User[];
 }
 

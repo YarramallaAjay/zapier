@@ -23,46 +23,77 @@ const router: Router = express.Router();
 router.use(express.json());
 router.use(cookieParser());
 
+router.get("/team", AuthUser, async (req, res) => {
+  try {
+    const user = req.user as unknown as UserDetails; // Use cached user details
+
+    if (!user) {
+      Apiresponse.error(res, "User not authenticated", 401, {});
+      return;
+    }
+
+    // Retrieve the team where the user is a member
+    const team = await prisma.team.findFirst({
+      where: {
+        members: {
+          some: {
+            id: user.id, // Check if the user's ID exists in the members array
+          },
+        },
+      },
+      include:{apps:true}
+    });
+
+    if (!team) {
+      Apiresponse.success(res, null, "User is not part of any team.", 200);
+      return;
+    }
+
+    Apiresponse.success(res, team, "Successfully fetched user team.", 200);
+  } catch (error) {
+    console.error("Error fetching team:", error);
+    Apiresponse.error(res, "Failed to fetch team.", 500, error);
+  }
+});
 // 1. Create Team
 router.post("/team", AuthUser, async (req, res) => {
   try {
-    const user = await req.user as unknown as UserDetails; // Use cached user details
+    const user = await req.user as UserDetails;
+    const {name,members,metadata,createdById} = await req.body;
+    
     if (!user) {
-      Apiresponse.error(res, "User not authUserenticated", 401, {});
+      Apiresponse.error(res, "User not authenticated", 401, {});
       return;
     }
 
     // Check if user already has a team
     if (user.team && (user.team as TeamBase).id) {
-      Apiresponse.error(res, "User can only create one team.", 400, {});
+      Apiresponse.error(res, "User can only create one team.", 400,user.team);
       return;
     }
 
-    const { name, metadata, createdById } = req.body;
-    console.log(createdById);
 
+    // Create the team
     const newTeam = await prisma.team.create({
       data: {
         name,
         metadata: metadata || {},
-        createdById: (user.id) as unknown as string,
+        createdById: user.id || createdById,
         members: {
-          connect: {
-            id: String(user.id)
-          }
-        }
-      }, // Add user as team member
+          connect: members.map((id: string) => ({
+            id
+          })),
+        },
+      },
     });
 
     // Update user session to include the new team
     await UserDetails.updateUserDetails(user.id);
 
     Apiresponse.success(res, { team: newTeam }, "Team created successfully.", 201);
-    return;
   } catch (error) {
     console.error("Error creating team:", error);
     Apiresponse.error(res, "Failed to create team.", 500, error);
-    return;
   }
 });
 

@@ -1,0 +1,264 @@
+{
+  "user": {
+    "id": "user-1",
+    "name": "Alex Johnson",
+    "email": "alex@example.com",
+    "avatar": "/placeholder-user.jpg"
+  },
+  "teams": [
+    {
+      "id": "team-1",
+      "name": "Personal Team",
+      "description": "Your personal workspace",
+      "createdBy": "user-1",
+      "isPrimary": true,
+      "lastInteracted": "2024-05-01T10:30:00Z",
+      "members": [
+        {
+          "id": "user-1",
+          "role": "owner"
+        }
+      ],
+      "applications": [
+        {
+          "id": "app-1",
+          "name": "Customer Portal",
+          "description": "Customer-facing portal for account management",
+          "status": "active",
+          "authMethods": [
+            {
+              "id": "auth-1",
+              "type": "oauth",
+              "name": "Google OAuth",
+              "enabled": true
+            },
+            {
+              "id": "auth-2",
+              "type": "email",
+              "name": "Email & Password",
+              "enabled": true
+            }
+          ],
+          "triggers": [
+            {
+              "id": "trigger-1",
+              "name": "New User Registration",
+              "description": "Triggered when a new user registers",
+              "enabled": true
+            },
+            {
+              "id": "trigger-2",
+              "name": "Password Reset",
+              "description": "Triggered when a user requests password reset",
+              "enabled": true
+            }
+          ],
+          "actions": [
+            {
+              "id": "action-1",
+              "name": "Send Welcome Email",
+              "description": "Sends welcome email to new users",
+              "enabled": true
+            },
+            {
+              "id": "action-2",
+              "name": "Create User Profile",
+              "description": "Creates default user profile",
+              "enabled": true
+            }
+          ]
+        },
+        {
+          "id": "app-2",
+          "name": "Admin Dashboard",
+          "description": "Internal admin dashboard",
+          "status": "development",
+          "authMethods": [
+            {
+              "id": "auth-3",
+              "type": "email",
+              "name": "Email & Password",
+              "enabled": true
+            },
+            {
+              "id": "auth-4",
+              "type": "mfa",
+              "name": "Two-Factor Auth",
+              "enabled": false
+            }
+          ],
+          "triggers": [
+            {
+              "id": "trigger-3",
+              "name": "Admin Login",
+              "description": "Triggered when an admin logs in",
+              "enabled": true
+            }
+          ],
+          "actions": [
+            {
+              "id": "action-3",
+              "name": "Log Admin Activity",
+              "description": "Records all admin actions",
+              "enabled": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "team-2",
+      "name": "Marketing Team",
+      "description": "Marketing department workspace",
+      "createdBy": "user-2",
+      "isPrimary": false,
+      "lastInteracted": "2024-05-05T14:20:00Z",
+      "members": [
+        {
+          "id": "user-1",
+          "role": "member"
+        },
+        {
+          "id": "user-2",
+          "role": "owner"
+        }
+      ],
+      "applications": [
+        {
+          "id": "app-3",
+          "name": "Campaign Manager",
+          "description": "Email campaign management tool",
+          "status": "active",
+          "authMethods": [
+            {
+              "id": "auth-5",
+              "type": "sso",
+              "name": "Company SSO",
+              "enabled": true
+            }
+          ],
+          "triggers": [
+            {
+              "id": "trigger-4",
+              "name": "Campaign Scheduled",
+              "description": "Triggered when a campaign is scheduled",
+              "enabled": true
+            },
+            {
+              "id": "trigger-5",
+              "name": "Campaign Completed",
+              "description": "Triggered when a campaign finishes sending",
+              "enabled": true
+            }
+          ],
+          "actions": [
+            {
+              "id": "action-4",
+              "name": "Generate Campaign Report",
+              "description": "Creates performance report",
+              "enabled": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "team-3",
+      "name": "Engineering",
+      "description": "Engineering team workspace",
+      "createdBy": "user-3",
+      "isPrimary": false,
+      "lastInteracted": "2024-05-06T09:15:00Z",
+      "members": [
+        {
+          "id": "user-1",
+          "role": "member"
+        },
+        {
+          "id": "user-3",
+          "role": "owner"
+        }
+      ],
+      "applications": [
+        {
+          "id": "app-4",
+          "name": "API Gateway",
+          "description": "API management and monitoring",
+          "status": "active",
+          "authMethods": [
+            {
+              "id": "auth-6",
+              "type": "api-key",
+              "name": "API Key Auth",
+              "enabled": true
+            },
+            {
+              "id": "auth-7",
+              "type": "jwt",
+              "name": "JWT Auth",
+              "enabled": true
+            }
+          ],
+          "triggers": [
+            {
+              "id": "trigger-6",
+              "name": "Rate Limit Exceeded",
+              "description": "Triggered when API rate limit is exceeded",
+              "enabled": true
+            }
+          ],
+          "actions": [
+            {
+              "id": "action-5",
+              "name": "Notify Admin",
+              "description": "Sends notification to admin",
+              "enabled": true
+            },
+            {
+              "id": "action-6",
+              "name": "Log Event",
+              "description": "Records event in monitoring system",
+              "enabled": true
+            }
+          ]
+        },
+        {
+          "id": "app-5",
+          "name": "CI/CD Pipeline",
+          "description": "Continuous integration and deployment",
+          "status": "development",
+          "authMethods": [
+            {
+              "id": "auth-8",
+              "type": "github",
+              "name": "GitHub OAuth",
+              "enabled": true
+            }
+          ],
+          "triggers": [
+            {
+              "id": "trigger-7",
+              "name": "Pull Request Created",
+              "description": "Triggered when a PR is created",
+              "enabled": true
+            },
+            {
+              "id": "trigger-8",
+              "name": "Build Completed",
+              "description": "Triggered when a build finishes",
+              "enabled": true
+            }
+          ],
+          "actions": [
+            {
+              "id": "action-7",
+              "name": "Deploy to Staging",
+              "description": "Deploys code to staging environment",
+              "enabled": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

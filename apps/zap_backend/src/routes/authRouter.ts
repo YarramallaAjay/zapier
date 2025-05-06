@@ -196,7 +196,7 @@ router.get("/github/callback",
     }
     const user = req.user as any;
     res.cookie("zapper", user.jwtToken, { httpOnly: true, secure: false });
-    res.redirect("http://localhost:3000/dashboard");
+    res.redirect("http://localhost:3000/dashboard/zaps");
   }
 );
 
@@ -225,7 +225,7 @@ router.get("/google/callback",
     }
     const user = req.user as any;
     res.cookie("zapper", user.jwtToken, { httpOnly: true, secure: false });
-    res.redirect("http://localhost:3000/dashboard");
+    res.redirect("http://localhost:3000/dashboard/zaps");
   }
 );
 

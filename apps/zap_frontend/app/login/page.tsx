@@ -67,7 +67,7 @@ export default function SignInPage() {
         title: "Success",
         description: "Google login successful",
       })
-      router.push("/dashboard")
+      router.push("/dashboard/zaps")
     } catch (err) {
       console.error("Google login error:", err)
       toast({
@@ -86,7 +86,7 @@ export default function SignInPage() {
         title: "Success",
         description: "GitHub login successful",
       })
-      router.push("/dashboard")
+      router.push("/dashboard/zaps")
     } catch (err) {
       console.error("GitHub login error:", err)
       toast({

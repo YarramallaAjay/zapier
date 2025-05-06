@@ -130,8 +130,8 @@ export default function CreateZapPage() {
         }),
       })
 
-      if (response.code) {
-        router.push("/dashboard")
+      if (response.status===200) {
+        router.push("/dashboard/zaps")
       } else {
         setError(response.error || "Failed to create zap")
       }

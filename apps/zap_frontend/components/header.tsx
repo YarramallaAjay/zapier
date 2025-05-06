@@ -53,10 +53,10 @@ export default function Header() {
           {isAuthenticated ? (
             <>
               <Button variant="outline" asChild>
-                <Link href="/dashboard">Dashboard</Link>
+                <Link href="/dashboard/zaps">Dashboard</Link>
               </Button>
               <Button asChild>
-                <Link href="/applications">My Applications</Link>
+                <Link href="/dashboard/teams">My Applications</Link>
               </Button>
               <Button variant="ghost" onClick={signOut}>
                 Sign Out
@@ -98,10 +98,10 @@ export default function Header() {
               {isAuthenticated ? (
                 <>
                   <Button variant="outline" asChild className="w-full">
-                    <Link href="/dashboard">Dashboard</Link>
+                    <Link href="/dashboard/zaps">Dashboard</Link>
                   </Button>
                   <Button asChild className="w-full">
-                    <Link href="/applications">My Applications</Link>
+                    <Link href="/dashboard/teams">My Applications</Link>
                   </Button>
                   <Button variant="ghost" onClick={signOut} className="w-full">
                     Sign Out
