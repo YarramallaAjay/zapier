@@ -7,15 +7,22 @@ import { useState } from "react";
 import { Github, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { useEffect } from "react";
 export default function SignupPage() {
-  const { signUp, googleLogin, githubLogin } = useAuth();
+  const { signUp, googleLogin, githubLogin,isAuthenticated,user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const pageRouter=useRouter()
+
+  
+  useEffect(()=>{
+    if(isAuthenticated){
+      pageRouter.push("/dashboard/zaps")
+    }
+  },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

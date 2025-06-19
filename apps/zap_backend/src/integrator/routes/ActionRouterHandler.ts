@@ -1,13 +1,13 @@
 import express, { Router } from "express";
 import {  PrismaClient } from "@repo/db/src";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import { Auth } from "@integrator/middlewares/Auth";
+import { AuthUser } from "@/middlewares/userAuthMiddleware";
 import { Apiresponse } from "@/utils/Response";
 // import { ActionBase } from "@repo/types/src/Actions";
 
 const router: Router = express.Router();
 const prisma = new PrismaClient();
-router.use(Auth)
+router.use(AuthUser)
 // Get all available actions
 router.get("/", async (req, res) => {
   try {

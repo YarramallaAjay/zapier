@@ -1,12 +1,13 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { NextFunction, Response } from 'express';
 import { UserDetails } from '@repo/types/src/UserSession';
 import { JWT_SECRET } from '@/config';
+import { Request,Response,NextFunction } from 'express';
 
 // Fallback secret if environment variable is missing
 const jwtSecret = JWT_SECRET || 'jwtSecret';
 
-export async function AuthUser(req, res: Response, next: NextFunction) {
+export async function AuthUser(req:Request, res: Response, next: NextFunction) {
+   console.log(req)
   const authHeader = req.headers['authorization'];
   console.log('Token from header:', authHeader);
 

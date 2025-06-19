@@ -9,9 +9,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <AuthProvider>
-        <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex flex-col w-full max-width-4xl px-4">
           <Header />
-          <main className="flex flex-col items-center justify-center w-full max-w-4xl px-4">
+          <main >
             {children}
           </main>
           <Footer />

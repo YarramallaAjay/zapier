@@ -5,17 +5,21 @@ import { cn } from "@/lib/utils"
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({ className, onClick, ...props }, ref) => (
   <div
     ref={ref}
+    onClick={onClick}
+    role={onClick ? "button" : undefined}
+    tabIndex={onClick ? 0 : undefined}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
+      "rounded-xl border bg-card text-card-foreground shadow transition hover:shadow-md cursor-pointer",
       className
     )}
     {...props}
   />
 ))
 Card.displayName = "Card"
+
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -72,5 +76,6 @@ const CardFooter = React.forwardRef<
   />
 ))
 CardFooter.displayName = "CardFooter"
+
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

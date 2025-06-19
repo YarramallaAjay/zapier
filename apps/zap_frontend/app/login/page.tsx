@@ -12,6 +12,7 @@ import { Github, Mail } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { useEffect } from "react"
 
 export default function SignInPage() {
   const { signIn, googleLogin, githubLogin } = useAuth()
@@ -21,6 +22,13 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+  const {user,isAuthenticated}=useAuth()
+
+  useEffect(()=>{
+    if(isAuthenticated){
+      router.back()
+    }
+  },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault() // Prevent form submission and page reload

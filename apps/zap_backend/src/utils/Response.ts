@@ -8,7 +8,7 @@ export const Apiresponse = {
       data
     });
   },
-  error: (res: Response, message: string = 'Error', status: number = 400, error) => {
+  error: (res: Response, message: string = 'Error', status: number = 400, error:any) => {
     
     return res.status(status).json({
       success: false,

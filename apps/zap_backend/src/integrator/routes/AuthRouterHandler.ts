@@ -1,4 +1,4 @@
-import { Auth } from "@integrator/middlewares/Auth";
+import { AuthUser } from "@/middlewares/userAuthMiddleware";
 import {  PrismaClient } from "@repo/db/src";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Express from "express";
@@ -9,7 +9,7 @@ const router: Express.Router = Express.Router();
 const prisma = new PrismaClient();
 
 // Add Auth Method to an App
-router.post("/newauth/:appId/:authId", Auth, async (req, res) => {
+router.post("/newauth/:appId/:authId",AuthUser, async (req, res) => {
   try {
     const { appId, authId } = req.params;
     const { metadata } = req.body;
@@ -61,7 +61,7 @@ router.post("/newauth/:appId/:authId", Auth, async (req, res) => {
 });
 
 // Delete Auth Method from an App
-router.delete("/deleteauth/:appId/:authId", Auth, async (req, res) => {
+router.delete("/deleteauth/:appId/:authId", AuthUser, async (req, res) => {
   try {
     const { appId, authId } = req.params;
 
@@ -91,7 +91,7 @@ router.delete("/deleteauth/:appId/:authId", Auth, async (req, res) => {
 });
 
 // Get Auth Methods for an App
-router.get("/authmethods/:appId", Auth, async (req, res) => {
+router.get("/authmethods/:appId", AuthUser, async (req, res) => {
   try {
     const { appId } = req.params;
 
@@ -114,7 +114,7 @@ router.get("/authmethods/:appId", Auth, async (req, res) => {
 });
 
 // Update Auth Method for an App
-router.put("/updateauth/:appId/:authId", Auth, async (req, res) => {
+router.put("/updateauth/:appId/:authId", AuthUser, async (req, res) => {
   try {
     const { appId, authId } = req.params;
     const { metadata } = req.body;
@@ -149,7 +149,7 @@ router.put("/updateauth/:appId/:authId", Auth, async (req, res) => {
 });
 
 // Get App by ID
-router.get("/apps/:id", Auth, async (req, res) => {
+router.get("/apps/:id", AuthUser, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -178,7 +178,7 @@ router.get("/apps/:id", Auth, async (req, res) => {
 });
 
 // Get Available Auth Methods
-router.get("/auth-methods", Auth, async (req, res) => {
+router.get("/auth-methods", AuthUser, async (req, res) => {
   try {
     console.log(req)
 

@@ -166,7 +166,8 @@ exports.Prisma.ZapScalarFieldEnum = {
   description: 'description',
   metadata: 'metadata',
   userId: 'userId',
-  image: 'image'
+  image: 'image',
+  templateId: 'templateId'
 };
 
 exports.Prisma.TriggerScalarFieldEnum = {
@@ -229,6 +230,22 @@ exports.Prisma.TokenStoreScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.ZapTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  isPopular: 'isPopular',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  triggerAppId: 'triggerAppId',
+  triggerId: 'triggerId',
+  actionAppId: 'actionAppId',
+  actionId: 'actionId',
+  triggerConfig: 'triggerConfig',
+  actionConfig: 'actionConfig'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -268,7 +285,8 @@ exports.Prisma.ModelName = {
   AvailableActions: 'AvailableActions',
   ZapRun: 'ZapRun',
   ZapRunOutBox: 'ZapRunOutBox',
-  TokenStore: 'TokenStore'
+  TokenStore: 'TokenStore',
+  ZapTemplate: 'ZapTemplate'
 };
 
 /**

@@ -1,8 +1,8 @@
-import { UserBase } from "@repo/types/dist/UserSession";
+import { UserBase } from "@repo/types/src/UserSession";
 
 declare global {
   namespace Express {
-    interface Request {
+    export interface Request {
       user?: UserBase & { token?: string };
     }
     interface User extends UserBase {

@@ -32,14 +32,16 @@ model Team {
 }
 
 model App {
-  name        String
-  description String
-  teamId      String
-  id          String              @id @default(uuid())
-  team        Team                @relation(fields: [teamId], references: [id])
-  authMethods AuthMethods[]
-  actions     AvailableActions[]
-  triggers    AvailableTriggers[]
+  name             String
+  description      String
+  teamId           String
+  id               String              @id @default(uuid())
+  team             Team                @relation(fields: [teamId], references: [id])
+  authMethods      AuthMethods[]
+  actions          AvailableActions[]
+  triggers         AvailableTriggers[]
+  triggerTemplates ZapTemplate[]       @relation("TemplateTriggerApp")
+  actionTemplates  ZapTemplate[]       @relation("TemplateActionApp")
 }
 
 model AuthMethods {
@@ -61,16 +63,18 @@ model AvailableAuthMethods {
 }
 
 model Zap {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
   description String
-  metadata    Json     @default("{}")
+  metadata    Json         @default("{}")
   userId      String
   image       String?
   actions     Action[]
   trigger     Trigger?
-  user        User     @relation(fields: [userId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
   zapRuns     ZapRun[]
+  templateId  String?
+  template    ZapTemplate? @relation(fields: [templateId], references: [id])
 }
 
 model Trigger {
@@ -97,27 +101,29 @@ model Action {
 }
 
 model AvailableTriggers {
-  id             String    @id @default(uuid())
+  id             String        @id @default(uuid())
   name           String
   description    String
-  metadata       Json      @default("{}")
-  configMetadata Json      @default("{}")
+  metadata       Json          @default("{}")
+  configMetadata Json          @default("{}")
   type           String
   appId          String
-  app            App       @relation(fields: [appId], references: [id])
+  app            App           @relation(fields: [appId], references: [id])
   triggers       Trigger[]
+  templates      ZapTemplate[]
 }
 
 model AvailableActions {
-  id             String   @id @default(uuid())
+  id             String        @id @default(uuid())
   name           String
   description    String
-  metadata       Json     @default("{}")
-  configMetadata Json     @default("{}")
+  metadata       Json          @default("{}")
+  configMetadata Json          @default("{}")
   type           String
   appId          String
   actions        Action[]
-  app            App      @relation(fields: [appId], references: [id])
+  app            App           @relation(fields: [appId], references: [id])
+  templates      ZapTemplate[]
 }
 
 model ZapRun {
@@ -143,4 +149,33 @@ model TokenStore {
   refreshToken String
   userId       String
   user         User     @relation(fields: [userId], references: [id])
+}
+
+model ZapTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  category    String
+  isPopular   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Template trigger configuration
+  triggerAppId String
+  triggerApp   App               @relation("TemplateTriggerApp", fields: [triggerAppId], references: [id])
+  triggerId    String
+  trigger      AvailableTriggers @relation(fields: [triggerId], references: [id])
+
+  // Template action configuration
+  actionAppId String
+  actionApp   App              @relation("TemplateActionApp", fields: [actionAppId], references: [id])
+  actionId    String
+  action      AvailableActions @relation(fields: [actionId], references: [id])
+
+  // Additional configuration
+  triggerConfig Json @default("{}") // For any additional trigger-specific configuration
+  actionConfig  Json @default("{}") // For any additional action-specific configuration
+
+  // Relation to Zaps using this template
+  zaps Zap[]
 }

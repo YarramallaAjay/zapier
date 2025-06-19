@@ -1,95 +1,90 @@
-import express, {  Router } from "express";
-import {  PrismaClient } from "@repo/db/src";
+import express, { Router } from "express";
+import { PrismaClient } from "@repo/db/src";
 import cookieParser from "cookie-parser";
 import { AuthUser } from "@/middlewares/userAuthMiddleware";
 import { UserDetails, UserSession } from "@repo/types/src/UserSession";
 import { TeamBase } from "@repo/types/src/Team";
 import { Apiresponse } from "@/utils/Response";
 
-
 const prisma = new PrismaClient();
 const router: Router = express.Router();
 
-// Middlewares
-// router.use(
-//   cors({
-//     origin: ["http://localhost:3000"],
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//     exposedHeaders: ["Content-Type", "Authorization"],
-//     credentials: true,
-//   })
-// );
 router.use(express.json());
 router.use(cookieParser());
 
-router.get("/team", AuthUser, async (req, res) => {
+// Get team by ID
+router.get("/team/:teamId", AuthUser, async (req, res) => {
   try {
-    const user = req.user as unknown as UserDetails; // Use cached user details
-
-    if (!user) {
-      Apiresponse.error(res, "User not authenticated", 401, {});
-      return;
-    }
-
-    // Retrieve the team where the user is a member
-    const team = await prisma.team.findFirst({
-      where: {
-        members: {
-          some: {
-            id: user.id, // Check if the user's ID exists in the members array
-          },
-        },
-      },
-      include:{apps:true}
+    const { teamId } = req.params;
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      include: { apps: true, members: true }
     });
 
     if (!team) {
-      Apiresponse.success(res, null, "User is not part of any team.", 200);
-      return;
-    }
+       Apiresponse.error(res, "Team not found.", 404, {});
+       return;
+      }
 
+    Apiresponse.success(res, team, "Team retrieved successfully.", 200);
+  } catch (error) {
+    console.error("Error fetching team by ID:", error);
+    Apiresponse.error(res, "Failed to fetch team.", 500, error);
+  }
+});
+
+// Get team for user
+router.get("/team", AuthUser, async (req, res) => {
+  try {
+    const user = req.user as unknown as UserSession;
+    if (!user)  {Apiresponse.error(res, "User not authenticated", 401, {});
+  return}
+
+    const team = await prisma.team.findFirst({
+      where: { members: { some: { id: user.id } } },
+      include: { apps: true }
+    });
+
+    if (!team)  {
+      Apiresponse.success(res, null, "User is not part of any team.", 200);
+      return
+}
     Apiresponse.success(res, team, "Successfully fetched user team.", 200);
   } catch (error) {
     console.error("Error fetching team:", error);
     Apiresponse.error(res, "Failed to fetch team.", 500, error);
   }
 });
-// 1. Create Team
+
+// Create team
 router.post("/team", AuthUser, async (req, res) => {
   try {
-    const user = await req.user as UserDetails;
-    const {name,members,metadata,createdById} = await req.body;
-    
-    if (!user) {
-      Apiresponse.error(res, "User not authenticated", 401, {});
-      return;
-    }
+    const user = req.user as UserSession;
+    const { name, members, metadata, createdById } = req.body;
 
-    // Check if user already has a team
-    if (user.team && (user.team as TeamBase).id) {
-      Apiresponse.error(res, "User can only create one team.", 400,user.team);
-      return;
-    }
+    if (!user)  {Apiresponse.error(res, "User not authenticated", 401, {});
+  return}
 
+    const existingTeam = await prisma.team.findFirst({ where: { createdById: user.id } });
+    if (existingTeam)  {
+      Apiresponse.error(res, "User can only create one team.", 400, existingTeam);
+      return
+}
+    const memberUsers = await prisma.user.findMany({
+      select: { id: true },
+      where: { email: { in: [...members] } }
+    });
 
-    // Create the team
     const newTeam = await prisma.team.create({
       data: {
         name,
         metadata: metadata || {},
-        createdById: user.id || createdById,
-        members: {
-          connect: members.map((id: string) => ({
-            id
-          })),
-        },
-      },
+        createdById: createdById || user.id,
+        members: { connect: memberUsers.map((u) => ({ id: u.id })) }
+      }
     });
 
-    // Update user session to include the new team
     await UserDetails.updateUserDetails(user.id);
-
     Apiresponse.success(res, { team: newTeam }, "Team created successfully.", 201);
   } catch (error) {
     console.error("Error creating team:", error);
@@ -97,30 +92,21 @@ router.post("/team", AuthUser, async (req, res) => {
   }
 });
 
-// 2. Update Team Details
+// Update team
 router.put("/team", AuthUser, async (req, res) => {
   try {
-    const user = await req.user as unknown as UserDetails; // Use cached user details
-    if (!user) {
-      Apiresponse.error(res, "User not authenticated", 401, {});
-      return;
-    }
-
+    const user = req.user as UserSession;
     const { name, metadata } = req.body;
 
-    if (!user.team || !(user.team as any).id) {
-      Apiresponse.error(res, "User not part of a team.", 400, {});
-      return;
-    }
+    if (!(user.team as TeamBase).id)  {Apiresponse.error(res, "User not part of a team.", 400, {});
+   return }
 
     const updatedTeam = await prisma.team.update({
       where: { id: (user.team as TeamBase).id },
       data: { name, metadata: metadata || {} },
     });
 
-    // Update user session to reflect team changes
     await UserDetails.updateUserDetails(user.id);
-
     Apiresponse.success(res, { team: updatedTeam }, "Team updated successfully.", 200);
   } catch (error) {
     console.error("Error updating team:", error);
@@ -128,20 +114,14 @@ router.put("/team", AuthUser, async (req, res) => {
   }
 });
 
-// 3. Delete Team
+// Delete team
 router.delete("/team", AuthUser, async (req, res) => {
   try {
-    const user = req.user as unknown as UserDetails; // Use cached user details
-    if (!user) {
-      Apiresponse.error(res, "User not authenticated", 401, {});
-      return;
-    }
+    const user = req.user as UserSession;
+    if (!user)  {Apiresponse.error(res, "User not authenticated", 401, {});
+    return}
 
-    await prisma.team.delete({
-      where: { createdById: (user as unknown as UserSession).user.id },
-    });
-
-    // Clear user session since team is deleted
+    await prisma.team.delete({ where: { createdById: user.id } });
     await UserDetails.updateUserDetails(user.id);
 
     Apiresponse.success(res, {}, "Team deleted successfully.", 200);
@@ -151,22 +131,16 @@ router.delete("/team", AuthUser, async (req, res) => {
   }
 });
 
-// 4. Get Apps for the User's Team
+// Get apps for user's team
 router.get("/teamapps", AuthUser, async (req, res) => {
   try {
-    const user = await req.user as unknown as UserDetails; // Use cached user details
-    if (!user) {
-      Apiresponse.error(res, "User not authenticated", 401, {});
-      return;
-    }
+    const user = req.user as UserSession;
 
-    if (!user.team || !(user.team as any).id) {
-      Apiresponse.success(res, [],"User not part of a team....create one", 201);
-      return;
-    }
+    if (!(user?.team as TeamBase).id)  {Apiresponse.success(res, [], "User not part of a team....create one", 201);
+    return}
 
     const apps = await prisma.app.findMany({
-      where: { teamId: (user.team as any).id },
+      where: { teamId: (user.team as TeamBase).id },
       include: {
         team: true,
         actions: true,
@@ -175,31 +149,26 @@ router.get("/teamapps", AuthUser, async (req, res) => {
       },
     });
 
-    Apiresponse.success(res, apps , "Apps fetched successfully.", 200);
+    Apiresponse.success(res, apps, "Apps fetched successfully.", 200);
   } catch (error) {
     console.error("Error fetching apps:", error);
     Apiresponse.error(res, "Failed to fetch apps.", 500, error);
   }
 });
 
-// 5. Create New App
+// Create new app in team
 router.post("/newapp", AuthUser, async (req, res) => {
   try {
-    const user = await req.user as unknown as UserDetails; // Use cached user details
-    if (!user) {
-      Apiresponse.error(res, "User not authenticated", 401, {});
-      return;
-    }
-
+    const user = req.user as UserSession;
     const { name, description } = req.body;
 
-    if (!user.team || !(user.team as any).id) {
+    if (!(user?.team as TeamBase).id)  {
       Apiresponse.error(res, "User not part of a team.", 400, {});
-      return;
+      return
     }
 
     const newApp = await prisma.app.create({
-      data: { name, description, teamId: (user.team as any).id },
+      data: { name, description, teamId: (user.team as TeamBase).id },
     });
 
     Apiresponse.success(res, { app: newApp }, "App created successfully.", 201);
@@ -209,15 +178,10 @@ router.post("/newapp", AuthUser, async (req, res) => {
   }
 });
 
+// Get all apps
 router.get("/allapps", AuthUser, async (req, res) => {
   try {
-    const user = await req.user as unknown as UserDetails; // Use cached user details
-    if (!user) {
-      Apiresponse.error(res, "User not authenticated", 401, {});
-      return;
-    }
-
-
+    console.log(req)
     const apps = await prisma.app.findMany({
       include: {
         team: true,
@@ -226,17 +190,71 @@ router.get("/allapps", AuthUser, async (req, res) => {
         authMethods: { include: { availableAuth: true } },
       },
     });
-    if(!apps){
-      Apiresponse.error(res, "Apps not found/ mis-fetch",400, []);
+
+    if (!apps.length)  {Apiresponse.error(res, "Apps not found/mis-fetch", 400, []);
+      return
     }
 
-    Apiresponse.success(res, apps , "Apps fetched successfully.", 200);
+    Apiresponse.success(res, apps, "Apps fetched successfully.", 200);
   } catch (error) {
     console.error("Error fetching apps:", error);
     Apiresponse.error(res, "Failed to fetch apps.", 500, error);
   }
 });
 
-// 6. Add Auth Method to an App
+// Get app by ID
+router.get("/app/:appId", AuthUser, async (req, res) => {
+  try {
+    const { appId } = req.params;
+    const app = await prisma.app.findUnique({
+      where: { id: appId },
+      include: {
+        team: true,
+        actions: true,
+        triggers: true,
+        authMethods: { include: { availableAuth: true } },
+      },
+    });
+
+    if (!app) { Apiresponse.error(res, "App not found.", 404, {});
+  return}
+
+    Apiresponse.success(res, app, "App fetched successfully.", 200);
+  } catch (error) {
+    console.error("Error fetching app:", error);
+    Apiresponse.error(res, "Failed to fetch app.", 500, error);
+  }
+});
+
+// Update app
+router.put("/app/:appId", AuthUser, async (req, res) => {
+  try {
+    const { appId } = req.params;
+    const { name, description } = req.body;
+
+    const updatedApp = await prisma.app.update({
+      where: { id: appId },
+      data: { name, description },
+    });
+
+    Apiresponse.success(res, updatedApp, "App updated successfully.", 200);
+  } catch (error) {
+    console.error("Error updating app:", error);
+    Apiresponse.error(res, "Failed to update app.", 500, error);
+  }
+});
+
+// Delete app
+router.delete("/app/:appId", AuthUser, async (req, res) => {
+  try {
+    const { appId } = req.params;
+
+    await prisma.app.delete({ where: { id: appId } });
+    Apiresponse.success(res, {}, "App deleted successfully.", 200);
+  } catch (error) {
+    console.error("Error deleting app:", error);
+    Apiresponse.error(res, "Failed to delete app.", 500, error);
+  }
+});
 
 export default router;

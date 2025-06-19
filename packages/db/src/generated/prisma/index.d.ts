@@ -78,6 +78,11 @@ export type ZapRunOutBox = $Result.DefaultSelection<Prisma.$ZapRunOutBoxPayload>
  * 
  */
 export type TokenStore = $Result.DefaultSelection<Prisma.$TokenStorePayload>
+/**
+ * Model ZapTemplate
+ * 
+ */
+export type ZapTemplate = $Result.DefaultSelection<Prisma.$ZapTemplatePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -333,6 +338,16 @@ export class PrismaClient<
     * ```
     */
   get tokenStore(): Prisma.TokenStoreDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.zapTemplate`: Exposes CRUD operations for the **ZapTemplate** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ZapTemplates
+    * const zapTemplates = await prisma.zapTemplate.findMany()
+    * ```
+    */
+  get zapTemplate(): Prisma.ZapTemplateDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -785,7 +800,8 @@ export namespace Prisma {
     AvailableActions: 'AvailableActions',
     ZapRun: 'ZapRun',
     ZapRunOutBox: 'ZapRunOutBox',
-    TokenStore: 'TokenStore'
+    TokenStore: 'TokenStore',
+    ZapTemplate: 'ZapTemplate'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -804,7 +820,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "team" | "app" | "authMethods" | "availableAuthMethods" | "zap" | "trigger" | "action" | "availableTriggers" | "availableActions" | "zapRun" | "zapRunOutBox" | "tokenStore"
+      modelProps: "user" | "team" | "app" | "authMethods" | "availableAuthMethods" | "zap" | "trigger" | "action" | "availableTriggers" | "availableActions" | "zapRun" | "zapRunOutBox" | "tokenStore" | "zapTemplate"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1718,6 +1734,76 @@ export namespace Prisma {
           }
         }
       }
+      ZapTemplate: {
+        payload: Prisma.$ZapTemplatePayload<ExtArgs>
+        fields: Prisma.ZapTemplateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ZapTemplateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ZapTemplateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>
+          }
+          findFirst: {
+            args: Prisma.ZapTemplateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ZapTemplateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>
+          }
+          findMany: {
+            args: Prisma.ZapTemplateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>[]
+          }
+          create: {
+            args: Prisma.ZapTemplateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>
+          }
+          createMany: {
+            args: Prisma.ZapTemplateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ZapTemplateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>[]
+          }
+          delete: {
+            args: Prisma.ZapTemplateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>
+          }
+          update: {
+            args: Prisma.ZapTemplateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>
+          }
+          deleteMany: {
+            args: Prisma.ZapTemplateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ZapTemplateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ZapTemplateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ZapTemplatePayload>
+          }
+          aggregate: {
+            args: Prisma.ZapTemplateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateZapTemplate>
+          }
+          groupBy: {
+            args: Prisma.ZapTemplateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ZapTemplateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ZapTemplateCountArgs<ExtArgs>
+            result: $Utils.Optional<ZapTemplateCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1815,6 +1901,7 @@ export namespace Prisma {
     zapRun?: ZapRunOmit
     zapRunOutBox?: ZapRunOutBoxOmit
     tokenStore?: TokenStoreOmit
+    zapTemplate?: ZapTemplateOmit
   }
 
   /* Types for Logging */
@@ -1992,12 +2079,16 @@ export namespace Prisma {
     authMethods: number
     actions: number
     triggers: number
+    triggerTemplates: number
+    actionTemplates: number
   }
 
   export type AppCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     authMethods?: boolean | AppCountOutputTypeCountAuthMethodsArgs
     actions?: boolean | AppCountOutputTypeCountActionsArgs
     triggers?: boolean | AppCountOutputTypeCountTriggersArgs
+    triggerTemplates?: boolean | AppCountOutputTypeCountTriggerTemplatesArgs
+    actionTemplates?: boolean | AppCountOutputTypeCountActionTemplatesArgs
   }
 
   // Custom InputTypes
@@ -2030,6 +2121,20 @@ export namespace Prisma {
    */
   export type AppCountOutputTypeCountTriggersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AvailableTriggersWhereInput
+  }
+
+  /**
+   * AppCountOutputType without action
+   */
+  export type AppCountOutputTypeCountTriggerTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ZapTemplateWhereInput
+  }
+
+  /**
+   * AppCountOutputType without action
+   */
+  export type AppCountOutputTypeCountActionTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ZapTemplateWhereInput
   }
 
 
@@ -2110,10 +2215,12 @@ export namespace Prisma {
 
   export type AvailableTriggersCountOutputType = {
     triggers: number
+    templates: number
   }
 
   export type AvailableTriggersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     triggers?: boolean | AvailableTriggersCountOutputTypeCountTriggersArgs
+    templates?: boolean | AvailableTriggersCountOutputTypeCountTemplatesArgs
   }
 
   // Custom InputTypes
@@ -2134,6 +2241,13 @@ export namespace Prisma {
     where?: TriggerWhereInput
   }
 
+  /**
+   * AvailableTriggersCountOutputType without action
+   */
+  export type AvailableTriggersCountOutputTypeCountTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ZapTemplateWhereInput
+  }
+
 
   /**
    * Count Type AvailableActionsCountOutputType
@@ -2141,10 +2255,12 @@ export namespace Prisma {
 
   export type AvailableActionsCountOutputType = {
     actions: number
+    templates: number
   }
 
   export type AvailableActionsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     actions?: boolean | AvailableActionsCountOutputTypeCountActionsArgs
+    templates?: boolean | AvailableActionsCountOutputTypeCountTemplatesArgs
   }
 
   // Custom InputTypes
@@ -2163,6 +2279,44 @@ export namespace Prisma {
    */
   export type AvailableActionsCountOutputTypeCountActionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ActionWhereInput
+  }
+
+  /**
+   * AvailableActionsCountOutputType without action
+   */
+  export type AvailableActionsCountOutputTypeCountTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ZapTemplateWhereInput
+  }
+
+
+  /**
+   * Count Type ZapTemplateCountOutputType
+   */
+
+  export type ZapTemplateCountOutputType = {
+    zaps: number
+  }
+
+  export type ZapTemplateCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    zaps?: boolean | ZapTemplateCountOutputTypeCountZapsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ZapTemplateCountOutputType without action
+   */
+  export type ZapTemplateCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplateCountOutputType
+     */
+    select?: ZapTemplateCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ZapTemplateCountOutputType without action
+   */
+  export type ZapTemplateCountOutputTypeCountZapsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ZapWhereInput
   }
 
 
@@ -4432,6 +4586,8 @@ export namespace Prisma {
     authMethods?: boolean | App$authMethodsArgs<ExtArgs>
     actions?: boolean | App$actionsArgs<ExtArgs>
     triggers?: boolean | App$triggersArgs<ExtArgs>
+    triggerTemplates?: boolean | App$triggerTemplatesArgs<ExtArgs>
+    actionTemplates?: boolean | App$actionTemplatesArgs<ExtArgs>
     _count?: boolean | AppCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["app"]>
 
@@ -4457,6 +4613,8 @@ export namespace Prisma {
     authMethods?: boolean | App$authMethodsArgs<ExtArgs>
     actions?: boolean | App$actionsArgs<ExtArgs>
     triggers?: boolean | App$triggersArgs<ExtArgs>
+    triggerTemplates?: boolean | App$triggerTemplatesArgs<ExtArgs>
+    actionTemplates?: boolean | App$actionTemplatesArgs<ExtArgs>
     _count?: boolean | AppCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AppIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4470,6 +4628,8 @@ export namespace Prisma {
       authMethods: Prisma.$AuthMethodsPayload<ExtArgs>[]
       actions: Prisma.$AvailableActionsPayload<ExtArgs>[]
       triggers: Prisma.$AvailableTriggersPayload<ExtArgs>[]
+      triggerTemplates: Prisma.$ZapTemplatePayload<ExtArgs>[]
+      actionTemplates: Prisma.$ZapTemplatePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       name: string
@@ -4844,6 +5004,8 @@ export namespace Prisma {
     authMethods<T extends App$authMethodsArgs<ExtArgs> = {}>(args?: Subset<T, App$authMethodsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthMethodsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     actions<T extends App$actionsArgs<ExtArgs> = {}>(args?: Subset<T, App$actionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvailableActionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     triggers<T extends App$triggersArgs<ExtArgs> = {}>(args?: Subset<T, App$triggersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvailableTriggersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    triggerTemplates<T extends App$triggerTemplatesArgs<ExtArgs> = {}>(args?: Subset<T, App$triggerTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    actionTemplates<T extends App$actionTemplatesArgs<ExtArgs> = {}>(args?: Subset<T, App$actionTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5304,6 +5466,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AvailableTriggersScalarFieldEnum | AvailableTriggersScalarFieldEnum[]
+  }
+
+  /**
+   * App.triggerTemplates
+   */
+  export type App$triggerTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    where?: ZapTemplateWhereInput
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    cursor?: ZapTemplateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ZapTemplateScalarFieldEnum | ZapTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * App.actionTemplates
+   */
+  export type App$actionTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    where?: ZapTemplateWhereInput
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    cursor?: ZapTemplateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ZapTemplateScalarFieldEnum | ZapTemplateScalarFieldEnum[]
   }
 
   /**
@@ -7304,6 +7514,7 @@ export namespace Prisma {
     description: string | null
     userId: string | null
     image: string | null
+    templateId: string | null
   }
 
   export type ZapMaxAggregateOutputType = {
@@ -7312,6 +7523,7 @@ export namespace Prisma {
     description: string | null
     userId: string | null
     image: string | null
+    templateId: string | null
   }
 
   export type ZapCountAggregateOutputType = {
@@ -7321,6 +7533,7 @@ export namespace Prisma {
     metadata: number
     userId: number
     image: number
+    templateId: number
     _all: number
   }
 
@@ -7331,6 +7544,7 @@ export namespace Prisma {
     description?: true
     userId?: true
     image?: true
+    templateId?: true
   }
 
   export type ZapMaxAggregateInputType = {
@@ -7339,6 +7553,7 @@ export namespace Prisma {
     description?: true
     userId?: true
     image?: true
+    templateId?: true
   }
 
   export type ZapCountAggregateInputType = {
@@ -7348,6 +7563,7 @@ export namespace Prisma {
     metadata?: true
     userId?: true
     image?: true
+    templateId?: true
     _all?: true
   }
 
@@ -7430,6 +7646,7 @@ export namespace Prisma {
     metadata: JsonValue
     userId: string
     image: string | null
+    templateId: string | null
     _count: ZapCountAggregateOutputType | null
     _min: ZapMinAggregateOutputType | null
     _max: ZapMaxAggregateOutputType | null
@@ -7456,10 +7673,12 @@ export namespace Prisma {
     metadata?: boolean
     userId?: boolean
     image?: boolean
+    templateId?: boolean
     actions?: boolean | Zap$actionsArgs<ExtArgs>
     trigger?: boolean | Zap$triggerArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     zapRuns?: boolean | Zap$zapRunsArgs<ExtArgs>
+    template?: boolean | Zap$templateArgs<ExtArgs>
     _count?: boolean | ZapCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["zap"]>
 
@@ -7470,7 +7689,9 @@ export namespace Prisma {
     metadata?: boolean
     userId?: boolean
     image?: boolean
+    templateId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    template?: boolean | Zap$templateArgs<ExtArgs>
   }, ExtArgs["result"]["zap"]>
 
 
@@ -7481,18 +7702,21 @@ export namespace Prisma {
     metadata?: boolean
     userId?: boolean
     image?: boolean
+    templateId?: boolean
   }
 
-  export type ZapOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "metadata" | "userId" | "image", ExtArgs["result"]["zap"]>
+  export type ZapOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "metadata" | "userId" | "image" | "templateId", ExtArgs["result"]["zap"]>
   export type ZapInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     actions?: boolean | Zap$actionsArgs<ExtArgs>
     trigger?: boolean | Zap$triggerArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     zapRuns?: boolean | Zap$zapRunsArgs<ExtArgs>
+    template?: boolean | Zap$templateArgs<ExtArgs>
     _count?: boolean | ZapCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ZapIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    template?: boolean | Zap$templateArgs<ExtArgs>
   }
 
   export type $ZapPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7502,6 +7726,7 @@ export namespace Prisma {
       trigger: Prisma.$TriggerPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
       zapRuns: Prisma.$ZapRunPayload<ExtArgs>[]
+      template: Prisma.$ZapTemplatePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7510,6 +7735,7 @@ export namespace Prisma {
       metadata: Prisma.JsonValue
       userId: string
       image: string | null
+      templateId: string | null
     }, ExtArgs["result"]["zap"]>
     composites: {}
   }
@@ -7878,6 +8104,7 @@ export namespace Prisma {
     trigger<T extends Zap$triggerArgs<ExtArgs> = {}>(args?: Subset<T, Zap$triggerArgs<ExtArgs>>): Prisma__TriggerClient<$Result.GetResult<Prisma.$TriggerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     zapRuns<T extends Zap$zapRunsArgs<ExtArgs> = {}>(args?: Subset<T, Zap$zapRunsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    template<T extends Zap$templateArgs<ExtArgs> = {}>(args?: Subset<T, Zap$templateArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7913,6 +8140,7 @@ export namespace Prisma {
     readonly metadata: FieldRef<"Zap", 'Json'>
     readonly userId: FieldRef<"Zap", 'String'>
     readonly image: FieldRef<"Zap", 'String'>
+    readonly templateId: FieldRef<"Zap", 'String'>
   }
     
 
@@ -8335,6 +8563,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ZapRunScalarFieldEnum | ZapRunScalarFieldEnum[]
+  }
+
+  /**
+   * Zap.template
+   */
+  export type Zap$templateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    where?: ZapTemplateWhereInput
   }
 
   /**
@@ -10562,6 +10809,7 @@ export namespace Prisma {
     appId?: boolean
     app?: boolean | AppDefaultArgs<ExtArgs>
     triggers?: boolean | AvailableTriggers$triggersArgs<ExtArgs>
+    templates?: boolean | AvailableTriggers$templatesArgs<ExtArgs>
     _count?: boolean | AvailableTriggersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["availableTriggers"]>
 
@@ -10591,6 +10839,7 @@ export namespace Prisma {
   export type AvailableTriggersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     app?: boolean | AppDefaultArgs<ExtArgs>
     triggers?: boolean | AvailableTriggers$triggersArgs<ExtArgs>
+    templates?: boolean | AvailableTriggers$templatesArgs<ExtArgs>
     _count?: boolean | AvailableTriggersCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AvailableTriggersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10602,6 +10851,7 @@ export namespace Prisma {
     objects: {
       app: Prisma.$AppPayload<ExtArgs>
       triggers: Prisma.$TriggerPayload<ExtArgs>[]
+      templates: Prisma.$ZapTemplatePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10977,6 +11227,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     app<T extends AppDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AppDefaultArgs<ExtArgs>>): Prisma__AppClient<$Result.GetResult<Prisma.$AppPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     triggers<T extends AvailableTriggers$triggersArgs<ExtArgs> = {}>(args?: Subset<T, AvailableTriggers$triggersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TriggerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    templates<T extends AvailableTriggers$templatesArgs<ExtArgs> = {}>(args?: Subset<T, AvailableTriggers$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11395,6 +11646,30 @@ export namespace Prisma {
   }
 
   /**
+   * AvailableTriggers.templates
+   */
+  export type AvailableTriggers$templatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    where?: ZapTemplateWhereInput
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    cursor?: ZapTemplateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ZapTemplateScalarFieldEnum | ZapTemplateScalarFieldEnum[]
+  }
+
+  /**
    * AvailableTriggers without action
    */
   export type AvailableTriggersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11587,6 +11862,7 @@ export namespace Prisma {
     appId?: boolean
     actions?: boolean | AvailableActions$actionsArgs<ExtArgs>
     app?: boolean | AppDefaultArgs<ExtArgs>
+    templates?: boolean | AvailableActions$templatesArgs<ExtArgs>
     _count?: boolean | AvailableActionsCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["availableActions"]>
 
@@ -11616,6 +11892,7 @@ export namespace Prisma {
   export type AvailableActionsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     actions?: boolean | AvailableActions$actionsArgs<ExtArgs>
     app?: boolean | AppDefaultArgs<ExtArgs>
+    templates?: boolean | AvailableActions$templatesArgs<ExtArgs>
     _count?: boolean | AvailableActionsCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AvailableActionsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11627,6 +11904,7 @@ export namespace Prisma {
     objects: {
       actions: Prisma.$ActionPayload<ExtArgs>[]
       app: Prisma.$AppPayload<ExtArgs>
+      templates: Prisma.$ZapTemplatePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12002,6 +12280,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     actions<T extends AvailableActions$actionsArgs<ExtArgs> = {}>(args?: Subset<T, AvailableActions$actionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     app<T extends AppDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AppDefaultArgs<ExtArgs>>): Prisma__AppClient<$Result.GetResult<Prisma.$AppPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    templates<T extends AvailableActions$templatesArgs<ExtArgs> = {}>(args?: Subset<T, AvailableActions$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12417,6 +12696,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ActionScalarFieldEnum | ActionScalarFieldEnum[]
+  }
+
+  /**
+   * AvailableActions.templates
+   */
+  export type AvailableActions$templatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    where?: ZapTemplateWhereInput
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    cursor?: ZapTemplateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ZapTemplateScalarFieldEnum | ZapTemplateScalarFieldEnum[]
   }
 
   /**
@@ -15359,6 +15662,1121 @@ export namespace Prisma {
 
 
   /**
+   * Model ZapTemplate
+   */
+
+  export type AggregateZapTemplate = {
+    _count: ZapTemplateCountAggregateOutputType | null
+    _min: ZapTemplateMinAggregateOutputType | null
+    _max: ZapTemplateMaxAggregateOutputType | null
+  }
+
+  export type ZapTemplateMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    category: string | null
+    isPopular: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    triggerAppId: string | null
+    triggerId: string | null
+    actionAppId: string | null
+    actionId: string | null
+  }
+
+  export type ZapTemplateMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    category: string | null
+    isPopular: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    triggerAppId: string | null
+    triggerId: string | null
+    actionAppId: string | null
+    actionId: string | null
+  }
+
+  export type ZapTemplateCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    category: number
+    isPopular: number
+    createdAt: number
+    updatedAt: number
+    triggerAppId: number
+    triggerId: number
+    actionAppId: number
+    actionId: number
+    triggerConfig: number
+    actionConfig: number
+    _all: number
+  }
+
+
+  export type ZapTemplateMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    category?: true
+    isPopular?: true
+    createdAt?: true
+    updatedAt?: true
+    triggerAppId?: true
+    triggerId?: true
+    actionAppId?: true
+    actionId?: true
+  }
+
+  export type ZapTemplateMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    category?: true
+    isPopular?: true
+    createdAt?: true
+    updatedAt?: true
+    triggerAppId?: true
+    triggerId?: true
+    actionAppId?: true
+    actionId?: true
+  }
+
+  export type ZapTemplateCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    category?: true
+    isPopular?: true
+    createdAt?: true
+    updatedAt?: true
+    triggerAppId?: true
+    triggerId?: true
+    actionAppId?: true
+    actionId?: true
+    triggerConfig?: true
+    actionConfig?: true
+    _all?: true
+  }
+
+  export type ZapTemplateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ZapTemplate to aggregate.
+     */
+    where?: ZapTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ZapTemplates to fetch.
+     */
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ZapTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ZapTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ZapTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ZapTemplates
+    **/
+    _count?: true | ZapTemplateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ZapTemplateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ZapTemplateMaxAggregateInputType
+  }
+
+  export type GetZapTemplateAggregateType<T extends ZapTemplateAggregateArgs> = {
+        [P in keyof T & keyof AggregateZapTemplate]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateZapTemplate[P]>
+      : GetScalarType<T[P], AggregateZapTemplate[P]>
+  }
+
+
+
+
+  export type ZapTemplateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ZapTemplateWhereInput
+    orderBy?: ZapTemplateOrderByWithAggregationInput | ZapTemplateOrderByWithAggregationInput[]
+    by: ZapTemplateScalarFieldEnum[] | ZapTemplateScalarFieldEnum
+    having?: ZapTemplateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ZapTemplateCountAggregateInputType | true
+    _min?: ZapTemplateMinAggregateInputType
+    _max?: ZapTemplateMaxAggregateInputType
+  }
+
+  export type ZapTemplateGroupByOutputType = {
+    id: string
+    name: string
+    description: string
+    category: string
+    isPopular: boolean
+    createdAt: Date
+    updatedAt: Date
+    triggerAppId: string
+    triggerId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig: JsonValue
+    actionConfig: JsonValue
+    _count: ZapTemplateCountAggregateOutputType | null
+    _min: ZapTemplateMinAggregateOutputType | null
+    _max: ZapTemplateMaxAggregateOutputType | null
+  }
+
+  type GetZapTemplateGroupByPayload<T extends ZapTemplateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ZapTemplateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ZapTemplateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ZapTemplateGroupByOutputType[P]>
+            : GetScalarType<T[P], ZapTemplateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ZapTemplateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    category?: boolean
+    isPopular?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    triggerAppId?: boolean
+    triggerId?: boolean
+    actionAppId?: boolean
+    actionId?: boolean
+    triggerConfig?: boolean
+    actionConfig?: boolean
+    triggerApp?: boolean | AppDefaultArgs<ExtArgs>
+    trigger?: boolean | AvailableTriggersDefaultArgs<ExtArgs>
+    actionApp?: boolean | AppDefaultArgs<ExtArgs>
+    action?: boolean | AvailableActionsDefaultArgs<ExtArgs>
+    zaps?: boolean | ZapTemplate$zapsArgs<ExtArgs>
+    _count?: boolean | ZapTemplateCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["zapTemplate"]>
+
+  export type ZapTemplateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    category?: boolean
+    isPopular?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    triggerAppId?: boolean
+    triggerId?: boolean
+    actionAppId?: boolean
+    actionId?: boolean
+    triggerConfig?: boolean
+    actionConfig?: boolean
+    triggerApp?: boolean | AppDefaultArgs<ExtArgs>
+    trigger?: boolean | AvailableTriggersDefaultArgs<ExtArgs>
+    actionApp?: boolean | AppDefaultArgs<ExtArgs>
+    action?: boolean | AvailableActionsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["zapTemplate"]>
+
+
+  export type ZapTemplateSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    category?: boolean
+    isPopular?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    triggerAppId?: boolean
+    triggerId?: boolean
+    actionAppId?: boolean
+    actionId?: boolean
+    triggerConfig?: boolean
+    actionConfig?: boolean
+  }
+
+  export type ZapTemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "category" | "isPopular" | "createdAt" | "updatedAt" | "triggerAppId" | "triggerId" | "actionAppId" | "actionId" | "triggerConfig" | "actionConfig", ExtArgs["result"]["zapTemplate"]>
+  export type ZapTemplateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    triggerApp?: boolean | AppDefaultArgs<ExtArgs>
+    trigger?: boolean | AvailableTriggersDefaultArgs<ExtArgs>
+    actionApp?: boolean | AppDefaultArgs<ExtArgs>
+    action?: boolean | AvailableActionsDefaultArgs<ExtArgs>
+    zaps?: boolean | ZapTemplate$zapsArgs<ExtArgs>
+    _count?: boolean | ZapTemplateCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ZapTemplateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    triggerApp?: boolean | AppDefaultArgs<ExtArgs>
+    trigger?: boolean | AvailableTriggersDefaultArgs<ExtArgs>
+    actionApp?: boolean | AppDefaultArgs<ExtArgs>
+    action?: boolean | AvailableActionsDefaultArgs<ExtArgs>
+  }
+
+  export type $ZapTemplatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ZapTemplate"
+    objects: {
+      triggerApp: Prisma.$AppPayload<ExtArgs>
+      trigger: Prisma.$AvailableTriggersPayload<ExtArgs>
+      actionApp: Prisma.$AppPayload<ExtArgs>
+      action: Prisma.$AvailableActionsPayload<ExtArgs>
+      zaps: Prisma.$ZapPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string
+      category: string
+      isPopular: boolean
+      createdAt: Date
+      updatedAt: Date
+      triggerAppId: string
+      triggerId: string
+      actionAppId: string
+      actionId: string
+      triggerConfig: Prisma.JsonValue
+      actionConfig: Prisma.JsonValue
+    }, ExtArgs["result"]["zapTemplate"]>
+    composites: {}
+  }
+
+  type ZapTemplateGetPayload<S extends boolean | null | undefined | ZapTemplateDefaultArgs> = $Result.GetResult<Prisma.$ZapTemplatePayload, S>
+
+  type ZapTemplateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ZapTemplateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ZapTemplateCountAggregateInputType | true
+    }
+
+  export interface ZapTemplateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ZapTemplate'], meta: { name: 'ZapTemplate' } }
+    /**
+     * Find zero or one ZapTemplate that matches the filter.
+     * @param {ZapTemplateFindUniqueArgs} args - Arguments to find a ZapTemplate
+     * @example
+     * // Get one ZapTemplate
+     * const zapTemplate = await prisma.zapTemplate.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ZapTemplateFindUniqueArgs>(args: SelectSubset<T, ZapTemplateFindUniqueArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ZapTemplate that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ZapTemplateFindUniqueOrThrowArgs} args - Arguments to find a ZapTemplate
+     * @example
+     * // Get one ZapTemplate
+     * const zapTemplate = await prisma.zapTemplate.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ZapTemplateFindUniqueOrThrowArgs>(args: SelectSubset<T, ZapTemplateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ZapTemplate that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZapTemplateFindFirstArgs} args - Arguments to find a ZapTemplate
+     * @example
+     * // Get one ZapTemplate
+     * const zapTemplate = await prisma.zapTemplate.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ZapTemplateFindFirstArgs>(args?: SelectSubset<T, ZapTemplateFindFirstArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ZapTemplate that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZapTemplateFindFirstOrThrowArgs} args - Arguments to find a ZapTemplate
+     * @example
+     * // Get one ZapTemplate
+     * const zapTemplate = await prisma.zapTemplate.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ZapTemplateFindFirstOrThrowArgs>(args?: SelectSubset<T, ZapTemplateFindFirstOrThrowArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ZapTemplates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZapTemplateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ZapTemplates
+     * const zapTemplates = await prisma.zapTemplate.findMany()
+     * 
+     * // Get first 10 ZapTemplates
+     * const zapTemplates = await prisma.zapTemplate.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const zapTemplateWithIdOnly = await prisma.zapTemplate.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ZapTemplateFindManyArgs>(args?: SelectSubset<T, ZapTemplateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ZapTemplate.
+     * @param {ZapTemplateCreateArgs} args - Arguments to create a ZapTemplate.
+     * @example
+     * // Create one ZapTemplate
+     * const ZapTemplate = await prisma.zapTemplate.create({
+     *   data: {
+     *     // ... data to create a ZapTemplate
+     *   }
+     * })
+     * 
+     */
+    create<T extends ZapTemplateCreateArgs>(args: SelectSubset<T, ZapTemplateCreateArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ZapTemplates.
+     * @param {ZapTemplateCreateManyArgs} args - Arguments to create many ZapTemplates.
+     * @example
+     * // Create many ZapTemplates
+     * const zapTemplate = await prisma.zapTemplate.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ZapTemplateCreateManyArgs>(args?: SelectSubset<T, ZapTemplateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ZapTemplates and returns the data saved in the database.
+     * @param {ZapTemplateCreateManyAndReturnArgs} args - Arguments to create many ZapTemplates.
+     * @example
+     * // Create many ZapTemplates
+     * const zapTemplate = await prisma.zapTemplate.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ZapTemplates and only return the `id`
+     * const zapTemplateWithIdOnly = await prisma.zapTemplate.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ZapTemplateCreateManyAndReturnArgs>(args?: SelectSubset<T, ZapTemplateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ZapTemplate.
+     * @param {ZapTemplateDeleteArgs} args - Arguments to delete one ZapTemplate.
+     * @example
+     * // Delete one ZapTemplate
+     * const ZapTemplate = await prisma.zapTemplate.delete({
+     *   where: {
+     *     // ... filter to delete one ZapTemplate
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ZapTemplateDeleteArgs>(args: SelectSubset<T, ZapTemplateDeleteArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ZapTemplate.
+     * @param {ZapTemplateUpdateArgs} args - Arguments to update one ZapTemplate.
+     * @example
+     * // Update one ZapTemplate
+     * const zapTemplate = await prisma.zapTemplate.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ZapTemplateUpdateArgs>(args: SelectSubset<T, ZapTemplateUpdateArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ZapTemplates.
+     * @param {ZapTemplateDeleteManyArgs} args - Arguments to filter ZapTemplates to delete.
+     * @example
+     * // Delete a few ZapTemplates
+     * const { count } = await prisma.zapTemplate.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ZapTemplateDeleteManyArgs>(args?: SelectSubset<T, ZapTemplateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ZapTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZapTemplateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ZapTemplates
+     * const zapTemplate = await prisma.zapTemplate.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ZapTemplateUpdateManyArgs>(args: SelectSubset<T, ZapTemplateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ZapTemplate.
+     * @param {ZapTemplateUpsertArgs} args - Arguments to update or create a ZapTemplate.
+     * @example
+     * // Update or create a ZapTemplate
+     * const zapTemplate = await prisma.zapTemplate.upsert({
+     *   create: {
+     *     // ... data to create a ZapTemplate
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ZapTemplate we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ZapTemplateUpsertArgs>(args: SelectSubset<T, ZapTemplateUpsertArgs<ExtArgs>>): Prisma__ZapTemplateClient<$Result.GetResult<Prisma.$ZapTemplatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ZapTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZapTemplateCountArgs} args - Arguments to filter ZapTemplates to count.
+     * @example
+     * // Count the number of ZapTemplates
+     * const count = await prisma.zapTemplate.count({
+     *   where: {
+     *     // ... the filter for the ZapTemplates we want to count
+     *   }
+     * })
+    **/
+    count<T extends ZapTemplateCountArgs>(
+      args?: Subset<T, ZapTemplateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ZapTemplateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ZapTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZapTemplateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ZapTemplateAggregateArgs>(args: Subset<T, ZapTemplateAggregateArgs>): Prisma.PrismaPromise<GetZapTemplateAggregateType<T>>
+
+    /**
+     * Group by ZapTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZapTemplateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ZapTemplateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ZapTemplateGroupByArgs['orderBy'] }
+        : { orderBy?: ZapTemplateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ZapTemplateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetZapTemplateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ZapTemplate model
+   */
+  readonly fields: ZapTemplateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ZapTemplate.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ZapTemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    triggerApp<T extends AppDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AppDefaultArgs<ExtArgs>>): Prisma__AppClient<$Result.GetResult<Prisma.$AppPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    trigger<T extends AvailableTriggersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AvailableTriggersDefaultArgs<ExtArgs>>): Prisma__AvailableTriggersClient<$Result.GetResult<Prisma.$AvailableTriggersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actionApp<T extends AppDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AppDefaultArgs<ExtArgs>>): Prisma__AppClient<$Result.GetResult<Prisma.$AppPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    action<T extends AvailableActionsDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AvailableActionsDefaultArgs<ExtArgs>>): Prisma__AvailableActionsClient<$Result.GetResult<Prisma.$AvailableActionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    zaps<T extends ZapTemplate$zapsArgs<ExtArgs> = {}>(args?: Subset<T, ZapTemplate$zapsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ZapPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ZapTemplate model
+   */
+  interface ZapTemplateFieldRefs {
+    readonly id: FieldRef<"ZapTemplate", 'String'>
+    readonly name: FieldRef<"ZapTemplate", 'String'>
+    readonly description: FieldRef<"ZapTemplate", 'String'>
+    readonly category: FieldRef<"ZapTemplate", 'String'>
+    readonly isPopular: FieldRef<"ZapTemplate", 'Boolean'>
+    readonly createdAt: FieldRef<"ZapTemplate", 'DateTime'>
+    readonly updatedAt: FieldRef<"ZapTemplate", 'DateTime'>
+    readonly triggerAppId: FieldRef<"ZapTemplate", 'String'>
+    readonly triggerId: FieldRef<"ZapTemplate", 'String'>
+    readonly actionAppId: FieldRef<"ZapTemplate", 'String'>
+    readonly actionId: FieldRef<"ZapTemplate", 'String'>
+    readonly triggerConfig: FieldRef<"ZapTemplate", 'Json'>
+    readonly actionConfig: FieldRef<"ZapTemplate", 'Json'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ZapTemplate findUnique
+   */
+  export type ZapTemplateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which ZapTemplate to fetch.
+     */
+    where: ZapTemplateWhereUniqueInput
+  }
+
+  /**
+   * ZapTemplate findUniqueOrThrow
+   */
+  export type ZapTemplateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which ZapTemplate to fetch.
+     */
+    where: ZapTemplateWhereUniqueInput
+  }
+
+  /**
+   * ZapTemplate findFirst
+   */
+  export type ZapTemplateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which ZapTemplate to fetch.
+     */
+    where?: ZapTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ZapTemplates to fetch.
+     */
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ZapTemplates.
+     */
+    cursor?: ZapTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ZapTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ZapTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ZapTemplates.
+     */
+    distinct?: ZapTemplateScalarFieldEnum | ZapTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * ZapTemplate findFirstOrThrow
+   */
+  export type ZapTemplateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which ZapTemplate to fetch.
+     */
+    where?: ZapTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ZapTemplates to fetch.
+     */
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ZapTemplates.
+     */
+    cursor?: ZapTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ZapTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ZapTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ZapTemplates.
+     */
+    distinct?: ZapTemplateScalarFieldEnum | ZapTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * ZapTemplate findMany
+   */
+  export type ZapTemplateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which ZapTemplates to fetch.
+     */
+    where?: ZapTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ZapTemplates to fetch.
+     */
+    orderBy?: ZapTemplateOrderByWithRelationInput | ZapTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ZapTemplates.
+     */
+    cursor?: ZapTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ZapTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ZapTemplates.
+     */
+    skip?: number
+    distinct?: ZapTemplateScalarFieldEnum | ZapTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * ZapTemplate create
+   */
+  export type ZapTemplateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ZapTemplate.
+     */
+    data: XOR<ZapTemplateCreateInput, ZapTemplateUncheckedCreateInput>
+  }
+
+  /**
+   * ZapTemplate createMany
+   */
+  export type ZapTemplateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ZapTemplates.
+     */
+    data: ZapTemplateCreateManyInput | ZapTemplateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ZapTemplate createManyAndReturn
+   */
+  export type ZapTemplateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * The data used to create many ZapTemplates.
+     */
+    data: ZapTemplateCreateManyInput | ZapTemplateCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ZapTemplate update
+   */
+  export type ZapTemplateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ZapTemplate.
+     */
+    data: XOR<ZapTemplateUpdateInput, ZapTemplateUncheckedUpdateInput>
+    /**
+     * Choose, which ZapTemplate to update.
+     */
+    where: ZapTemplateWhereUniqueInput
+  }
+
+  /**
+   * ZapTemplate updateMany
+   */
+  export type ZapTemplateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ZapTemplates.
+     */
+    data: XOR<ZapTemplateUpdateManyMutationInput, ZapTemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which ZapTemplates to update
+     */
+    where?: ZapTemplateWhereInput
+  }
+
+  /**
+   * ZapTemplate upsert
+   */
+  export type ZapTemplateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ZapTemplate to update in case it exists.
+     */
+    where: ZapTemplateWhereUniqueInput
+    /**
+     * In case the ZapTemplate found by the `where` argument doesn't exist, create a new ZapTemplate with this data.
+     */
+    create: XOR<ZapTemplateCreateInput, ZapTemplateUncheckedCreateInput>
+    /**
+     * In case the ZapTemplate was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ZapTemplateUpdateInput, ZapTemplateUncheckedUpdateInput>
+  }
+
+  /**
+   * ZapTemplate delete
+   */
+  export type ZapTemplateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+    /**
+     * Filter which ZapTemplate to delete.
+     */
+    where: ZapTemplateWhereUniqueInput
+  }
+
+  /**
+   * ZapTemplate deleteMany
+   */
+  export type ZapTemplateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ZapTemplates to delete
+     */
+    where?: ZapTemplateWhereInput
+  }
+
+  /**
+   * ZapTemplate.zaps
+   */
+  export type ZapTemplate$zapsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zap
+     */
+    select?: ZapSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Zap
+     */
+    omit?: ZapOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapInclude<ExtArgs> | null
+    where?: ZapWhereInput
+    orderBy?: ZapOrderByWithRelationInput | ZapOrderByWithRelationInput[]
+    cursor?: ZapWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ZapScalarFieldEnum | ZapScalarFieldEnum[]
+  }
+
+  /**
+   * ZapTemplate without action
+   */
+  export type ZapTemplateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ZapTemplate
+     */
+    select?: ZapTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ZapTemplate
+     */
+    omit?: ZapTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ZapTemplateInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -15433,7 +16851,8 @@ export namespace Prisma {
     description: 'description',
     metadata: 'metadata',
     userId: 'userId',
-    image: 'image'
+    image: 'image',
+    templateId: 'templateId'
   };
 
   export type ZapScalarFieldEnum = (typeof ZapScalarFieldEnum)[keyof typeof ZapScalarFieldEnum]
@@ -15518,6 +16937,25 @@ export namespace Prisma {
   };
 
   export type TokenStoreScalarFieldEnum = (typeof TokenStoreScalarFieldEnum)[keyof typeof TokenStoreScalarFieldEnum]
+
+
+  export const ZapTemplateScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    category: 'category',
+    isPopular: 'isPopular',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    triggerAppId: 'triggerAppId',
+    triggerId: 'triggerId',
+    actionAppId: 'actionAppId',
+    actionId: 'actionId',
+    triggerConfig: 'triggerConfig',
+    actionConfig: 'actionConfig'
+  };
+
+  export type ZapTemplateScalarFieldEnum = (typeof ZapTemplateScalarFieldEnum)[keyof typeof ZapTemplateScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -15611,6 +17049,13 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -15772,6 +17217,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsListRelationFilter
     actions?: AvailableActionsListRelationFilter
     triggers?: AvailableTriggersListRelationFilter
+    triggerTemplates?: ZapTemplateListRelationFilter
+    actionTemplates?: ZapTemplateListRelationFilter
   }
 
   export type AppOrderByWithRelationInput = {
@@ -15783,6 +17230,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsOrderByRelationAggregateInput
     actions?: AvailableActionsOrderByRelationAggregateInput
     triggers?: AvailableTriggersOrderByRelationAggregateInput
+    triggerTemplates?: ZapTemplateOrderByRelationAggregateInput
+    actionTemplates?: ZapTemplateOrderByRelationAggregateInput
   }
 
   export type AppWhereUniqueInput = Prisma.AtLeast<{
@@ -15797,6 +17246,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsListRelationFilter
     actions?: AvailableActionsListRelationFilter
     triggers?: AvailableTriggersListRelationFilter
+    triggerTemplates?: ZapTemplateListRelationFilter
+    actionTemplates?: ZapTemplateListRelationFilter
   }, "id">
 
   export type AppOrderByWithAggregationInput = {
@@ -15937,10 +17388,12 @@ export namespace Prisma {
     metadata?: JsonFilter<"Zap">
     userId?: StringFilter<"Zap"> | string
     image?: StringNullableFilter<"Zap"> | string | null
+    templateId?: StringNullableFilter<"Zap"> | string | null
     actions?: ActionListRelationFilter
     trigger?: XOR<TriggerNullableRelationFilter, TriggerWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     zapRuns?: ZapRunListRelationFilter
+    template?: XOR<ZapTemplateNullableRelationFilter, ZapTemplateWhereInput> | null
   }
 
   export type ZapOrderByWithRelationInput = {
@@ -15950,10 +17403,12 @@ export namespace Prisma {
     metadata?: SortOrder
     userId?: SortOrder
     image?: SortOrderInput | SortOrder
+    templateId?: SortOrderInput | SortOrder
     actions?: ActionOrderByRelationAggregateInput
     trigger?: TriggerOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
     zapRuns?: ZapRunOrderByRelationAggregateInput
+    template?: ZapTemplateOrderByWithRelationInput
   }
 
   export type ZapWhereUniqueInput = Prisma.AtLeast<{
@@ -15966,10 +17421,12 @@ export namespace Prisma {
     metadata?: JsonFilter<"Zap">
     userId?: StringFilter<"Zap"> | string
     image?: StringNullableFilter<"Zap"> | string | null
+    templateId?: StringNullableFilter<"Zap"> | string | null
     actions?: ActionListRelationFilter
     trigger?: XOR<TriggerNullableRelationFilter, TriggerWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     zapRuns?: ZapRunListRelationFilter
+    template?: XOR<ZapTemplateNullableRelationFilter, ZapTemplateWhereInput> | null
   }, "id">
 
   export type ZapOrderByWithAggregationInput = {
@@ -15979,6 +17436,7 @@ export namespace Prisma {
     metadata?: SortOrder
     userId?: SortOrder
     image?: SortOrderInput | SortOrder
+    templateId?: SortOrderInput | SortOrder
     _count?: ZapCountOrderByAggregateInput
     _max?: ZapMaxOrderByAggregateInput
     _min?: ZapMinOrderByAggregateInput
@@ -15994,6 +17452,7 @@ export namespace Prisma {
     metadata?: JsonWithAggregatesFilter<"Zap">
     userId?: StringWithAggregatesFilter<"Zap"> | string
     image?: StringNullableWithAggregatesFilter<"Zap"> | string | null
+    templateId?: StringNullableWithAggregatesFilter<"Zap"> | string | null
   }
 
   export type TriggerWhereInput = {
@@ -16142,6 +17601,7 @@ export namespace Prisma {
     appId?: StringFilter<"AvailableTriggers"> | string
     app?: XOR<AppRelationFilter, AppWhereInput>
     triggers?: TriggerListRelationFilter
+    templates?: ZapTemplateListRelationFilter
   }
 
   export type AvailableTriggersOrderByWithRelationInput = {
@@ -16154,6 +17614,7 @@ export namespace Prisma {
     appId?: SortOrder
     app?: AppOrderByWithRelationInput
     triggers?: TriggerOrderByRelationAggregateInput
+    templates?: ZapTemplateOrderByRelationAggregateInput
   }
 
   export type AvailableTriggersWhereUniqueInput = Prisma.AtLeast<{
@@ -16169,6 +17630,7 @@ export namespace Prisma {
     appId?: StringFilter<"AvailableTriggers"> | string
     app?: XOR<AppRelationFilter, AppWhereInput>
     triggers?: TriggerListRelationFilter
+    templates?: ZapTemplateListRelationFilter
   }, "id">
 
   export type AvailableTriggersOrderByWithAggregationInput = {
@@ -16210,6 +17672,7 @@ export namespace Prisma {
     appId?: StringFilter<"AvailableActions"> | string
     actions?: ActionListRelationFilter
     app?: XOR<AppRelationFilter, AppWhereInput>
+    templates?: ZapTemplateListRelationFilter
   }
 
   export type AvailableActionsOrderByWithRelationInput = {
@@ -16222,6 +17685,7 @@ export namespace Prisma {
     appId?: SortOrder
     actions?: ActionOrderByRelationAggregateInput
     app?: AppOrderByWithRelationInput
+    templates?: ZapTemplateOrderByRelationAggregateInput
   }
 
   export type AvailableActionsWhereUniqueInput = Prisma.AtLeast<{
@@ -16237,6 +17701,7 @@ export namespace Prisma {
     appId?: StringFilter<"AvailableActions"> | string
     actions?: ActionListRelationFilter
     app?: XOR<AppRelationFilter, AppWhereInput>
+    templates?: ZapTemplateListRelationFilter
   }, "id">
 
   export type AvailableActionsOrderByWithAggregationInput = {
@@ -16418,6 +17883,113 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"TokenStore"> | string
   }
 
+  export type ZapTemplateWhereInput = {
+    AND?: ZapTemplateWhereInput | ZapTemplateWhereInput[]
+    OR?: ZapTemplateWhereInput[]
+    NOT?: ZapTemplateWhereInput | ZapTemplateWhereInput[]
+    id?: StringFilter<"ZapTemplate"> | string
+    name?: StringFilter<"ZapTemplate"> | string
+    description?: StringFilter<"ZapTemplate"> | string
+    category?: StringFilter<"ZapTemplate"> | string
+    isPopular?: BoolFilter<"ZapTemplate"> | boolean
+    createdAt?: DateTimeFilter<"ZapTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"ZapTemplate"> | Date | string
+    triggerAppId?: StringFilter<"ZapTemplate"> | string
+    triggerId?: StringFilter<"ZapTemplate"> | string
+    actionAppId?: StringFilter<"ZapTemplate"> | string
+    actionId?: StringFilter<"ZapTemplate"> | string
+    triggerConfig?: JsonFilter<"ZapTemplate">
+    actionConfig?: JsonFilter<"ZapTemplate">
+    triggerApp?: XOR<AppRelationFilter, AppWhereInput>
+    trigger?: XOR<AvailableTriggersRelationFilter, AvailableTriggersWhereInput>
+    actionApp?: XOR<AppRelationFilter, AppWhereInput>
+    action?: XOR<AvailableActionsRelationFilter, AvailableActionsWhereInput>
+    zaps?: ZapListRelationFilter
+  }
+
+  export type ZapTemplateOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    isPopular?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    triggerAppId?: SortOrder
+    triggerId?: SortOrder
+    actionAppId?: SortOrder
+    actionId?: SortOrder
+    triggerConfig?: SortOrder
+    actionConfig?: SortOrder
+    triggerApp?: AppOrderByWithRelationInput
+    trigger?: AvailableTriggersOrderByWithRelationInput
+    actionApp?: AppOrderByWithRelationInput
+    action?: AvailableActionsOrderByWithRelationInput
+    zaps?: ZapOrderByRelationAggregateInput
+  }
+
+  export type ZapTemplateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ZapTemplateWhereInput | ZapTemplateWhereInput[]
+    OR?: ZapTemplateWhereInput[]
+    NOT?: ZapTemplateWhereInput | ZapTemplateWhereInput[]
+    name?: StringFilter<"ZapTemplate"> | string
+    description?: StringFilter<"ZapTemplate"> | string
+    category?: StringFilter<"ZapTemplate"> | string
+    isPopular?: BoolFilter<"ZapTemplate"> | boolean
+    createdAt?: DateTimeFilter<"ZapTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"ZapTemplate"> | Date | string
+    triggerAppId?: StringFilter<"ZapTemplate"> | string
+    triggerId?: StringFilter<"ZapTemplate"> | string
+    actionAppId?: StringFilter<"ZapTemplate"> | string
+    actionId?: StringFilter<"ZapTemplate"> | string
+    triggerConfig?: JsonFilter<"ZapTemplate">
+    actionConfig?: JsonFilter<"ZapTemplate">
+    triggerApp?: XOR<AppRelationFilter, AppWhereInput>
+    trigger?: XOR<AvailableTriggersRelationFilter, AvailableTriggersWhereInput>
+    actionApp?: XOR<AppRelationFilter, AppWhereInput>
+    action?: XOR<AvailableActionsRelationFilter, AvailableActionsWhereInput>
+    zaps?: ZapListRelationFilter
+  }, "id">
+
+  export type ZapTemplateOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    isPopular?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    triggerAppId?: SortOrder
+    triggerId?: SortOrder
+    actionAppId?: SortOrder
+    actionId?: SortOrder
+    triggerConfig?: SortOrder
+    actionConfig?: SortOrder
+    _count?: ZapTemplateCountOrderByAggregateInput
+    _max?: ZapTemplateMaxOrderByAggregateInput
+    _min?: ZapTemplateMinOrderByAggregateInput
+  }
+
+  export type ZapTemplateScalarWhereWithAggregatesInput = {
+    AND?: ZapTemplateScalarWhereWithAggregatesInput | ZapTemplateScalarWhereWithAggregatesInput[]
+    OR?: ZapTemplateScalarWhereWithAggregatesInput[]
+    NOT?: ZapTemplateScalarWhereWithAggregatesInput | ZapTemplateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    name?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    description?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    category?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    isPopular?: BoolWithAggregatesFilter<"ZapTemplate"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"ZapTemplate"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ZapTemplate"> | Date | string
+    triggerAppId?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    triggerId?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    actionAppId?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    actionId?: StringWithAggregatesFilter<"ZapTemplate"> | string
+    triggerConfig?: JsonWithAggregatesFilter<"ZapTemplate">
+    actionConfig?: JsonWithAggregatesFilter<"ZapTemplate">
+  }
+
   export type UserCreateInput = {
     id?: string
     name: string
@@ -16567,6 +18139,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsCreateNestedManyWithoutAppInput
     actions?: AvailableActionsCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateCreateNestedManyWithoutActionAppInput
   }
 
   export type AppUncheckedCreateInput = {
@@ -16577,6 +18151,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsUncheckedCreateNestedManyWithoutAppInput
     actions?: AvailableActionsUncheckedCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersUncheckedCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutActionAppInput
   }
 
   export type AppUpdateInput = {
@@ -16587,6 +18163,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsUpdateManyWithoutAppNestedInput
     actions?: AvailableActionsUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUpdateManyWithoutActionAppNestedInput
   }
 
   export type AppUncheckedUpdateInput = {
@@ -16597,6 +18175,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsUncheckedUpdateManyWithoutAppNestedInput
     actions?: AvailableActionsUncheckedUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUncheckedUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUncheckedUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUncheckedUpdateManyWithoutActionAppNestedInput
   }
 
   export type AppCreateManyInput = {
@@ -16736,6 +18316,7 @@ export namespace Prisma {
     trigger?: TriggerCreateNestedOneWithoutZapInput
     user: UserCreateNestedOneWithoutZapsInput
     zapRuns?: ZapRunCreateNestedManyWithoutZapInput
+    template?: ZapTemplateCreateNestedOneWithoutZapsInput
   }
 
   export type ZapUncheckedCreateInput = {
@@ -16745,6 +18326,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId: string
     image?: string | null
+    templateId?: string | null
     actions?: ActionUncheckedCreateNestedManyWithoutZapInput
     trigger?: TriggerUncheckedCreateNestedOneWithoutZapInput
     zapRuns?: ZapRunUncheckedCreateNestedManyWithoutZapInput
@@ -16760,6 +18342,7 @@ export namespace Prisma {
     trigger?: TriggerUpdateOneWithoutZapNestedInput
     user?: UserUpdateOneRequiredWithoutZapsNestedInput
     zapRuns?: ZapRunUpdateManyWithoutZapNestedInput
+    template?: ZapTemplateUpdateOneWithoutZapsNestedInput
   }
 
   export type ZapUncheckedUpdateInput = {
@@ -16769,6 +18352,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
     actions?: ActionUncheckedUpdateManyWithoutZapNestedInput
     trigger?: TriggerUncheckedUpdateOneWithoutZapNestedInput
     zapRuns?: ZapRunUncheckedUpdateManyWithoutZapNestedInput
@@ -16781,6 +18365,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId: string
     image?: string | null
+    templateId?: string | null
   }
 
   export type ZapUpdateManyMutationInput = {
@@ -16798,6 +18383,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TriggerCreateInput = {
@@ -16938,6 +18524,7 @@ export namespace Prisma {
     type: string
     app: AppCreateNestedOneWithoutTriggersInput
     triggers?: TriggerCreateNestedManyWithoutAvailableInput
+    templates?: ZapTemplateCreateNestedManyWithoutTriggerInput
   }
 
   export type AvailableTriggersUncheckedCreateInput = {
@@ -16949,6 +18536,7 @@ export namespace Prisma {
     type: string
     appId: string
     triggers?: TriggerUncheckedCreateNestedManyWithoutAvailableInput
+    templates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerInput
   }
 
   export type AvailableTriggersUpdateInput = {
@@ -16960,6 +18548,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     app?: AppUpdateOneRequiredWithoutTriggersNestedInput
     triggers?: TriggerUpdateManyWithoutAvailableNestedInput
+    templates?: ZapTemplateUpdateManyWithoutTriggerNestedInput
   }
 
   export type AvailableTriggersUncheckedUpdateInput = {
@@ -16971,6 +18560,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     appId?: StringFieldUpdateOperationsInput | string
     triggers?: TriggerUncheckedUpdateManyWithoutAvailableNestedInput
+    templates?: ZapTemplateUncheckedUpdateManyWithoutTriggerNestedInput
   }
 
   export type AvailableTriggersCreateManyInput = {
@@ -17011,6 +18601,7 @@ export namespace Prisma {
     type: string
     actions?: ActionCreateNestedManyWithoutAvailableInput
     app: AppCreateNestedOneWithoutActionsInput
+    templates?: ZapTemplateCreateNestedManyWithoutActionInput
   }
 
   export type AvailableActionsUncheckedCreateInput = {
@@ -17022,6 +18613,7 @@ export namespace Prisma {
     type: string
     appId: string
     actions?: ActionUncheckedCreateNestedManyWithoutAvailableInput
+    templates?: ZapTemplateUncheckedCreateNestedManyWithoutActionInput
   }
 
   export type AvailableActionsUpdateInput = {
@@ -17033,6 +18625,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     actions?: ActionUpdateManyWithoutAvailableNestedInput
     app?: AppUpdateOneRequiredWithoutActionsNestedInput
+    templates?: ZapTemplateUpdateManyWithoutActionNestedInput
   }
 
   export type AvailableActionsUncheckedUpdateInput = {
@@ -17044,6 +18637,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     appId?: StringFieldUpdateOperationsInput | string
     actions?: ActionUncheckedUpdateManyWithoutAvailableNestedInput
+    templates?: ZapTemplateUncheckedUpdateManyWithoutActionNestedInput
   }
 
   export type AvailableActionsCreateManyInput = {
@@ -17221,6 +18815,118 @@ export namespace Prisma {
     accessToken?: StringFieldUpdateOperationsInput | string
     refreshToken?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ZapTemplateCreateInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp: AppCreateNestedOneWithoutTriggerTemplatesInput
+    trigger: AvailableTriggersCreateNestedOneWithoutTemplatesInput
+    actionApp: AppCreateNestedOneWithoutActionTemplatesInput
+    action: AvailableActionsCreateNestedOneWithoutTemplatesInput
+    zaps?: ZapCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateUncheckedCreateInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    triggerId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp?: AppUpdateOneRequiredWithoutTriggerTemplatesNestedInput
+    trigger?: AvailableTriggersUpdateOneRequiredWithoutTemplatesNestedInput
+    actionApp?: AppUpdateOneRequiredWithoutActionTemplatesNestedInput
+    action?: AvailableActionsUpdateOneRequiredWithoutTemplatesNestedInput
+    zaps?: ZapUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateCreateManyInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    triggerId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ZapTemplateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ZapTemplateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -17486,6 +19192,12 @@ export namespace Prisma {
     none?: AvailableTriggersWhereInput
   }
 
+  export type ZapTemplateListRelationFilter = {
+    every?: ZapTemplateWhereInput
+    some?: ZapTemplateWhereInput
+    none?: ZapTemplateWhereInput
+  }
+
   export type AuthMethodsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -17495,6 +19207,10 @@ export namespace Prisma {
   }
 
   export type AvailableTriggersOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ZapTemplateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -17592,6 +19308,11 @@ export namespace Prisma {
     none?: ZapRunWhereInput
   }
 
+  export type ZapTemplateNullableRelationFilter = {
+    is?: ZapTemplateWhereInput | null
+    isNot?: ZapTemplateWhereInput | null
+  }
+
   export type ActionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -17607,6 +19328,7 @@ export namespace Prisma {
     metadata?: SortOrder
     userId?: SortOrder
     image?: SortOrder
+    templateId?: SortOrder
   }
 
   export type ZapMaxOrderByAggregateInput = {
@@ -17615,6 +19337,7 @@ export namespace Prisma {
     description?: SortOrder
     userId?: SortOrder
     image?: SortOrder
+    templateId?: SortOrder
   }
 
   export type ZapMinOrderByAggregateInput = {
@@ -17623,6 +19346,7 @@ export namespace Prisma {
     description?: SortOrder
     userId?: SortOrder
     image?: SortOrder
+    templateId?: SortOrder
   }
 
   export type AvailableTriggersRelationFilter = {
@@ -17861,6 +19585,63 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type ZapTemplateCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    isPopular?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    triggerAppId?: SortOrder
+    triggerId?: SortOrder
+    actionAppId?: SortOrder
+    actionId?: SortOrder
+    triggerConfig?: SortOrder
+    actionConfig?: SortOrder
+  }
+
+  export type ZapTemplateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    isPopular?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    triggerAppId?: SortOrder
+    triggerId?: SortOrder
+    actionAppId?: SortOrder
+    actionId?: SortOrder
+  }
+
+  export type ZapTemplateMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    isPopular?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    triggerAppId?: SortOrder
+    triggerId?: SortOrder
+    actionAppId?: SortOrder
+    actionId?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type TokenStoreCreateNestedManyWithoutUserInput = {
     create?: XOR<TokenStoreCreateWithoutUserInput, TokenStoreUncheckedCreateWithoutUserInput> | TokenStoreCreateWithoutUserInput[] | TokenStoreUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TokenStoreCreateOrConnectWithoutUserInput | TokenStoreCreateOrConnectWithoutUserInput[]
@@ -18084,6 +19865,20 @@ export namespace Prisma {
     connect?: AvailableTriggersWhereUniqueInput | AvailableTriggersWhereUniqueInput[]
   }
 
+  export type ZapTemplateCreateNestedManyWithoutTriggerAppInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerAppInput, ZapTemplateUncheckedCreateWithoutTriggerAppInput> | ZapTemplateCreateWithoutTriggerAppInput[] | ZapTemplateUncheckedCreateWithoutTriggerAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerAppInput | ZapTemplateCreateOrConnectWithoutTriggerAppInput[]
+    createMany?: ZapTemplateCreateManyTriggerAppInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+  }
+
+  export type ZapTemplateCreateNestedManyWithoutActionAppInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionAppInput, ZapTemplateUncheckedCreateWithoutActionAppInput> | ZapTemplateCreateWithoutActionAppInput[] | ZapTemplateUncheckedCreateWithoutActionAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionAppInput | ZapTemplateCreateOrConnectWithoutActionAppInput[]
+    createMany?: ZapTemplateCreateManyActionAppInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+  }
+
   export type AuthMethodsUncheckedCreateNestedManyWithoutAppInput = {
     create?: XOR<AuthMethodsCreateWithoutAppInput, AuthMethodsUncheckedCreateWithoutAppInput> | AuthMethodsCreateWithoutAppInput[] | AuthMethodsUncheckedCreateWithoutAppInput[]
     connectOrCreate?: AuthMethodsCreateOrConnectWithoutAppInput | AuthMethodsCreateOrConnectWithoutAppInput[]
@@ -18103,6 +19898,20 @@ export namespace Prisma {
     connectOrCreate?: AvailableTriggersCreateOrConnectWithoutAppInput | AvailableTriggersCreateOrConnectWithoutAppInput[]
     createMany?: AvailableTriggersCreateManyAppInputEnvelope
     connect?: AvailableTriggersWhereUniqueInput | AvailableTriggersWhereUniqueInput[]
+  }
+
+  export type ZapTemplateUncheckedCreateNestedManyWithoutTriggerAppInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerAppInput, ZapTemplateUncheckedCreateWithoutTriggerAppInput> | ZapTemplateCreateWithoutTriggerAppInput[] | ZapTemplateUncheckedCreateWithoutTriggerAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerAppInput | ZapTemplateCreateOrConnectWithoutTriggerAppInput[]
+    createMany?: ZapTemplateCreateManyTriggerAppInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+  }
+
+  export type ZapTemplateUncheckedCreateNestedManyWithoutActionAppInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionAppInput, ZapTemplateUncheckedCreateWithoutActionAppInput> | ZapTemplateCreateWithoutActionAppInput[] | ZapTemplateUncheckedCreateWithoutActionAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionAppInput | ZapTemplateCreateOrConnectWithoutActionAppInput[]
+    createMany?: ZapTemplateCreateManyActionAppInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
   }
 
   export type TeamUpdateOneRequiredWithoutAppsNestedInput = {
@@ -18155,6 +19964,34 @@ export namespace Prisma {
     deleteMany?: AvailableTriggersScalarWhereInput | AvailableTriggersScalarWhereInput[]
   }
 
+  export type ZapTemplateUpdateManyWithoutTriggerAppNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerAppInput, ZapTemplateUncheckedCreateWithoutTriggerAppInput> | ZapTemplateCreateWithoutTriggerAppInput[] | ZapTemplateUncheckedCreateWithoutTriggerAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerAppInput | ZapTemplateCreateOrConnectWithoutTriggerAppInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutTriggerAppInput | ZapTemplateUpsertWithWhereUniqueWithoutTriggerAppInput[]
+    createMany?: ZapTemplateCreateManyTriggerAppInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutTriggerAppInput | ZapTemplateUpdateWithWhereUniqueWithoutTriggerAppInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutTriggerAppInput | ZapTemplateUpdateManyWithWhereWithoutTriggerAppInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
+  }
+
+  export type ZapTemplateUpdateManyWithoutActionAppNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionAppInput, ZapTemplateUncheckedCreateWithoutActionAppInput> | ZapTemplateCreateWithoutActionAppInput[] | ZapTemplateUncheckedCreateWithoutActionAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionAppInput | ZapTemplateCreateOrConnectWithoutActionAppInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutActionAppInput | ZapTemplateUpsertWithWhereUniqueWithoutActionAppInput[]
+    createMany?: ZapTemplateCreateManyActionAppInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutActionAppInput | ZapTemplateUpdateWithWhereUniqueWithoutActionAppInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutActionAppInput | ZapTemplateUpdateManyWithWhereWithoutActionAppInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
+  }
+
   export type AuthMethodsUncheckedUpdateManyWithoutAppNestedInput = {
     create?: XOR<AuthMethodsCreateWithoutAppInput, AuthMethodsUncheckedCreateWithoutAppInput> | AuthMethodsCreateWithoutAppInput[] | AuthMethodsUncheckedCreateWithoutAppInput[]
     connectOrCreate?: AuthMethodsCreateOrConnectWithoutAppInput | AuthMethodsCreateOrConnectWithoutAppInput[]
@@ -18195,6 +20032,34 @@ export namespace Prisma {
     update?: AvailableTriggersUpdateWithWhereUniqueWithoutAppInput | AvailableTriggersUpdateWithWhereUniqueWithoutAppInput[]
     updateMany?: AvailableTriggersUpdateManyWithWhereWithoutAppInput | AvailableTriggersUpdateManyWithWhereWithoutAppInput[]
     deleteMany?: AvailableTriggersScalarWhereInput | AvailableTriggersScalarWhereInput[]
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutTriggerAppNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerAppInput, ZapTemplateUncheckedCreateWithoutTriggerAppInput> | ZapTemplateCreateWithoutTriggerAppInput[] | ZapTemplateUncheckedCreateWithoutTriggerAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerAppInput | ZapTemplateCreateOrConnectWithoutTriggerAppInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutTriggerAppInput | ZapTemplateUpsertWithWhereUniqueWithoutTriggerAppInput[]
+    createMany?: ZapTemplateCreateManyTriggerAppInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutTriggerAppInput | ZapTemplateUpdateWithWhereUniqueWithoutTriggerAppInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutTriggerAppInput | ZapTemplateUpdateManyWithWhereWithoutTriggerAppInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutActionAppNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionAppInput, ZapTemplateUncheckedCreateWithoutActionAppInput> | ZapTemplateCreateWithoutActionAppInput[] | ZapTemplateUncheckedCreateWithoutActionAppInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionAppInput | ZapTemplateCreateOrConnectWithoutActionAppInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutActionAppInput | ZapTemplateUpsertWithWhereUniqueWithoutActionAppInput[]
+    createMany?: ZapTemplateCreateManyActionAppInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutActionAppInput | ZapTemplateUpdateWithWhereUniqueWithoutActionAppInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutActionAppInput | ZapTemplateUpdateManyWithWhereWithoutActionAppInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
   }
 
   export type AppCreateNestedOneWithoutAuthMethodsInput = {
@@ -18293,6 +20158,12 @@ export namespace Prisma {
     connect?: ZapRunWhereUniqueInput | ZapRunWhereUniqueInput[]
   }
 
+  export type ZapTemplateCreateNestedOneWithoutZapsInput = {
+    create?: XOR<ZapTemplateCreateWithoutZapsInput, ZapTemplateUncheckedCreateWithoutZapsInput>
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutZapsInput
+    connect?: ZapTemplateWhereUniqueInput
+  }
+
   export type ActionUncheckedCreateNestedManyWithoutZapInput = {
     create?: XOR<ActionCreateWithoutZapInput, ActionUncheckedCreateWithoutZapInput> | ActionCreateWithoutZapInput[] | ActionUncheckedCreateWithoutZapInput[]
     connectOrCreate?: ActionCreateOrConnectWithoutZapInput | ActionCreateOrConnectWithoutZapInput[]
@@ -18357,6 +20228,16 @@ export namespace Prisma {
     update?: ZapRunUpdateWithWhereUniqueWithoutZapInput | ZapRunUpdateWithWhereUniqueWithoutZapInput[]
     updateMany?: ZapRunUpdateManyWithWhereWithoutZapInput | ZapRunUpdateManyWithWhereWithoutZapInput[]
     deleteMany?: ZapRunScalarWhereInput | ZapRunScalarWhereInput[]
+  }
+
+  export type ZapTemplateUpdateOneWithoutZapsNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutZapsInput, ZapTemplateUncheckedCreateWithoutZapsInput>
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutZapsInput
+    upsert?: ZapTemplateUpsertWithoutZapsInput
+    disconnect?: ZapTemplateWhereInput | boolean
+    delete?: ZapTemplateWhereInput | boolean
+    connect?: ZapTemplateWhereUniqueInput
+    update?: XOR<XOR<ZapTemplateUpdateToOneWithWhereWithoutZapsInput, ZapTemplateUpdateWithoutZapsInput>, ZapTemplateUncheckedUpdateWithoutZapsInput>
   }
 
   export type ActionUncheckedUpdateManyWithoutZapNestedInput = {
@@ -18474,11 +20355,25 @@ export namespace Prisma {
     connect?: TriggerWhereUniqueInput | TriggerWhereUniqueInput[]
   }
 
+  export type ZapTemplateCreateNestedManyWithoutTriggerInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerInput, ZapTemplateUncheckedCreateWithoutTriggerInput> | ZapTemplateCreateWithoutTriggerInput[] | ZapTemplateUncheckedCreateWithoutTriggerInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerInput | ZapTemplateCreateOrConnectWithoutTriggerInput[]
+    createMany?: ZapTemplateCreateManyTriggerInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+  }
+
   export type TriggerUncheckedCreateNestedManyWithoutAvailableInput = {
     create?: XOR<TriggerCreateWithoutAvailableInput, TriggerUncheckedCreateWithoutAvailableInput> | TriggerCreateWithoutAvailableInput[] | TriggerUncheckedCreateWithoutAvailableInput[]
     connectOrCreate?: TriggerCreateOrConnectWithoutAvailableInput | TriggerCreateOrConnectWithoutAvailableInput[]
     createMany?: TriggerCreateManyAvailableInputEnvelope
     connect?: TriggerWhereUniqueInput | TriggerWhereUniqueInput[]
+  }
+
+  export type ZapTemplateUncheckedCreateNestedManyWithoutTriggerInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerInput, ZapTemplateUncheckedCreateWithoutTriggerInput> | ZapTemplateCreateWithoutTriggerInput[] | ZapTemplateUncheckedCreateWithoutTriggerInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerInput | ZapTemplateCreateOrConnectWithoutTriggerInput[]
+    createMany?: ZapTemplateCreateManyTriggerInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
   }
 
   export type AppUpdateOneRequiredWithoutTriggersNestedInput = {
@@ -18503,6 +20398,20 @@ export namespace Prisma {
     deleteMany?: TriggerScalarWhereInput | TriggerScalarWhereInput[]
   }
 
+  export type ZapTemplateUpdateManyWithoutTriggerNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerInput, ZapTemplateUncheckedCreateWithoutTriggerInput> | ZapTemplateCreateWithoutTriggerInput[] | ZapTemplateUncheckedCreateWithoutTriggerInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerInput | ZapTemplateCreateOrConnectWithoutTriggerInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutTriggerInput | ZapTemplateUpsertWithWhereUniqueWithoutTriggerInput[]
+    createMany?: ZapTemplateCreateManyTriggerInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutTriggerInput | ZapTemplateUpdateWithWhereUniqueWithoutTriggerInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutTriggerInput | ZapTemplateUpdateManyWithWhereWithoutTriggerInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
+  }
+
   export type TriggerUncheckedUpdateManyWithoutAvailableNestedInput = {
     create?: XOR<TriggerCreateWithoutAvailableInput, TriggerUncheckedCreateWithoutAvailableInput> | TriggerCreateWithoutAvailableInput[] | TriggerUncheckedCreateWithoutAvailableInput[]
     connectOrCreate?: TriggerCreateOrConnectWithoutAvailableInput | TriggerCreateOrConnectWithoutAvailableInput[]
@@ -18515,6 +20424,20 @@ export namespace Prisma {
     update?: TriggerUpdateWithWhereUniqueWithoutAvailableInput | TriggerUpdateWithWhereUniqueWithoutAvailableInput[]
     updateMany?: TriggerUpdateManyWithWhereWithoutAvailableInput | TriggerUpdateManyWithWhereWithoutAvailableInput[]
     deleteMany?: TriggerScalarWhereInput | TriggerScalarWhereInput[]
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutTriggerNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutTriggerInput, ZapTemplateUncheckedCreateWithoutTriggerInput> | ZapTemplateCreateWithoutTriggerInput[] | ZapTemplateUncheckedCreateWithoutTriggerInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutTriggerInput | ZapTemplateCreateOrConnectWithoutTriggerInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutTriggerInput | ZapTemplateUpsertWithWhereUniqueWithoutTriggerInput[]
+    createMany?: ZapTemplateCreateManyTriggerInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutTriggerInput | ZapTemplateUpdateWithWhereUniqueWithoutTriggerInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutTriggerInput | ZapTemplateUpdateManyWithWhereWithoutTriggerInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
   }
 
   export type ActionCreateNestedManyWithoutAvailableInput = {
@@ -18530,11 +20453,25 @@ export namespace Prisma {
     connect?: AppWhereUniqueInput
   }
 
+  export type ZapTemplateCreateNestedManyWithoutActionInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionInput, ZapTemplateUncheckedCreateWithoutActionInput> | ZapTemplateCreateWithoutActionInput[] | ZapTemplateUncheckedCreateWithoutActionInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionInput | ZapTemplateCreateOrConnectWithoutActionInput[]
+    createMany?: ZapTemplateCreateManyActionInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+  }
+
   export type ActionUncheckedCreateNestedManyWithoutAvailableInput = {
     create?: XOR<ActionCreateWithoutAvailableInput, ActionUncheckedCreateWithoutAvailableInput> | ActionCreateWithoutAvailableInput[] | ActionUncheckedCreateWithoutAvailableInput[]
     connectOrCreate?: ActionCreateOrConnectWithoutAvailableInput | ActionCreateOrConnectWithoutAvailableInput[]
     createMany?: ActionCreateManyAvailableInputEnvelope
     connect?: ActionWhereUniqueInput | ActionWhereUniqueInput[]
+  }
+
+  export type ZapTemplateUncheckedCreateNestedManyWithoutActionInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionInput, ZapTemplateUncheckedCreateWithoutActionInput> | ZapTemplateCreateWithoutActionInput[] | ZapTemplateUncheckedCreateWithoutActionInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionInput | ZapTemplateCreateOrConnectWithoutActionInput[]
+    createMany?: ZapTemplateCreateManyActionInputEnvelope
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
   }
 
   export type ActionUpdateManyWithoutAvailableNestedInput = {
@@ -18559,6 +20496,20 @@ export namespace Prisma {
     update?: XOR<XOR<AppUpdateToOneWithWhereWithoutActionsInput, AppUpdateWithoutActionsInput>, AppUncheckedUpdateWithoutActionsInput>
   }
 
+  export type ZapTemplateUpdateManyWithoutActionNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionInput, ZapTemplateUncheckedCreateWithoutActionInput> | ZapTemplateCreateWithoutActionInput[] | ZapTemplateUncheckedCreateWithoutActionInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionInput | ZapTemplateCreateOrConnectWithoutActionInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutActionInput | ZapTemplateUpsertWithWhereUniqueWithoutActionInput[]
+    createMany?: ZapTemplateCreateManyActionInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutActionInput | ZapTemplateUpdateWithWhereUniqueWithoutActionInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutActionInput | ZapTemplateUpdateManyWithWhereWithoutActionInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
+  }
+
   export type ActionUncheckedUpdateManyWithoutAvailableNestedInput = {
     create?: XOR<ActionCreateWithoutAvailableInput, ActionUncheckedCreateWithoutAvailableInput> | ActionCreateWithoutAvailableInput[] | ActionUncheckedCreateWithoutAvailableInput[]
     connectOrCreate?: ActionCreateOrConnectWithoutAvailableInput | ActionCreateOrConnectWithoutAvailableInput[]
@@ -18571,6 +20522,20 @@ export namespace Prisma {
     update?: ActionUpdateWithWhereUniqueWithoutAvailableInput | ActionUpdateWithWhereUniqueWithoutAvailableInput[]
     updateMany?: ActionUpdateManyWithWhereWithoutAvailableInput | ActionUpdateManyWithWhereWithoutAvailableInput[]
     deleteMany?: ActionScalarWhereInput | ActionScalarWhereInput[]
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutActionNestedInput = {
+    create?: XOR<ZapTemplateCreateWithoutActionInput, ZapTemplateUncheckedCreateWithoutActionInput> | ZapTemplateCreateWithoutActionInput[] | ZapTemplateUncheckedCreateWithoutActionInput[]
+    connectOrCreate?: ZapTemplateCreateOrConnectWithoutActionInput | ZapTemplateCreateOrConnectWithoutActionInput[]
+    upsert?: ZapTemplateUpsertWithWhereUniqueWithoutActionInput | ZapTemplateUpsertWithWhereUniqueWithoutActionInput[]
+    createMany?: ZapTemplateCreateManyActionInputEnvelope
+    set?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    disconnect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    delete?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    connect?: ZapTemplateWhereUniqueInput | ZapTemplateWhereUniqueInput[]
+    update?: ZapTemplateUpdateWithWhereUniqueWithoutActionInput | ZapTemplateUpdateWithWhereUniqueWithoutActionInput[]
+    updateMany?: ZapTemplateUpdateManyWithWhereWithoutActionInput | ZapTemplateUpdateManyWithWhereWithoutActionInput[]
+    deleteMany?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
   }
 
   export type ZapCreateNestedOneWithoutZapRunsInput = {
@@ -18645,6 +20610,108 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutTokensInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTokensInput, UserUpdateWithoutTokensInput>, UserUncheckedUpdateWithoutTokensInput>
+  }
+
+  export type AppCreateNestedOneWithoutTriggerTemplatesInput = {
+    create?: XOR<AppCreateWithoutTriggerTemplatesInput, AppUncheckedCreateWithoutTriggerTemplatesInput>
+    connectOrCreate?: AppCreateOrConnectWithoutTriggerTemplatesInput
+    connect?: AppWhereUniqueInput
+  }
+
+  export type AvailableTriggersCreateNestedOneWithoutTemplatesInput = {
+    create?: XOR<AvailableTriggersCreateWithoutTemplatesInput, AvailableTriggersUncheckedCreateWithoutTemplatesInput>
+    connectOrCreate?: AvailableTriggersCreateOrConnectWithoutTemplatesInput
+    connect?: AvailableTriggersWhereUniqueInput
+  }
+
+  export type AppCreateNestedOneWithoutActionTemplatesInput = {
+    create?: XOR<AppCreateWithoutActionTemplatesInput, AppUncheckedCreateWithoutActionTemplatesInput>
+    connectOrCreate?: AppCreateOrConnectWithoutActionTemplatesInput
+    connect?: AppWhereUniqueInput
+  }
+
+  export type AvailableActionsCreateNestedOneWithoutTemplatesInput = {
+    create?: XOR<AvailableActionsCreateWithoutTemplatesInput, AvailableActionsUncheckedCreateWithoutTemplatesInput>
+    connectOrCreate?: AvailableActionsCreateOrConnectWithoutTemplatesInput
+    connect?: AvailableActionsWhereUniqueInput
+  }
+
+  export type ZapCreateNestedManyWithoutTemplateInput = {
+    create?: XOR<ZapCreateWithoutTemplateInput, ZapUncheckedCreateWithoutTemplateInput> | ZapCreateWithoutTemplateInput[] | ZapUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: ZapCreateOrConnectWithoutTemplateInput | ZapCreateOrConnectWithoutTemplateInput[]
+    createMany?: ZapCreateManyTemplateInputEnvelope
+    connect?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+  }
+
+  export type ZapUncheckedCreateNestedManyWithoutTemplateInput = {
+    create?: XOR<ZapCreateWithoutTemplateInput, ZapUncheckedCreateWithoutTemplateInput> | ZapCreateWithoutTemplateInput[] | ZapUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: ZapCreateOrConnectWithoutTemplateInput | ZapCreateOrConnectWithoutTemplateInput[]
+    createMany?: ZapCreateManyTemplateInputEnvelope
+    connect?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type AppUpdateOneRequiredWithoutTriggerTemplatesNestedInput = {
+    create?: XOR<AppCreateWithoutTriggerTemplatesInput, AppUncheckedCreateWithoutTriggerTemplatesInput>
+    connectOrCreate?: AppCreateOrConnectWithoutTriggerTemplatesInput
+    upsert?: AppUpsertWithoutTriggerTemplatesInput
+    connect?: AppWhereUniqueInput
+    update?: XOR<XOR<AppUpdateToOneWithWhereWithoutTriggerTemplatesInput, AppUpdateWithoutTriggerTemplatesInput>, AppUncheckedUpdateWithoutTriggerTemplatesInput>
+  }
+
+  export type AvailableTriggersUpdateOneRequiredWithoutTemplatesNestedInput = {
+    create?: XOR<AvailableTriggersCreateWithoutTemplatesInput, AvailableTriggersUncheckedCreateWithoutTemplatesInput>
+    connectOrCreate?: AvailableTriggersCreateOrConnectWithoutTemplatesInput
+    upsert?: AvailableTriggersUpsertWithoutTemplatesInput
+    connect?: AvailableTriggersWhereUniqueInput
+    update?: XOR<XOR<AvailableTriggersUpdateToOneWithWhereWithoutTemplatesInput, AvailableTriggersUpdateWithoutTemplatesInput>, AvailableTriggersUncheckedUpdateWithoutTemplatesInput>
+  }
+
+  export type AppUpdateOneRequiredWithoutActionTemplatesNestedInput = {
+    create?: XOR<AppCreateWithoutActionTemplatesInput, AppUncheckedCreateWithoutActionTemplatesInput>
+    connectOrCreate?: AppCreateOrConnectWithoutActionTemplatesInput
+    upsert?: AppUpsertWithoutActionTemplatesInput
+    connect?: AppWhereUniqueInput
+    update?: XOR<XOR<AppUpdateToOneWithWhereWithoutActionTemplatesInput, AppUpdateWithoutActionTemplatesInput>, AppUncheckedUpdateWithoutActionTemplatesInput>
+  }
+
+  export type AvailableActionsUpdateOneRequiredWithoutTemplatesNestedInput = {
+    create?: XOR<AvailableActionsCreateWithoutTemplatesInput, AvailableActionsUncheckedCreateWithoutTemplatesInput>
+    connectOrCreate?: AvailableActionsCreateOrConnectWithoutTemplatesInput
+    upsert?: AvailableActionsUpsertWithoutTemplatesInput
+    connect?: AvailableActionsWhereUniqueInput
+    update?: XOR<XOR<AvailableActionsUpdateToOneWithWhereWithoutTemplatesInput, AvailableActionsUpdateWithoutTemplatesInput>, AvailableActionsUncheckedUpdateWithoutTemplatesInput>
+  }
+
+  export type ZapUpdateManyWithoutTemplateNestedInput = {
+    create?: XOR<ZapCreateWithoutTemplateInput, ZapUncheckedCreateWithoutTemplateInput> | ZapCreateWithoutTemplateInput[] | ZapUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: ZapCreateOrConnectWithoutTemplateInput | ZapCreateOrConnectWithoutTemplateInput[]
+    upsert?: ZapUpsertWithWhereUniqueWithoutTemplateInput | ZapUpsertWithWhereUniqueWithoutTemplateInput[]
+    createMany?: ZapCreateManyTemplateInputEnvelope
+    set?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    disconnect?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    delete?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    connect?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    update?: ZapUpdateWithWhereUniqueWithoutTemplateInput | ZapUpdateWithWhereUniqueWithoutTemplateInput[]
+    updateMany?: ZapUpdateManyWithWhereWithoutTemplateInput | ZapUpdateManyWithWhereWithoutTemplateInput[]
+    deleteMany?: ZapScalarWhereInput | ZapScalarWhereInput[]
+  }
+
+  export type ZapUncheckedUpdateManyWithoutTemplateNestedInput = {
+    create?: XOR<ZapCreateWithoutTemplateInput, ZapUncheckedCreateWithoutTemplateInput> | ZapCreateWithoutTemplateInput[] | ZapUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: ZapCreateOrConnectWithoutTemplateInput | ZapCreateOrConnectWithoutTemplateInput[]
+    upsert?: ZapUpsertWithWhereUniqueWithoutTemplateInput | ZapUpsertWithWhereUniqueWithoutTemplateInput[]
+    createMany?: ZapCreateManyTemplateInputEnvelope
+    set?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    disconnect?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    delete?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    connect?: ZapWhereUniqueInput | ZapWhereUniqueInput[]
+    update?: ZapUpdateWithWhereUniqueWithoutTemplateInput | ZapUpdateWithWhereUniqueWithoutTemplateInput[]
+    updateMany?: ZapUpdateManyWithWhereWithoutTemplateInput | ZapUpdateManyWithWhereWithoutTemplateInput[]
+    deleteMany?: ZapScalarWhereInput | ZapScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -18805,6 +20872,19 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type TokenStoreCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
@@ -18867,6 +20947,7 @@ export namespace Prisma {
     actions?: ActionCreateNestedManyWithoutZapInput
     trigger?: TriggerCreateNestedOneWithoutZapInput
     zapRuns?: ZapRunCreateNestedManyWithoutZapInput
+    template?: ZapTemplateCreateNestedOneWithoutZapsInput
   }
 
   export type ZapUncheckedCreateWithoutUserInput = {
@@ -18875,6 +20956,7 @@ export namespace Prisma {
     description: string
     metadata?: JsonNullValueInput | InputJsonValue
     image?: string | null
+    templateId?: string | null
     actions?: ActionUncheckedCreateNestedManyWithoutZapInput
     trigger?: TriggerUncheckedCreateNestedOneWithoutZapInput
     zapRuns?: ZapRunUncheckedCreateNestedManyWithoutZapInput
@@ -18976,6 +21058,7 @@ export namespace Prisma {
     metadata?: JsonFilter<"Zap">
     userId?: StringFilter<"Zap"> | string
     image?: StringNullableFilter<"Zap"> | string | null
+    templateId?: StringNullableFilter<"Zap"> | string | null
   }
 
   export type AppCreateWithoutTeamInput = {
@@ -18985,6 +21068,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsCreateNestedManyWithoutAppInput
     actions?: AvailableActionsCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateCreateNestedManyWithoutActionAppInput
   }
 
   export type AppUncheckedCreateWithoutTeamInput = {
@@ -18994,6 +21079,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsUncheckedCreateNestedManyWithoutAppInput
     actions?: AvailableActionsUncheckedCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersUncheckedCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutActionAppInput
   }
 
   export type AppCreateOrConnectWithoutTeamInput = {
@@ -19145,6 +21232,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     actions?: ActionCreateNestedManyWithoutAvailableInput
+    templates?: ZapTemplateCreateNestedManyWithoutActionInput
   }
 
   export type AvailableActionsUncheckedCreateWithoutAppInput = {
@@ -19155,6 +21243,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     actions?: ActionUncheckedCreateNestedManyWithoutAvailableInput
+    templates?: ZapTemplateUncheckedCreateNestedManyWithoutActionInput
   }
 
   export type AvailableActionsCreateOrConnectWithoutAppInput = {
@@ -19175,6 +21264,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     triggers?: TriggerCreateNestedManyWithoutAvailableInput
+    templates?: ZapTemplateCreateNestedManyWithoutTriggerInput
   }
 
   export type AvailableTriggersUncheckedCreateWithoutAppInput = {
@@ -19185,6 +21275,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     triggers?: TriggerUncheckedCreateNestedManyWithoutAvailableInput
+    templates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerInput
   }
 
   export type AvailableTriggersCreateOrConnectWithoutAppInput = {
@@ -19194,6 +21285,90 @@ export namespace Prisma {
 
   export type AvailableTriggersCreateManyAppInputEnvelope = {
     data: AvailableTriggersCreateManyAppInput | AvailableTriggersCreateManyAppInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ZapTemplateCreateWithoutTriggerAppInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    trigger: AvailableTriggersCreateNestedOneWithoutTemplatesInput
+    actionApp: AppCreateNestedOneWithoutActionTemplatesInput
+    action: AvailableActionsCreateNestedOneWithoutTemplatesInput
+    zaps?: ZapCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateUncheckedCreateWithoutTriggerAppInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateCreateOrConnectWithoutTriggerAppInput = {
+    where: ZapTemplateWhereUniqueInput
+    create: XOR<ZapTemplateCreateWithoutTriggerAppInput, ZapTemplateUncheckedCreateWithoutTriggerAppInput>
+  }
+
+  export type ZapTemplateCreateManyTriggerAppInputEnvelope = {
+    data: ZapTemplateCreateManyTriggerAppInput | ZapTemplateCreateManyTriggerAppInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ZapTemplateCreateWithoutActionAppInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp: AppCreateNestedOneWithoutTriggerTemplatesInput
+    trigger: AvailableTriggersCreateNestedOneWithoutTemplatesInput
+    action: AvailableActionsCreateNestedOneWithoutTemplatesInput
+    zaps?: ZapCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateUncheckedCreateWithoutActionAppInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    triggerId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateCreateOrConnectWithoutActionAppInput = {
+    where: ZapTemplateWhereUniqueInput
+    create: XOR<ZapTemplateCreateWithoutActionAppInput, ZapTemplateUncheckedCreateWithoutActionAppInput>
+  }
+
+  export type ZapTemplateCreateManyActionAppInputEnvelope = {
+    data: ZapTemplateCreateManyActionAppInput | ZapTemplateCreateManyActionAppInput[]
     skipDuplicates?: boolean
   }
 
@@ -19312,6 +21487,57 @@ export namespace Prisma {
     appId?: StringFilter<"AvailableTriggers"> | string
   }
 
+  export type ZapTemplateUpsertWithWhereUniqueWithoutTriggerAppInput = {
+    where: ZapTemplateWhereUniqueInput
+    update: XOR<ZapTemplateUpdateWithoutTriggerAppInput, ZapTemplateUncheckedUpdateWithoutTriggerAppInput>
+    create: XOR<ZapTemplateCreateWithoutTriggerAppInput, ZapTemplateUncheckedCreateWithoutTriggerAppInput>
+  }
+
+  export type ZapTemplateUpdateWithWhereUniqueWithoutTriggerAppInput = {
+    where: ZapTemplateWhereUniqueInput
+    data: XOR<ZapTemplateUpdateWithoutTriggerAppInput, ZapTemplateUncheckedUpdateWithoutTriggerAppInput>
+  }
+
+  export type ZapTemplateUpdateManyWithWhereWithoutTriggerAppInput = {
+    where: ZapTemplateScalarWhereInput
+    data: XOR<ZapTemplateUpdateManyMutationInput, ZapTemplateUncheckedUpdateManyWithoutTriggerAppInput>
+  }
+
+  export type ZapTemplateScalarWhereInput = {
+    AND?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
+    OR?: ZapTemplateScalarWhereInput[]
+    NOT?: ZapTemplateScalarWhereInput | ZapTemplateScalarWhereInput[]
+    id?: StringFilter<"ZapTemplate"> | string
+    name?: StringFilter<"ZapTemplate"> | string
+    description?: StringFilter<"ZapTemplate"> | string
+    category?: StringFilter<"ZapTemplate"> | string
+    isPopular?: BoolFilter<"ZapTemplate"> | boolean
+    createdAt?: DateTimeFilter<"ZapTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"ZapTemplate"> | Date | string
+    triggerAppId?: StringFilter<"ZapTemplate"> | string
+    triggerId?: StringFilter<"ZapTemplate"> | string
+    actionAppId?: StringFilter<"ZapTemplate"> | string
+    actionId?: StringFilter<"ZapTemplate"> | string
+    triggerConfig?: JsonFilter<"ZapTemplate">
+    actionConfig?: JsonFilter<"ZapTemplate">
+  }
+
+  export type ZapTemplateUpsertWithWhereUniqueWithoutActionAppInput = {
+    where: ZapTemplateWhereUniqueInput
+    update: XOR<ZapTemplateUpdateWithoutActionAppInput, ZapTemplateUncheckedUpdateWithoutActionAppInput>
+    create: XOR<ZapTemplateCreateWithoutActionAppInput, ZapTemplateUncheckedCreateWithoutActionAppInput>
+  }
+
+  export type ZapTemplateUpdateWithWhereUniqueWithoutActionAppInput = {
+    where: ZapTemplateWhereUniqueInput
+    data: XOR<ZapTemplateUpdateWithoutActionAppInput, ZapTemplateUncheckedUpdateWithoutActionAppInput>
+  }
+
+  export type ZapTemplateUpdateManyWithWhereWithoutActionAppInput = {
+    where: ZapTemplateScalarWhereInput
+    data: XOR<ZapTemplateUpdateManyMutationInput, ZapTemplateUncheckedUpdateManyWithoutActionAppInput>
+  }
+
   export type AppCreateWithoutAuthMethodsInput = {
     name: string
     description: string
@@ -19319,6 +21545,8 @@ export namespace Prisma {
     team: TeamCreateNestedOneWithoutAppsInput
     actions?: AvailableActionsCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateCreateNestedManyWithoutActionAppInput
   }
 
   export type AppUncheckedCreateWithoutAuthMethodsInput = {
@@ -19328,6 +21556,8 @@ export namespace Prisma {
     id?: string
     actions?: AvailableActionsUncheckedCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersUncheckedCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutActionAppInput
   }
 
   export type AppCreateOrConnectWithoutAuthMethodsInput = {
@@ -19374,6 +21604,8 @@ export namespace Prisma {
     team?: TeamUpdateOneRequiredWithoutAppsNestedInput
     actions?: AvailableActionsUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUpdateManyWithoutActionAppNestedInput
   }
 
   export type AppUncheckedUpdateWithoutAuthMethodsInput = {
@@ -19383,6 +21615,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     actions?: AvailableActionsUncheckedUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUncheckedUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUncheckedUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUncheckedUpdateManyWithoutActionAppNestedInput
   }
 
   export type AvailableAuthMethodsUpsertWithoutAuthMethodsInput = {
@@ -19546,6 +21780,43 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ZapTemplateCreateWithoutZapsInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp: AppCreateNestedOneWithoutTriggerTemplatesInput
+    trigger: AvailableTriggersCreateNestedOneWithoutTemplatesInput
+    actionApp: AppCreateNestedOneWithoutActionTemplatesInput
+    action: AvailableActionsCreateNestedOneWithoutTemplatesInput
+  }
+
+  export type ZapTemplateUncheckedCreateWithoutZapsInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    triggerId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ZapTemplateCreateOrConnectWithoutZapsInput = {
+    where: ZapTemplateWhereUniqueInput
+    create: XOR<ZapTemplateCreateWithoutZapsInput, ZapTemplateUncheckedCreateWithoutZapsInput>
+  }
+
   export type ActionUpsertWithWhereUniqueWithoutZapInput = {
     where: ActionWhereUniqueInput
     update: XOR<ActionUpdateWithoutZapInput, ActionUncheckedUpdateWithoutZapInput>
@@ -19658,6 +21929,49 @@ export namespace Prisma {
     zapId?: StringFilter<"ZapRun"> | string
   }
 
+  export type ZapTemplateUpsertWithoutZapsInput = {
+    update: XOR<ZapTemplateUpdateWithoutZapsInput, ZapTemplateUncheckedUpdateWithoutZapsInput>
+    create: XOR<ZapTemplateCreateWithoutZapsInput, ZapTemplateUncheckedCreateWithoutZapsInput>
+    where?: ZapTemplateWhereInput
+  }
+
+  export type ZapTemplateUpdateToOneWithWhereWithoutZapsInput = {
+    where?: ZapTemplateWhereInput
+    data: XOR<ZapTemplateUpdateWithoutZapsInput, ZapTemplateUncheckedUpdateWithoutZapsInput>
+  }
+
+  export type ZapTemplateUpdateWithoutZapsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp?: AppUpdateOneRequiredWithoutTriggerTemplatesNestedInput
+    trigger?: AvailableTriggersUpdateOneRequiredWithoutTemplatesNestedInput
+    actionApp?: AppUpdateOneRequiredWithoutActionTemplatesNestedInput
+    action?: AvailableActionsUpdateOneRequiredWithoutTemplatesNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateWithoutZapsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
   export type AvailableTriggersCreateWithoutTriggersInput = {
     id?: string
     name: string
@@ -19666,6 +21980,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     app: AppCreateNestedOneWithoutTriggersInput
+    templates?: ZapTemplateCreateNestedManyWithoutTriggerInput
   }
 
   export type AvailableTriggersUncheckedCreateWithoutTriggersInput = {
@@ -19676,6 +21991,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     appId: string
+    templates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerInput
   }
 
   export type AvailableTriggersCreateOrConnectWithoutTriggersInput = {
@@ -19692,6 +22008,7 @@ export namespace Prisma {
     actions?: ActionCreateNestedManyWithoutZapInput
     user: UserCreateNestedOneWithoutZapsInput
     zapRuns?: ZapRunCreateNestedManyWithoutZapInput
+    template?: ZapTemplateCreateNestedOneWithoutZapsInput
   }
 
   export type ZapUncheckedCreateWithoutTriggerInput = {
@@ -19701,6 +22018,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId: string
     image?: string | null
+    templateId?: string | null
     actions?: ActionUncheckedCreateNestedManyWithoutZapInput
     zapRuns?: ZapRunUncheckedCreateNestedManyWithoutZapInput
   }
@@ -19729,6 +22047,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     app?: AppUpdateOneRequiredWithoutTriggersNestedInput
+    templates?: ZapTemplateUpdateManyWithoutTriggerNestedInput
   }
 
   export type AvailableTriggersUncheckedUpdateWithoutTriggersInput = {
@@ -19739,6 +22058,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     appId?: StringFieldUpdateOperationsInput | string
+    templates?: ZapTemplateUncheckedUpdateManyWithoutTriggerNestedInput
   }
 
   export type ZapUpsertWithoutTriggerInput = {
@@ -19761,6 +22081,7 @@ export namespace Prisma {
     actions?: ActionUpdateManyWithoutZapNestedInput
     user?: UserUpdateOneRequiredWithoutZapsNestedInput
     zapRuns?: ZapRunUpdateManyWithoutZapNestedInput
+    template?: ZapTemplateUpdateOneWithoutZapsNestedInput
   }
 
   export type ZapUncheckedUpdateWithoutTriggerInput = {
@@ -19770,6 +22091,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
     actions?: ActionUncheckedUpdateManyWithoutZapNestedInput
     zapRuns?: ZapRunUncheckedUpdateManyWithoutZapNestedInput
   }
@@ -19782,6 +22104,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     app: AppCreateNestedOneWithoutActionsInput
+    templates?: ZapTemplateCreateNestedManyWithoutActionInput
   }
 
   export type AvailableActionsUncheckedCreateWithoutActionsInput = {
@@ -19792,6 +22115,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type: string
     appId: string
+    templates?: ZapTemplateUncheckedCreateNestedManyWithoutActionInput
   }
 
   export type AvailableActionsCreateOrConnectWithoutActionsInput = {
@@ -19808,6 +22132,7 @@ export namespace Prisma {
     trigger?: TriggerCreateNestedOneWithoutZapInput
     user: UserCreateNestedOneWithoutZapsInput
     zapRuns?: ZapRunCreateNestedManyWithoutZapInput
+    template?: ZapTemplateCreateNestedOneWithoutZapsInput
   }
 
   export type ZapUncheckedCreateWithoutActionsInput = {
@@ -19817,6 +22142,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId: string
     image?: string | null
+    templateId?: string | null
     trigger?: TriggerUncheckedCreateNestedOneWithoutZapInput
     zapRuns?: ZapRunUncheckedCreateNestedManyWithoutZapInput
   }
@@ -19845,6 +22171,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     app?: AppUpdateOneRequiredWithoutActionsNestedInput
+    templates?: ZapTemplateUpdateManyWithoutActionNestedInput
   }
 
   export type AvailableActionsUncheckedUpdateWithoutActionsInput = {
@@ -19855,6 +22182,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     appId?: StringFieldUpdateOperationsInput | string
+    templates?: ZapTemplateUncheckedUpdateManyWithoutActionNestedInput
   }
 
   export type ZapUpsertWithoutActionsInput = {
@@ -19877,6 +22205,7 @@ export namespace Prisma {
     trigger?: TriggerUpdateOneWithoutZapNestedInput
     user?: UserUpdateOneRequiredWithoutZapsNestedInput
     zapRuns?: ZapRunUpdateManyWithoutZapNestedInput
+    template?: ZapTemplateUpdateOneWithoutZapsNestedInput
   }
 
   export type ZapUncheckedUpdateWithoutActionsInput = {
@@ -19886,6 +22215,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
     trigger?: TriggerUncheckedUpdateOneWithoutZapNestedInput
     zapRuns?: ZapRunUncheckedUpdateManyWithoutZapNestedInput
   }
@@ -19897,6 +22227,8 @@ export namespace Prisma {
     team: TeamCreateNestedOneWithoutAppsInput
     authMethods?: AuthMethodsCreateNestedManyWithoutAppInput
     actions?: AvailableActionsCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateCreateNestedManyWithoutActionAppInput
   }
 
   export type AppUncheckedCreateWithoutTriggersInput = {
@@ -19906,6 +22238,8 @@ export namespace Prisma {
     id?: string
     authMethods?: AuthMethodsUncheckedCreateNestedManyWithoutAppInput
     actions?: AvailableActionsUncheckedCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutActionAppInput
   }
 
   export type AppCreateOrConnectWithoutTriggersInput = {
@@ -19939,6 +22273,48 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ZapTemplateCreateWithoutTriggerInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp: AppCreateNestedOneWithoutTriggerTemplatesInput
+    actionApp: AppCreateNestedOneWithoutActionTemplatesInput
+    action: AvailableActionsCreateNestedOneWithoutTemplatesInput
+    zaps?: ZapCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateUncheckedCreateWithoutTriggerInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateCreateOrConnectWithoutTriggerInput = {
+    where: ZapTemplateWhereUniqueInput
+    create: XOR<ZapTemplateCreateWithoutTriggerInput, ZapTemplateUncheckedCreateWithoutTriggerInput>
+  }
+
+  export type ZapTemplateCreateManyTriggerInputEnvelope = {
+    data: ZapTemplateCreateManyTriggerInput | ZapTemplateCreateManyTriggerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AppUpsertWithoutTriggersInput = {
     update: XOR<AppUpdateWithoutTriggersInput, AppUncheckedUpdateWithoutTriggersInput>
     create: XOR<AppCreateWithoutTriggersInput, AppUncheckedCreateWithoutTriggersInput>
@@ -19957,6 +22333,8 @@ export namespace Prisma {
     team?: TeamUpdateOneRequiredWithoutAppsNestedInput
     authMethods?: AuthMethodsUpdateManyWithoutAppNestedInput
     actions?: AvailableActionsUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUpdateManyWithoutActionAppNestedInput
   }
 
   export type AppUncheckedUpdateWithoutTriggersInput = {
@@ -19966,6 +22344,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     authMethods?: AuthMethodsUncheckedUpdateManyWithoutAppNestedInput
     actions?: AvailableActionsUncheckedUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUncheckedUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUncheckedUpdateManyWithoutActionAppNestedInput
   }
 
   export type TriggerUpsertWithWhereUniqueWithoutAvailableInput = {
@@ -19994,6 +22374,22 @@ export namespace Prisma {
     zapId?: StringFilter<"Trigger"> | string
     metadata?: JsonFilter<"Trigger">
     availableTriggerId?: StringFilter<"Trigger"> | string
+  }
+
+  export type ZapTemplateUpsertWithWhereUniqueWithoutTriggerInput = {
+    where: ZapTemplateWhereUniqueInput
+    update: XOR<ZapTemplateUpdateWithoutTriggerInput, ZapTemplateUncheckedUpdateWithoutTriggerInput>
+    create: XOR<ZapTemplateCreateWithoutTriggerInput, ZapTemplateUncheckedCreateWithoutTriggerInput>
+  }
+
+  export type ZapTemplateUpdateWithWhereUniqueWithoutTriggerInput = {
+    where: ZapTemplateWhereUniqueInput
+    data: XOR<ZapTemplateUpdateWithoutTriggerInput, ZapTemplateUncheckedUpdateWithoutTriggerInput>
+  }
+
+  export type ZapTemplateUpdateManyWithWhereWithoutTriggerInput = {
+    where: ZapTemplateScalarWhereInput
+    data: XOR<ZapTemplateUpdateManyMutationInput, ZapTemplateUncheckedUpdateManyWithoutTriggerInput>
   }
 
   export type ActionCreateWithoutAvailableInput = {
@@ -20031,6 +22427,8 @@ export namespace Prisma {
     team: TeamCreateNestedOneWithoutAppsInput
     authMethods?: AuthMethodsCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateCreateNestedManyWithoutActionAppInput
   }
 
   export type AppUncheckedCreateWithoutActionsInput = {
@@ -20040,11 +22438,55 @@ export namespace Prisma {
     id?: string
     authMethods?: AuthMethodsUncheckedCreateNestedManyWithoutAppInput
     triggers?: AvailableTriggersUncheckedCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerAppInput
+    actionTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutActionAppInput
   }
 
   export type AppCreateOrConnectWithoutActionsInput = {
     where: AppWhereUniqueInput
     create: XOR<AppCreateWithoutActionsInput, AppUncheckedCreateWithoutActionsInput>
+  }
+
+  export type ZapTemplateCreateWithoutActionInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp: AppCreateNestedOneWithoutTriggerTemplatesInput
+    trigger: AvailableTriggersCreateNestedOneWithoutTemplatesInput
+    actionApp: AppCreateNestedOneWithoutActionTemplatesInput
+    zaps?: ZapCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateUncheckedCreateWithoutActionInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    triggerId: string
+    actionAppId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedCreateNestedManyWithoutTemplateInput
+  }
+
+  export type ZapTemplateCreateOrConnectWithoutActionInput = {
+    where: ZapTemplateWhereUniqueInput
+    create: XOR<ZapTemplateCreateWithoutActionInput, ZapTemplateUncheckedCreateWithoutActionInput>
+  }
+
+  export type ZapTemplateCreateManyActionInputEnvelope = {
+    data: ZapTemplateCreateManyActionInput | ZapTemplateCreateManyActionInput[]
+    skipDuplicates?: boolean
   }
 
   export type ActionUpsertWithWhereUniqueWithoutAvailableInput = {
@@ -20081,6 +22523,8 @@ export namespace Prisma {
     team?: TeamUpdateOneRequiredWithoutAppsNestedInput
     authMethods?: AuthMethodsUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUpdateManyWithoutActionAppNestedInput
   }
 
   export type AppUncheckedUpdateWithoutActionsInput = {
@@ -20090,6 +22534,24 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     authMethods?: AuthMethodsUncheckedUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUncheckedUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUncheckedUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUncheckedUpdateManyWithoutActionAppNestedInput
+  }
+
+  export type ZapTemplateUpsertWithWhereUniqueWithoutActionInput = {
+    where: ZapTemplateWhereUniqueInput
+    update: XOR<ZapTemplateUpdateWithoutActionInput, ZapTemplateUncheckedUpdateWithoutActionInput>
+    create: XOR<ZapTemplateCreateWithoutActionInput, ZapTemplateUncheckedCreateWithoutActionInput>
+  }
+
+  export type ZapTemplateUpdateWithWhereUniqueWithoutActionInput = {
+    where: ZapTemplateWhereUniqueInput
+    data: XOR<ZapTemplateUpdateWithoutActionInput, ZapTemplateUncheckedUpdateWithoutActionInput>
+  }
+
+  export type ZapTemplateUpdateManyWithWhereWithoutActionInput = {
+    where: ZapTemplateScalarWhereInput
+    data: XOR<ZapTemplateUpdateManyMutationInput, ZapTemplateUncheckedUpdateManyWithoutActionInput>
   }
 
   export type ZapCreateWithoutZapRunsInput = {
@@ -20101,6 +22563,7 @@ export namespace Prisma {
     actions?: ActionCreateNestedManyWithoutZapInput
     trigger?: TriggerCreateNestedOneWithoutZapInput
     user: UserCreateNestedOneWithoutZapsInput
+    template?: ZapTemplateCreateNestedOneWithoutZapsInput
   }
 
   export type ZapUncheckedCreateWithoutZapRunsInput = {
@@ -20110,6 +22573,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId: string
     image?: string | null
+    templateId?: string | null
     actions?: ActionUncheckedCreateNestedManyWithoutZapInput
     trigger?: TriggerUncheckedCreateNestedOneWithoutZapInput
   }
@@ -20152,6 +22616,7 @@ export namespace Prisma {
     actions?: ActionUpdateManyWithoutZapNestedInput
     trigger?: TriggerUpdateOneWithoutZapNestedInput
     user?: UserUpdateOneRequiredWithoutZapsNestedInput
+    template?: ZapTemplateUpdateOneWithoutZapsNestedInput
   }
 
   export type ZapUncheckedUpdateWithoutZapRunsInput = {
@@ -20161,6 +22626,7 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
     actions?: ActionUncheckedUpdateManyWithoutZapNestedInput
     trigger?: TriggerUncheckedUpdateOneWithoutZapNestedInput
   }
@@ -20280,6 +22746,296 @@ export namespace Prisma {
     zaps?: ZapUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type AppCreateWithoutTriggerTemplatesInput = {
+    name: string
+    description: string
+    id?: string
+    team: TeamCreateNestedOneWithoutAppsInput
+    authMethods?: AuthMethodsCreateNestedManyWithoutAppInput
+    actions?: AvailableActionsCreateNestedManyWithoutAppInput
+    triggers?: AvailableTriggersCreateNestedManyWithoutAppInput
+    actionTemplates?: ZapTemplateCreateNestedManyWithoutActionAppInput
+  }
+
+  export type AppUncheckedCreateWithoutTriggerTemplatesInput = {
+    name: string
+    description: string
+    teamId: string
+    id?: string
+    authMethods?: AuthMethodsUncheckedCreateNestedManyWithoutAppInput
+    actions?: AvailableActionsUncheckedCreateNestedManyWithoutAppInput
+    triggers?: AvailableTriggersUncheckedCreateNestedManyWithoutAppInput
+    actionTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutActionAppInput
+  }
+
+  export type AppCreateOrConnectWithoutTriggerTemplatesInput = {
+    where: AppWhereUniqueInput
+    create: XOR<AppCreateWithoutTriggerTemplatesInput, AppUncheckedCreateWithoutTriggerTemplatesInput>
+  }
+
+  export type AvailableTriggersCreateWithoutTemplatesInput = {
+    id?: string
+    name: string
+    description: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type: string
+    app: AppCreateNestedOneWithoutTriggersInput
+    triggers?: TriggerCreateNestedManyWithoutAvailableInput
+  }
+
+  export type AvailableTriggersUncheckedCreateWithoutTemplatesInput = {
+    id?: string
+    name: string
+    description: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type: string
+    appId: string
+    triggers?: TriggerUncheckedCreateNestedManyWithoutAvailableInput
+  }
+
+  export type AvailableTriggersCreateOrConnectWithoutTemplatesInput = {
+    where: AvailableTriggersWhereUniqueInput
+    create: XOR<AvailableTriggersCreateWithoutTemplatesInput, AvailableTriggersUncheckedCreateWithoutTemplatesInput>
+  }
+
+  export type AppCreateWithoutActionTemplatesInput = {
+    name: string
+    description: string
+    id?: string
+    team: TeamCreateNestedOneWithoutAppsInput
+    authMethods?: AuthMethodsCreateNestedManyWithoutAppInput
+    actions?: AvailableActionsCreateNestedManyWithoutAppInput
+    triggers?: AvailableTriggersCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateCreateNestedManyWithoutTriggerAppInput
+  }
+
+  export type AppUncheckedCreateWithoutActionTemplatesInput = {
+    name: string
+    description: string
+    teamId: string
+    id?: string
+    authMethods?: AuthMethodsUncheckedCreateNestedManyWithoutAppInput
+    actions?: AvailableActionsUncheckedCreateNestedManyWithoutAppInput
+    triggers?: AvailableTriggersUncheckedCreateNestedManyWithoutAppInput
+    triggerTemplates?: ZapTemplateUncheckedCreateNestedManyWithoutTriggerAppInput
+  }
+
+  export type AppCreateOrConnectWithoutActionTemplatesInput = {
+    where: AppWhereUniqueInput
+    create: XOR<AppCreateWithoutActionTemplatesInput, AppUncheckedCreateWithoutActionTemplatesInput>
+  }
+
+  export type AvailableActionsCreateWithoutTemplatesInput = {
+    id?: string
+    name: string
+    description: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type: string
+    actions?: ActionCreateNestedManyWithoutAvailableInput
+    app: AppCreateNestedOneWithoutActionsInput
+  }
+
+  export type AvailableActionsUncheckedCreateWithoutTemplatesInput = {
+    id?: string
+    name: string
+    description: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type: string
+    appId: string
+    actions?: ActionUncheckedCreateNestedManyWithoutAvailableInput
+  }
+
+  export type AvailableActionsCreateOrConnectWithoutTemplatesInput = {
+    where: AvailableActionsWhereUniqueInput
+    create: XOR<AvailableActionsCreateWithoutTemplatesInput, AvailableActionsUncheckedCreateWithoutTemplatesInput>
+  }
+
+  export type ZapCreateWithoutTemplateInput = {
+    id?: string
+    name: string
+    description: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    image?: string | null
+    actions?: ActionCreateNestedManyWithoutZapInput
+    trigger?: TriggerCreateNestedOneWithoutZapInput
+    user: UserCreateNestedOneWithoutZapsInput
+    zapRuns?: ZapRunCreateNestedManyWithoutZapInput
+  }
+
+  export type ZapUncheckedCreateWithoutTemplateInput = {
+    id?: string
+    name: string
+    description: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    userId: string
+    image?: string | null
+    actions?: ActionUncheckedCreateNestedManyWithoutZapInput
+    trigger?: TriggerUncheckedCreateNestedOneWithoutZapInput
+    zapRuns?: ZapRunUncheckedCreateNestedManyWithoutZapInput
+  }
+
+  export type ZapCreateOrConnectWithoutTemplateInput = {
+    where: ZapWhereUniqueInput
+    create: XOR<ZapCreateWithoutTemplateInput, ZapUncheckedCreateWithoutTemplateInput>
+  }
+
+  export type ZapCreateManyTemplateInputEnvelope = {
+    data: ZapCreateManyTemplateInput | ZapCreateManyTemplateInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AppUpsertWithoutTriggerTemplatesInput = {
+    update: XOR<AppUpdateWithoutTriggerTemplatesInput, AppUncheckedUpdateWithoutTriggerTemplatesInput>
+    create: XOR<AppCreateWithoutTriggerTemplatesInput, AppUncheckedCreateWithoutTriggerTemplatesInput>
+    where?: AppWhereInput
+  }
+
+  export type AppUpdateToOneWithWhereWithoutTriggerTemplatesInput = {
+    where?: AppWhereInput
+    data: XOR<AppUpdateWithoutTriggerTemplatesInput, AppUncheckedUpdateWithoutTriggerTemplatesInput>
+  }
+
+  export type AppUpdateWithoutTriggerTemplatesInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
+    team?: TeamUpdateOneRequiredWithoutAppsNestedInput
+    authMethods?: AuthMethodsUpdateManyWithoutAppNestedInput
+    actions?: AvailableActionsUpdateManyWithoutAppNestedInput
+    triggers?: AvailableTriggersUpdateManyWithoutAppNestedInput
+    actionTemplates?: ZapTemplateUpdateManyWithoutActionAppNestedInput
+  }
+
+  export type AppUncheckedUpdateWithoutTriggerTemplatesInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    teamId?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
+    authMethods?: AuthMethodsUncheckedUpdateManyWithoutAppNestedInput
+    actions?: AvailableActionsUncheckedUpdateManyWithoutAppNestedInput
+    triggers?: AvailableTriggersUncheckedUpdateManyWithoutAppNestedInput
+    actionTemplates?: ZapTemplateUncheckedUpdateManyWithoutActionAppNestedInput
+  }
+
+  export type AvailableTriggersUpsertWithoutTemplatesInput = {
+    update: XOR<AvailableTriggersUpdateWithoutTemplatesInput, AvailableTriggersUncheckedUpdateWithoutTemplatesInput>
+    create: XOR<AvailableTriggersCreateWithoutTemplatesInput, AvailableTriggersUncheckedCreateWithoutTemplatesInput>
+    where?: AvailableTriggersWhereInput
+  }
+
+  export type AvailableTriggersUpdateToOneWithWhereWithoutTemplatesInput = {
+    where?: AvailableTriggersWhereInput
+    data: XOR<AvailableTriggersUpdateWithoutTemplatesInput, AvailableTriggersUncheckedUpdateWithoutTemplatesInput>
+  }
+
+  export type AvailableTriggersUpdateWithoutTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type?: StringFieldUpdateOperationsInput | string
+    app?: AppUpdateOneRequiredWithoutTriggersNestedInput
+    triggers?: TriggerUpdateManyWithoutAvailableNestedInput
+  }
+
+  export type AvailableTriggersUncheckedUpdateWithoutTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type?: StringFieldUpdateOperationsInput | string
+    appId?: StringFieldUpdateOperationsInput | string
+    triggers?: TriggerUncheckedUpdateManyWithoutAvailableNestedInput
+  }
+
+  export type AppUpsertWithoutActionTemplatesInput = {
+    update: XOR<AppUpdateWithoutActionTemplatesInput, AppUncheckedUpdateWithoutActionTemplatesInput>
+    create: XOR<AppCreateWithoutActionTemplatesInput, AppUncheckedCreateWithoutActionTemplatesInput>
+    where?: AppWhereInput
+  }
+
+  export type AppUpdateToOneWithWhereWithoutActionTemplatesInput = {
+    where?: AppWhereInput
+    data: XOR<AppUpdateWithoutActionTemplatesInput, AppUncheckedUpdateWithoutActionTemplatesInput>
+  }
+
+  export type AppUpdateWithoutActionTemplatesInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
+    team?: TeamUpdateOneRequiredWithoutAppsNestedInput
+    authMethods?: AuthMethodsUpdateManyWithoutAppNestedInput
+    actions?: AvailableActionsUpdateManyWithoutAppNestedInput
+    triggers?: AvailableTriggersUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUpdateManyWithoutTriggerAppNestedInput
+  }
+
+  export type AppUncheckedUpdateWithoutActionTemplatesInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    teamId?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
+    authMethods?: AuthMethodsUncheckedUpdateManyWithoutAppNestedInput
+    actions?: AvailableActionsUncheckedUpdateManyWithoutAppNestedInput
+    triggers?: AvailableTriggersUncheckedUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUncheckedUpdateManyWithoutTriggerAppNestedInput
+  }
+
+  export type AvailableActionsUpsertWithoutTemplatesInput = {
+    update: XOR<AvailableActionsUpdateWithoutTemplatesInput, AvailableActionsUncheckedUpdateWithoutTemplatesInput>
+    create: XOR<AvailableActionsCreateWithoutTemplatesInput, AvailableActionsUncheckedCreateWithoutTemplatesInput>
+    where?: AvailableActionsWhereInput
+  }
+
+  export type AvailableActionsUpdateToOneWithWhereWithoutTemplatesInput = {
+    where?: AvailableActionsWhereInput
+    data: XOR<AvailableActionsUpdateWithoutTemplatesInput, AvailableActionsUncheckedUpdateWithoutTemplatesInput>
+  }
+
+  export type AvailableActionsUpdateWithoutTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type?: StringFieldUpdateOperationsInput | string
+    actions?: ActionUpdateManyWithoutAvailableNestedInput
+    app?: AppUpdateOneRequiredWithoutActionsNestedInput
+  }
+
+  export type AvailableActionsUncheckedUpdateWithoutTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    configMetadata?: JsonNullValueInput | InputJsonValue
+    type?: StringFieldUpdateOperationsInput | string
+    appId?: StringFieldUpdateOperationsInput | string
+    actions?: ActionUncheckedUpdateManyWithoutAvailableNestedInput
+  }
+
+  export type ZapUpsertWithWhereUniqueWithoutTemplateInput = {
+    where: ZapWhereUniqueInput
+    update: XOR<ZapUpdateWithoutTemplateInput, ZapUncheckedUpdateWithoutTemplateInput>
+    create: XOR<ZapCreateWithoutTemplateInput, ZapUncheckedCreateWithoutTemplateInput>
+  }
+
+  export type ZapUpdateWithWhereUniqueWithoutTemplateInput = {
+    where: ZapWhereUniqueInput
+    data: XOR<ZapUpdateWithoutTemplateInput, ZapUncheckedUpdateWithoutTemplateInput>
+  }
+
+  export type ZapUpdateManyWithWhereWithoutTemplateInput = {
+    where: ZapScalarWhereInput
+    data: XOR<ZapUpdateManyMutationInput, ZapUncheckedUpdateManyWithoutTemplateInput>
+  }
+
   export type TokenStoreCreateManyUserInput = {
     id?: string
     createdAt?: Date | string
@@ -20295,6 +23051,7 @@ export namespace Prisma {
     description: string
     metadata?: JsonNullValueInput | InputJsonValue
     image?: string | null
+    templateId?: string | null
   }
 
   export type TokenStoreUpdateWithoutUserInput = {
@@ -20333,6 +23090,7 @@ export namespace Prisma {
     actions?: ActionUpdateManyWithoutZapNestedInput
     trigger?: TriggerUpdateOneWithoutZapNestedInput
     zapRuns?: ZapRunUpdateManyWithoutZapNestedInput
+    template?: ZapTemplateUpdateOneWithoutZapsNestedInput
   }
 
   export type ZapUncheckedUpdateWithoutUserInput = {
@@ -20341,6 +23099,7 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
     actions?: ActionUncheckedUpdateManyWithoutZapNestedInput
     trigger?: TriggerUncheckedUpdateOneWithoutZapNestedInput
     zapRuns?: ZapRunUncheckedUpdateManyWithoutZapNestedInput
@@ -20352,6 +23111,7 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppCreateManyTeamInput = {
@@ -20375,6 +23135,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsUpdateManyWithoutAppNestedInput
     actions?: AvailableActionsUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUpdateManyWithoutActionAppNestedInput
   }
 
   export type AppUncheckedUpdateWithoutTeamInput = {
@@ -20384,6 +23146,8 @@ export namespace Prisma {
     authMethods?: AuthMethodsUncheckedUpdateManyWithoutAppNestedInput
     actions?: AvailableActionsUncheckedUpdateManyWithoutAppNestedInput
     triggers?: AvailableTriggersUncheckedUpdateManyWithoutAppNestedInput
+    triggerTemplates?: ZapTemplateUncheckedUpdateManyWithoutTriggerAppNestedInput
+    actionTemplates?: ZapTemplateUncheckedUpdateManyWithoutActionAppNestedInput
   }
 
   export type AppUncheckedUpdateManyWithoutTeamInput = {
@@ -20444,6 +23208,36 @@ export namespace Prisma {
     type: string
   }
 
+  export type ZapTemplateCreateManyTriggerAppInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ZapTemplateCreateManyActionAppInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    triggerId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
   export type AuthMethodsUpdateWithoutAppInput = {
     id?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
@@ -20470,6 +23264,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     actions?: ActionUpdateManyWithoutAvailableNestedInput
+    templates?: ZapTemplateUpdateManyWithoutActionNestedInput
   }
 
   export type AvailableActionsUncheckedUpdateWithoutAppInput = {
@@ -20480,6 +23275,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     actions?: ActionUncheckedUpdateManyWithoutAvailableNestedInput
+    templates?: ZapTemplateUncheckedUpdateManyWithoutActionNestedInput
   }
 
   export type AvailableActionsUncheckedUpdateManyWithoutAppInput = {
@@ -20499,6 +23295,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     triggers?: TriggerUpdateManyWithoutAvailableNestedInput
+    templates?: ZapTemplateUpdateManyWithoutTriggerNestedInput
   }
 
   export type AvailableTriggersUncheckedUpdateWithoutAppInput = {
@@ -20509,6 +23306,7 @@ export namespace Prisma {
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
     triggers?: TriggerUncheckedUpdateManyWithoutAvailableNestedInput
+    templates?: ZapTemplateUncheckedUpdateManyWithoutTriggerNestedInput
   }
 
   export type AvailableTriggersUncheckedUpdateManyWithoutAppInput = {
@@ -20518,6 +23316,100 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     configMetadata?: JsonNullValueInput | InputJsonValue
     type?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ZapTemplateUpdateWithoutTriggerAppInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    trigger?: AvailableTriggersUpdateOneRequiredWithoutTemplatesNestedInput
+    actionApp?: AppUpdateOneRequiredWithoutActionTemplatesNestedInput
+    action?: AvailableActionsUpdateOneRequiredWithoutTemplatesNestedInput
+    zaps?: ZapUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateWithoutTriggerAppInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutTriggerAppInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ZapTemplateUpdateWithoutActionAppInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp?: AppUpdateOneRequiredWithoutTriggerTemplatesNestedInput
+    trigger?: AvailableTriggersUpdateOneRequiredWithoutTemplatesNestedInput
+    action?: AvailableActionsUpdateOneRequiredWithoutTemplatesNestedInput
+    zaps?: ZapUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateWithoutActionAppInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutActionAppInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
   }
 
   export type AuthMethodsCreateManyAvailableAuthInput = {
@@ -20610,6 +23502,21 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
   }
 
+  export type ZapTemplateCreateManyTriggerInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    actionAppId: string
+    actionId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
   export type TriggerUpdateWithoutAvailableInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -20634,6 +23541,53 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
   }
 
+  export type ZapTemplateUpdateWithoutTriggerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp?: AppUpdateOneRequiredWithoutTriggerTemplatesNestedInput
+    actionApp?: AppUpdateOneRequiredWithoutActionTemplatesNestedInput
+    action?: AvailableActionsUpdateOneRequiredWithoutTemplatesNestedInput
+    zaps?: ZapUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateWithoutTriggerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutTriggerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
   export type ActionCreateManyAvailableInput = {
     id?: string
     name: string
@@ -20641,6 +23595,21 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     zapId: string
     sortingOrder?: number
+  }
+
+  export type ZapTemplateCreateManyActionInput = {
+    id?: string
+    name: string
+    description: string
+    category: string
+    isPopular?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    triggerAppId: string
+    triggerId: string
+    actionAppId: string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
   }
 
   export type ActionUpdateWithoutAvailableInput = {
@@ -20668,6 +23637,95 @@ export namespace Prisma {
     metadata?: JsonNullValueInput | InputJsonValue
     zapId?: StringFieldUpdateOperationsInput | string
     sortingOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ZapTemplateUpdateWithoutActionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    triggerApp?: AppUpdateOneRequiredWithoutTriggerTemplatesNestedInput
+    trigger?: AvailableTriggersUpdateOneRequiredWithoutTemplatesNestedInput
+    actionApp?: AppUpdateOneRequiredWithoutActionTemplatesNestedInput
+    zaps?: ZapUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateWithoutActionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+    zaps?: ZapUncheckedUpdateManyWithoutTemplateNestedInput
+  }
+
+  export type ZapTemplateUncheckedUpdateManyWithoutActionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    isPopular?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    triggerAppId?: StringFieldUpdateOperationsInput | string
+    triggerId?: StringFieldUpdateOperationsInput | string
+    actionAppId?: StringFieldUpdateOperationsInput | string
+    triggerConfig?: JsonNullValueInput | InputJsonValue
+    actionConfig?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ZapCreateManyTemplateInput = {
+    id?: string
+    name: string
+    description: string
+    metadata?: JsonNullValueInput | InputJsonValue
+    userId: string
+    image?: string | null
+  }
+
+  export type ZapUpdateWithoutTemplateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    actions?: ActionUpdateManyWithoutZapNestedInput
+    trigger?: TriggerUpdateOneWithoutZapNestedInput
+    user?: UserUpdateOneRequiredWithoutZapsNestedInput
+    zapRuns?: ZapRunUpdateManyWithoutZapNestedInput
+  }
+
+  export type ZapUncheckedUpdateWithoutTemplateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    userId?: StringFieldUpdateOperationsInput | string
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    actions?: ActionUncheckedUpdateManyWithoutZapNestedInput
+    trigger?: TriggerUncheckedUpdateOneWithoutZapNestedInput
+    zapRuns?: ZapRunUncheckedUpdateManyWithoutZapNestedInput
+  }
+
+  export type ZapUncheckedUpdateManyWithoutTemplateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    userId?: StringFieldUpdateOperationsInput | string
+    image?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

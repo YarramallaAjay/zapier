@@ -10,6 +10,7 @@ import { KafkaProducer } from '@/processor/processor';
 import { KafkaConsumer } from '@/workers/worker';
 import { UserDetails } from '@repo/types/src/UserSession';
 import cors from 'cors'
+import templaterouter from './routes/zap-template.routes';
 
 async function main() {
   try {
@@ -52,7 +53,8 @@ async function main() {
     app.use('/hooks', hooksRouter);
     app.use('/auth', authRouter);
     app.use('/integrator', integrator);
-    app.use('/zap', zapRouter);
+    app.use('/zaps', zapRouter);
+    app.use('/templates',templaterouter);
 
     // Sample GET route
     app.get('/', async (req, res) => {

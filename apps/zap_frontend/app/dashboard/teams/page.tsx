@@ -7,7 +7,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/dashboard/ui/side
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BuildingIcon, PlusIcon } from "lucide-react"
-import { EmptyTeamState } from "@/components/ui/dashboard/empty-team-state"
+import { EmptyState } from "@/components/ui/dashboard/emptyState"
 import Link from "next/link"
 
 import data from "../data.json"
@@ -16,13 +16,11 @@ export default function Page() {
   // Check if user has any teams
   if (data.teams.length === 0) {
     return (
-      <SidebarProvider>
-        <AppSidebar teams={[]} user={data.user} />
-        <SidebarInset>
-          <SiteHeader />
-          <EmptyTeamState />
-        </SidebarInset>
-      </SidebarProvider>
+      <div>
+         <SiteHeader />
+          <EmptyState />
+      </div>
+         
     )
   }
 

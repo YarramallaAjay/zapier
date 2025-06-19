@@ -1,10 +1,11 @@
-import {  Response, NextFunction } from "express";
+import {  Request,Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { UserDetails } from "@repo/types/src/UserSession";
 import { Apiresponse } from "@/utils/Response";
 
-export const Auth = async (req, res: Response, next: NextFunction) => {
+export const Auth = async (req:Request, res: Response, next: NextFunction) => {
   try {
+    console.log(req)
     const token = req.cookies.token;
     if (!token) {
       Apiresponse.error(res,"cookie not found",401,{})

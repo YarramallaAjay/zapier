@@ -2,7 +2,7 @@ import { Email } from "./Email";
 import { SolTransaction } from "./SolTransaction";
 
 export class ActionFactory{
-    createInstance(type){
+    createInstance(type:string){
         switch(type){
             case 'email':{
                 return new Email();

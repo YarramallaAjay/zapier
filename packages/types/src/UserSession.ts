@@ -26,8 +26,7 @@ export interface UserDetails {
   image?: string;
 }
 
-export interface UserSession {
-  user: UserBase;
+export interface UserSession extends UserBase {
   expires: string;
 }
 
